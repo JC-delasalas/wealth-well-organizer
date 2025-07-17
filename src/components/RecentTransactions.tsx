@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Transaction } from '@/types';
-import { defaultCategories } from '@/data/categories';
+import { useCategories } from '@/hooks/useCategories';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -10,8 +10,10 @@ interface RecentTransactionsProps {
 }
 
 export const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions }) => {
-  const getCategoryInfo = (categoryId: string) => {
-    return defaultCategories.find(cat => cat.id === categoryId) || {
+  const { categories } = useCategories();
+
+  const getCategoryInfo = (categoryId: string | null) => {
+    return categories.find(cat => cat.id === categoryId) || {
       name: 'Unknown',
       icon: 'HelpCircle',
       color: '#6b7280'
@@ -26,10 +28,19 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transact
     });
   };
 
+  if (transactions.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <p>No transactions yet</p>
+        <p className="text-sm">Add your first transaction to get started!</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {transactions.map((transaction, index) => {
-        const category = getCategoryInfo(transaction.category);
+        const category = getCategoryInfo(transaction.category_id);
         const isIncome = transaction.type === 'income';
         
         return (

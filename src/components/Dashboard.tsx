@@ -11,13 +11,14 @@ import {
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
-import { mockDashboardStats } from '@/data/mockData';
 import { StatsCard } from './StatsCard';
 import { RecentTransactions } from './RecentTransactions';
 import { CategoryChart } from './CategoryChart';
+import { TransactionForm } from './transactions/TransactionForm';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
 
 export const Dashboard = () => {
-  const stats = mockDashboardStats;
+  const stats = useDashboardStats();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
@@ -28,13 +29,7 @@ export const Dashboard = () => {
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600 mt-1">Welcome back! Here's your financial overview.</p>
           </div>
-          <Button 
-            className="gradient-primary text-white shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in"
-            size="lg"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Transaction
-          </Button>
+          <TransactionForm />
         </div>
 
         {/* Stats Cards */}
@@ -83,7 +78,13 @@ export const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <CategoryChart data={stats.topCategories} />
+              {stats.topCategories.length > 0 ? (
+                <CategoryChart data={stats.topCategories} />
+              ) : (
+                <div className="h-80 flex items-center justify-center text-gray-500">
+                  <p>No expense data available for this month</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -111,14 +112,22 @@ export const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
-                <Plus className="w-6 h-6" />
-                Add Income
-              </Button>
-              <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
-                <Receipt className="w-6 h-6" />
-                Add Expense
-              </Button>
+              <TransactionForm 
+                trigger={
+                  <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
+                    <Plus className="w-6 h-6" />
+                    Add Income
+                  </Button>
+                }
+              />
+              <TransactionForm 
+                trigger={
+                  <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
+                    <Receipt className="w-6 h-6" />
+                    Add Expense
+                  </Button>
+                }
+              />
               <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
                 <TrendingUp className="w-6 h-6" />
                 View Reports
