@@ -88,6 +88,45 @@ export type Database = {
         }
         Relationships: []
       }
+      financial_insights: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          insight_type: string
+          is_read: boolean | null
+          period_end: string | null
+          period_start: string | null
+          priority: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          insight_type: string
+          is_read?: boolean | null
+          period_end?: string | null
+          period_start?: string | null
+          priority?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          insight_type?: string
+          is_read?: boolean | null
+          period_end?: string | null
+          period_start?: string | null
+          priority?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -112,6 +151,42 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      savings_goals: {
+        Row: {
+          created_at: string
+          current_amount: number | null
+          id: string
+          salary_date_1: number | null
+          salary_date_2: number | null
+          savings_percentage_threshold: number | null
+          target_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_amount?: number | null
+          id?: string
+          salary_date_1?: number | null
+          salary_date_2?: number | null
+          savings_percentage_threshold?: number | null
+          target_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_amount?: number | null
+          id?: string
+          salary_date_1?: number | null
+          salary_date_2?: number | null
+          savings_percentage_threshold?: number | null
+          target_amount?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

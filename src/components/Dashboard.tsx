@@ -9,16 +9,22 @@ import {
   Receipt,
   Plus,
   ArrowUpRight,
-  ArrowDownRight
+  Target,
+  Lightbulb
 } from 'lucide-react';
 import { StatsCard } from './StatsCard';
 import { RecentTransactions } from './RecentTransactions';
 import { CategoryChart } from './CategoryChart';
 import { TransactionForm } from './transactions/TransactionForm';
+import { SavingsGoalForm } from './savings/SavingsGoalForm';
+import { InsightsDashboard } from './insights/InsightsDashboard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useSavingsGoals } from '@/hooks/useSavingsGoals';
 
 export const Dashboard = () => {
   const stats = useDashboardStats();
+  const { savingsGoals } = useSavingsGoals();
+  const hasSavingsGoal = savingsGoals.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-6">
@@ -29,7 +35,10 @@ export const Dashboard = () => {
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="text-gray-600 mt-1">Welcome back! Here's your financial overview.</p>
           </div>
-          <TransactionForm />
+          <div className="flex gap-2">
+            <TransactionForm />
+            {!hasSavingsGoal && <SavingsGoalForm />}
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -68,8 +77,13 @@ export const Dashboard = () => {
           />
         </div>
 
+        {/* Insights Dashboard */}
+        <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <InsightsDashboard />
+        </div>
+
         {/* Charts and Recent Transactions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           {/* Category Breakdown */}
           <Card className="lg:col-span-2 shadow-card hover:shadow-card-hover transition-shadow duration-200">
             <CardHeader>
@@ -106,12 +120,12 @@ export const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <Card className="shadow-card animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <Card className="shadow-card animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <CardHeader>
             <CardTitle className="text-xl font-semibold text-gray-900">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <TransactionForm 
                 trigger={
                   <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
@@ -132,9 +146,24 @@ export const Dashboard = () => {
                 <TrendingUp className="w-6 h-6" />
                 View Reports
               </Button>
+              {hasSavingsGoal ? (
+                <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
+                  <Target className="w-6 h-6" />
+                  Update Goal
+                </Button>
+              ) : (
+                <SavingsGoalForm 
+                  trigger={
+                    <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
+                      <Target className="w-6 h-6" />
+                      Set Goal
+                    </Button>
+                  }
+                />
+              )}
               <Button variant="outline" className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary transition-colors">
-                <ArrowUpRight className="w-6 h-6" />
-                Upload Receipt
+                <Lightbulb className="w-6 h-6" />
+                Get Insights
               </Button>
             </div>
           </CardContent>

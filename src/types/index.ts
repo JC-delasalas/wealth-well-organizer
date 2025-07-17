@@ -44,6 +44,31 @@ export interface Profile {
   updated_at?: string;
 }
 
+export interface SavingsGoal {
+  id: string;
+  user_id: string;
+  target_amount: number;
+  current_amount: number;
+  savings_percentage_threshold: number;
+  salary_date_1: number;
+  salary_date_2: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface FinancialInsight {
+  id: string;
+  user_id: string;
+  insight_type: 'daily' | 'weekly' | 'monthly' | 'threshold_alert';
+  title: string;
+  content: string;
+  priority: 'low' | 'medium' | 'high';
+  period_start?: string;
+  period_end?: string;
+  is_read: boolean;
+  created_at?: string;
+}
+
 export interface MonthlyStats {
   month: string;
   totalIncome: number;
@@ -67,4 +92,14 @@ export interface DashboardStats {
   transactionCount: number;
   topCategories: CategoryStats[];
   recentTransactions: Transaction[];
+  savingsRate?: number;
+  daysUntilSalary?: number;
+}
+
+export interface InsightRecommendation {
+  type: 'spending_reduction' | 'income_increase' | 'budget_optimization' | 'savings_strategy';
+  title: string;
+  description: string;
+  impact: 'low' | 'medium' | 'high';
+  actionItems: string[];
 }
