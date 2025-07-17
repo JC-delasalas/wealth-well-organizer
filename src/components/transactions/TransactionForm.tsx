@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Upload, Loader2 } from 'lucide-react';
+import { Plus, Upload, Loader2, X } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { Transaction } from '@/types';
@@ -35,6 +35,40 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
   const { categories } = useCategories();
   const { toast } = useToast();
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Allow any file type but warn for very large files
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: "Please select a file smaller than 10MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setReceipt(file);
+    }
+  };
+
+  const removeReceipt = () => {
+    setReceipt(null);
+    // Reset the file input
+    const fileInput = document.getElementById('receipt') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -45,15 +79,30 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
     if (receipt) {
       setUploading(true);
       try {
-        const fileExt = receipt.name.split('.').pop();
-        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`;
-        const filePath = `${supabase.auth.getUser()}/${fileName}`;
+        // Get current user
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+          throw new Error('User not authenticated');
+        }
+
+        const fileExt = receipt.name.split('.').pop() || 'unknown';
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
+
+        console.log('Uploading file to path:', filePath);
 
         const { error: uploadError } = await supabase.storage
           .from('receipts')
-          .upload(filePath, receipt);
+          .upload(filePath, receipt, {
+            cacheControl: '3600',
+            upsert: false
+          });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw uploadError;
+        }
 
         const { data: { publicUrl } } = supabase.storage
           .from('receipts')
@@ -61,10 +110,13 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
 
         receiptUrl = publicUrl;
         receiptName = receipt.name;
+        
+        console.log('Receipt uploaded successfully:', { receiptUrl, receiptName });
       } catch (error: any) {
+        console.error('Receipt upload failed:', error);
         toast({
           title: "Receipt upload failed",
-          description: error.message,
+          description: error.message || "Failed to upload receipt. Please try again.",
           variant: "destructive",
         });
         setUploading(false);
@@ -80,21 +132,25 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
       receipt_name: receiptName,
     };
 
-    if (isEdit && transaction) {
-      updateTransaction({ id: transaction.id, ...transactionData });
-    } else {
-      addTransaction(transactionData);
-    }
+    try {
+      if (isEdit && transaction) {
+        updateTransaction({ id: transaction.id, ...transactionData });
+      } else {
+        addTransaction(transactionData);
+      }
 
-    setOpen(false);
-    setFormData({
-      amount: '',
-      type: 'expense',
-      category_id: '',
-      description: '',
-      date: new Date().toISOString().split('T')[0],
-    });
-    setReceipt(null);
+      setOpen(false);
+      setFormData({
+        amount: '',
+        type: 'expense',
+        category_id: '',
+        description: '',
+        date: new Date().toISOString().split('T')[0],
+      });
+      setReceipt(null);
+    } catch (error) {
+      console.error('Transaction save failed:', error);
+    }
   };
 
   const isLoading = isAdding || isUpdating || uploading;
@@ -189,18 +245,40 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
 
           <div className="space-y-2">
             <Label htmlFor="receipt">Receipt (Optional)</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="receipt"
-                type="file"
-                accept="image/*,.pdf"
-                onChange={(e) => setReceipt(e.target.files?.[0] || null)}
-              />
-              {receipt && (
-                <Button type="button" variant="outline" size="sm">
-                  <Upload className="w-4 h-4" />
-                </Button>
+            <div className="space-y-2">
+              {!receipt ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="receipt"
+                    type="file"
+                    accept="*/*"
+                    onChange={handleFileChange}
+                    className="file:mr-2 file:px-2 file:py-1 file:rounded file:border-0 file:text-sm file:bg-gray-100 hover:file:bg-gray-200"
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                  <div className="flex items-center gap-2">
+                    <Upload className="w-4 h-4 text-gray-500" />
+                    <div className="text-sm">
+                      <p className="font-medium text-gray-900">{receipt.name}</p>
+                      <p className="text-gray-500">{formatFileSize(receipt.size)}</p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={removeReceipt}
+                    className="text-gray-500 hover:text-red-500"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
               )}
+              <p className="text-xs text-gray-500">
+                Upload any file type (images, PDFs, documents, etc.). Max size: 10MB
+              </p>
             </div>
           </div>
 

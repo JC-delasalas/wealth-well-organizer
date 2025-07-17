@@ -23,14 +23,31 @@ export const useTransactions = () => {
   });
 
   const addTransactionMutation = useMutation({
-    mutationFn: async (transaction: Omit<Transaction, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (transaction: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        throw new Error('User not authenticated');
+      }
+
+      const transactionWithUserId = {
+        ...transaction,
+        user_id: user.id
+      };
+
+      console.log('Adding transaction:', transactionWithUserId);
+
       const { data, error } = await supabase
         .from('transactions')
-        .insert([transaction])
+        .insert([transactionWithUserId])
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Transaction insert error:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -41,9 +58,10 @@ export const useTransactions = () => {
       });
     },
     onError: (error: any) => {
+      console.error('Add transaction error:', error);
       toast({
         title: "Error adding transaction",
-        description: error.message,
+        description: error.message || "Failed to add transaction. Please try again.",
         variant: "destructive",
       });
     },
@@ -51,6 +69,8 @@ export const useTransactions = () => {
 
   const updateTransactionMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Transaction> & { id: string }) => {
+      console.log('Updating transaction:', { id, updates });
+
       const { data, error } = await supabase
         .from('transactions')
         .update(updates)
@@ -58,7 +78,10 @@ export const useTransactions = () => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Transaction update error:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -69,9 +92,10 @@ export const useTransactions = () => {
       });
     },
     onError: (error: any) => {
+      console.error('Update transaction error:', error);
       toast({
         title: "Error updating transaction",
-        description: error.message,
+        description: error.message || "Failed to update transaction. Please try again.",
         variant: "destructive",
       });
     },
@@ -79,12 +103,17 @@ export const useTransactions = () => {
 
   const deleteTransactionMutation = useMutation({
     mutationFn: async (id: string) => {
+      console.log('Deleting transaction:', id);
+
       const { error } = await supabase
         .from('transactions')
         .delete()
         .eq('id', id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Transaction delete error:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
@@ -94,9 +123,10 @@ export const useTransactions = () => {
       });
     },
     onError: (error: any) => {
+      console.error('Delete transaction error:', error);
       toast({
         title: "Error deleting transaction",
-        description: error.message,
+        description: error.message || "Failed to delete transaction. Please try again.",
         variant: "destructive",
       });
     },
