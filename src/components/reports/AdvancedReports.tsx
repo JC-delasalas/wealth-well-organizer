@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,12 @@ import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { Calendar, TrendingUp, TrendingDown, Download } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfDay, endOfDay } from 'date-fns';
+
+interface CategoryData {
+  name: string;
+  amount: number;
+  color: string;
+}
 
 export const AdvancedReports = () => {
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly'>('monthly');
@@ -53,9 +58,9 @@ export const AdvancedReports = () => {
     });
   };
 
-  const generateSpendingByCategory = () => {
+  const generateSpendingByCategory = (): CategoryData[] => {
     const filtered = getFilteredTransactions().filter(t => t.type === 'expense');
-    const categoryMap = {};
+    const categoryMap: Record<string, CategoryData> = {};
 
     filtered.forEach(transaction => {
       const category = categories.find(c => c.id === transaction.category_id);
