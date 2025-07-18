@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { Dashboard } from "./components/Dashboard";
 import { AuthPage } from "./components/auth/AuthPage";
+import { AuthCallback } from "./components/auth/AuthCallback";
 import { TransactionList } from "./components/transactions/TransactionList";
 import { ReportsPage } from "./components/reports/ReportsPage";
 import { Navbar } from "./components/layout/Navbar";
@@ -54,6 +55,10 @@ const AppRoutes = () => {
       <Route 
         path="/auth" 
         element={user ? <Navigate to="/" replace /> : <AuthPage />} 
+      />
+      <Route 
+        path="/auth/callback" 
+        element={<AuthCallback />} 
       />
       <Route 
         path="/" 

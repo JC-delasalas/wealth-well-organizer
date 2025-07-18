@@ -41,6 +41,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
+          
+          // Handle email confirmation
+          if (event === 'SIGNED_IN' && session?.user && !session.user.email_confirmed_at) {
+            toast({
+              title: "Email confirmation required",
+              description: "Please check your email and click the confirmation link to complete your registration.",
+              variant: "default",
+            });
+          } else if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
+            toast({
+              title: "Welcome!",
+              description: "You have successfully signed in.",
+            });
+          }
         }
       }
     );
@@ -71,13 +85,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [toast]);
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     setLoading(true);
     
     try {
-      const redirectUrl = `${window.location.origin}/`;
+      // Use the current origin for redirect
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+      
+      console.log('Signing up with redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -98,9 +115,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else if (data.user && !data.user.email_confirmed_at) {
         toast({
           title: "Check your email",
-          description: "We've sent you a confirmation link to complete your registration.",
+          description: "We've sent you a confirmation link. Please check your email and click the link to complete your registration.",
+          duration: 10000,
         });
-      } else if (data.user) {
+      } else if (data.user && data.user.email_confirmed_at) {
         toast({
           title: "Welcome!",
           description: "Your account has been created successfully.",
@@ -136,6 +154,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         toast({
           title: "Sign in failed",
           description: error.message,
+          variant: "destructive",
+        });
+      } else if (data.user && !data.user.email_confirmed_at) {
+        toast({
+          title: "Email not confirmed",
+          description: "Please check your email and click the confirmation link before signing in.",
           variant: "destructive",
         });
       } else if (data.user) {
