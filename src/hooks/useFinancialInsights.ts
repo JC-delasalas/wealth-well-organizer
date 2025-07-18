@@ -74,11 +74,42 @@ export const useFinancialInsights = () => {
         .update({ is_read: true })
         .eq('id', id)
         .eq('user_id', user.id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
+    },
+  });
+
+  const markAllAsReadMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { error } = await supabase
+        .from('financial_insights')
+        .update({ is_read: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false); // Only update unread insights
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
+      toast({
+        title: "Success",
+        description: "All insights marked as read",
+      });
+    },
+    onError: (error: DatabaseError) => {
+      console.error('Error marking all insights as read');
+      toast({
+        title: "Error",
+        description: "Failed to mark insights as read. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -87,6 +118,8 @@ export const useFinancialInsights = () => {
     isLoading,
     createInsight: createInsightMutation.mutate,
     markAsRead: markAsReadMutation.mutate,
+    markAllAsRead: markAllAsReadMutation.mutate,
+    isMarkingAllAsRead: markAllAsReadMutation.isPending,
     unreadCount: insights.filter(i => !i.is_read).length,
   };
 };

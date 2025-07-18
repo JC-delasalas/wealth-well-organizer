@@ -1,17 +1,29 @@
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  TrendingDown, 
-  TrendingUp, 
-  AlertTriangle, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  TrendingDown,
+  TrendingUp,
+  AlertTriangle,
   Lightbulb,
   Target,
   Calendar,
-  DollarSign
+  DollarSign,
+  CheckCheck
 } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
@@ -24,7 +36,7 @@ export const InsightsDashboard = () => {
   const { transactions } = useTransactions();
   const { categories } = useCategories();
   const { savingsGoals } = useSavingsGoals();
-  const { insights, createInsight, markAsRead, unreadCount } = useFinancialInsights();
+  const { insights, createInsight, markAsRead, markAllAsRead, isMarkingAllAsRead, unreadCount } = useFinancialInsights();
 
   const currentSavingsGoal = savingsGoals[0]; // Use first savings goal
 
@@ -154,15 +166,49 @@ export const InsightsDashboard = () => {
       {/* Financial Insights */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="flex items-center gap-2">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
               <Lightbulb className="w-5 h-5" />
               Financial Insights
-            </span>
+              {unreadCount > 0 && (
+                <Badge variant="destructive">{unreadCount} new</Badge>
+              )}
+            </CardTitle>
+
             {unreadCount > 0 && (
-              <Badge variant="destructive">{unreadCount} new</Badge>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isMarkingAllAsRead}
+                    className="flex items-center gap-2"
+                  >
+                    <CheckCheck className="w-4 h-4" />
+                    {isMarkingAllAsRead ? 'Marking...' : 'Mark All as Read'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Mark All Insights as Read?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will mark all {unreadCount} unread insight{unreadCount !== 1 ? 's' : ''} as read.
+                      This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => markAllAsRead()}
+                      disabled={isMarkingAllAsRead}
+                    >
+                      {isMarkingAllAsRead ? 'Marking...' : 'Mark All as Read'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
-          </CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
           {insights.length === 0 ? (
@@ -174,24 +220,36 @@ export const InsightsDashboard = () => {
           ) : (
             <div className="space-y-4">
               {insights.slice(0, 5).map((insight) => (
-                <div 
+                <div
                   key={insight.id}
                   className={cn(
-                    "p-4 rounded-lg border transition-colors",
-                    insight.is_read ? "bg-gray-50" : "bg-blue-50 border-blue-200"
+                    "p-4 rounded-lg border transition-all duration-300",
+                    insight.is_read
+                      ? "bg-gray-50 border-gray-200 opacity-75"
+                      : "bg-blue-50 border-blue-200 shadow-sm"
                   )}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {getPriorityIcon(insight.priority)}
-                      <h4 className="font-semibold">{insight.title}</h4>
+                      <h4 className={cn(
+                        "font-semibold transition-colors",
+                        insight.is_read ? "text-gray-600" : "text-gray-900"
+                      )}>
+                        {insight.title}
+                      </h4>
                       <Badge variant={getPriorityColor(insight.priority)}>
                         {insight.priority}
                       </Badge>
+                      {insight.is_read && (
+                        <Badge variant="secondary" className="text-xs">
+                          Read
+                        </Badge>
+                      )}
                     </div>
                     {!insight.is_read && (
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="sm"
                         onClick={() => markAsRead(insight.id)}
                       >
@@ -199,7 +257,12 @@ export const InsightsDashboard = () => {
                       </Button>
                     )}
                   </div>
-                  <p className="text-gray-700 text-sm">{insight.content}</p>
+                  <p className={cn(
+                    "text-sm transition-colors",
+                    insight.is_read ? "text-gray-500" : "text-gray-700"
+                  )}>
+                    {insight.content}
+                  </p>
                   {insight.period_start && (
                     <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
                       <Calendar className="w-3 h-3" />
