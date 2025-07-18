@@ -47,8 +47,11 @@ export interface Profile {
 export interface SavingsGoal {
   id: string;
   user_id: string;
+  name: string;
+  description?: string;
   target_amount: number;
   current_amount: number;
+  target_date: string;
   savings_percentage_threshold: number;
   salary_date_1: number;
   salary_date_2: number;

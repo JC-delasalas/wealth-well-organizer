@@ -14,7 +14,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
  */
 export const SavingsGoalsPage = () => {
   const navigate = useNavigate();
-  const { data: goals, isLoading, error } = useSavingsGoals();
+  const { savingsGoals: goals, isLoading } = useSavingsGoals();
 
   if (isLoading) {
     return (
@@ -24,16 +24,7 @@ export const SavingsGoalsPage = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Failed to load savings goals</p>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
-        </div>
-      </div>
-    );
-  }
+
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {

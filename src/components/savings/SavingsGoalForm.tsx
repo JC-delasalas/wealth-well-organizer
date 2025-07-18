@@ -4,40 +4,59 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Target, Settings } from 'lucide-react';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
+import { SavingsGoal } from '@/types';
 
 interface SavingsGoalFormProps {
   trigger?: React.ReactNode;
+  goal?: SavingsGoal;
+  isEdit?: boolean;
 }
 
-export const SavingsGoalForm = ({ trigger }: SavingsGoalFormProps) => {
+export const SavingsGoalForm = ({ trigger, goal, isEdit = false }: SavingsGoalFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    target_amount: '',
-    current_amount: '',
-    savings_percentage_threshold: '20',
-    salary_date_1: '15',
-    salary_date_2: '30',
+    name: goal?.name || '',
+    description: goal?.description || '',
+    target_amount: goal?.target_amount?.toString() || '',
+    current_amount: goal?.current_amount?.toString() || '',
+    target_date: goal?.target_date || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default to 1 year from now
+    savings_percentage_threshold: goal?.savings_percentage_threshold?.toString() || '20',
+    salary_date_1: goal?.salary_date_1?.toString() || '15',
+    salary_date_2: goal?.salary_date_2?.toString() || '30',
   });
 
-  const { createSavingsGoal, isCreating } = useSavingsGoals();
+  const { createSavingsGoal, updateSavingsGoal, isCreating, isUpdating } = useSavingsGoals();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    createSavingsGoal({
+
+    const goalData = {
+      name: formData.name,
+      description: formData.description || undefined,
       target_amount: parseFloat(formData.target_amount),
       current_amount: parseFloat(formData.current_amount || '0'),
+      target_date: formData.target_date,
       savings_percentage_threshold: parseFloat(formData.savings_percentage_threshold),
       salary_date_1: parseInt(formData.salary_date_1),
       salary_date_2: parseInt(formData.salary_date_2),
-    });
+    };
+
+    if (isEdit && goal) {
+      updateSavingsGoal({ id: goal.id, ...goalData });
+    } else {
+      createSavingsGoal(goalData);
+    }
 
     setOpen(false);
     setFormData({
+      name: '',
+      description: '',
       target_amount: '',
       current_amount: '',
+      target_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       savings_percentage_threshold: '20',
       salary_date_1: '15',
       salary_date_2: '30',
@@ -58,12 +77,35 @@ export const SavingsGoalForm = ({ trigger }: SavingsGoalFormProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
-            Configure Savings Goal & Thresholds
+            {isEdit ? 'Update Savings Goal' : 'Create Savings Goal'}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="target_amount">Target Savings Amount ($)</Label>
+            <Label htmlFor="name">Goal Name</Label>
+            <Input
+              id="name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Emergency Fund"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Description (Optional)</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Save for unexpected expenses"
+              rows={2}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="target_amount">Target Amount ($)</Label>
             <Input
               id="target_amount"
               type="number"
@@ -76,7 +118,7 @@ export const SavingsGoalForm = ({ trigger }: SavingsGoalFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="current_amount">Current Savings ($)</Label>
+            <Label htmlFor="current_amount">Current Amount ($)</Label>
             <Input
               id="current_amount"
               type="number"
@@ -84,6 +126,17 @@ export const SavingsGoalForm = ({ trigger }: SavingsGoalFormProps) => {
               value={formData.current_amount}
               onChange={(e) => setFormData({ ...formData, current_amount: e.target.value })}
               placeholder="0"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="target_date">Target Date</Label>
+            <Input
+              id="target_date"
+              type="date"
+              value={formData.target_date}
+              onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
+              required
             />
           </div>
 
@@ -134,8 +187,11 @@ export const SavingsGoalForm = ({ trigger }: SavingsGoalFormProps) => {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isCreating}>
-              {isCreating ? 'Creating...' : 'Create Goal'}
+            <Button type="submit" disabled={isCreating || isUpdating}>
+              {isEdit
+                ? (isUpdating ? 'Updating...' : 'Update Goal')
+                : (isCreating ? 'Creating...' : 'Create Goal')
+              }
             </Button>
           </div>
         </form>

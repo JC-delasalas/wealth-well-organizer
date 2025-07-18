@@ -158,33 +158,42 @@ export type Database = {
         Row: {
           created_at: string
           current_amount: number | null
+          description: string | null
           id: string
+          name: string
           salary_date_1: number | null
           salary_date_2: number | null
           savings_percentage_threshold: number | null
           target_amount: number
+          target_date: string
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
           current_amount?: number | null
+          description?: string | null
           id?: string
+          name: string
           salary_date_1?: number | null
           salary_date_2?: number | null
           savings_percentage_threshold?: number | null
           target_amount: number
+          target_date: string
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
           current_amount?: number | null
+          description?: string | null
           id?: string
+          name?: string
           salary_date_1?: number | null
           salary_date_2?: number | null
           savings_percentage_threshold?: number | null
           target_amount?: number
+          target_date?: string
           updated_at?: string
           user_id?: string
         }
