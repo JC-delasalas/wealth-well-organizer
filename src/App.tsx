@@ -32,6 +32,12 @@ const TransactionList = React.lazy(() =>
 const ReportsPage = React.lazy(() =>
   import("./components/reports/ReportsPage").then(module => ({ default: module.ReportsPage }))
 );
+const SavingsGoalsPage = React.lazy(() =>
+  import("./components/savings/SavingsGoalsPage").then(module => ({ default: module.SavingsGoalsPage }))
+);
+const InsightsPage = React.lazy(() =>
+  import("./components/insights/InsightsPage").then(module => ({ default: module.InsightsPage }))
+);
 const NotFound = React.lazy(() =>
   import("./pages/NotFound")
 );
@@ -133,23 +139,43 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
-      <Route 
-        path="/reports" 
+      <Route
+        path="/reports"
         element={
           <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner size="lg" />}>
               <ReportsPage />
             </Suspense>
           </ProtectedRoute>
-        } 
+        }
       />
-      <Route 
-        path="*" 
+      <Route
+        path="/goals"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <SavingsGoalsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/insights"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <InsightsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="*"
         element={
           <Suspense fallback={<LoadingSpinner size="lg" />}>
             <NotFound />
           </Suspense>
-        } 
+        }
       />
     </Routes>
   );

@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { 
   BarChart, 
   Bar, 
@@ -25,6 +27,7 @@ import { InsightsDashboard } from '../insights/InsightsDashboard';
 import { format, subMonths } from 'date-fns';
 
 export const ReportsPage = () => {
+  const navigate = useNavigate();
   const [timeRange, setTimeRange] = useState('6');
   const { transactions } = useTransactions();
   const { categories } = useCategories();
@@ -70,9 +73,20 @@ export const ReportsPage = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Financial Reports</h1>
-            <p className="text-gray-600 mt-1">Comprehensive insights into your financial health</p>
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Dashboard</span>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Financial Reports</h1>
+              <p className="text-gray-600 mt-1">Comprehensive insights into your financial health</p>
+            </div>
           </div>
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-48">

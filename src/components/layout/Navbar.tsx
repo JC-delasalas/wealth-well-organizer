@@ -48,13 +48,29 @@ export const Navbar = () => {
             >
               Transactions
             </Link>
-            <Link 
-              to="/reports" 
+            <Link
+              to="/reports"
               className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/reports') ? 'bg-primary text-white' : 'text-gray-700 hover:text-primary'
               }`}
             >
               Reports
+            </Link>
+            <Link
+              to="/goals"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive('/goals') ? 'bg-primary text-white' : 'text-gray-700 hover:text-primary'
+              }`}
+            >
+              Goals
+            </Link>
+            <Link
+              to="/insights"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive('/insights') ? 'bg-primary text-white' : 'text-gray-700 hover:text-primary'
+              }`}
+            >
+              Insights
             </Link>
           </div>
         </div>

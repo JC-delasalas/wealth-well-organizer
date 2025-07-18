@@ -2,16 +2,17 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
   Receipt,
   Plus,
   ArrowUpRight,
   Target,
   Lightbulb
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { StatsCard } from './StatsCard';
 import { RecentTransactions } from './RecentTransactions';
 import { CategoryChart } from './CategoryChart';
@@ -22,6 +23,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const stats = useDashboardStats();
   const { savingsGoals } = useSavingsGoals();
   const hasSavingsGoal = savingsGoals.length > 0;
@@ -84,7 +86,11 @@ export const Dashboard = () => {
                   }
                 />
               )}
-              <Button variant="outline" className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm col-span-2 sm:col-span-1">
+              <Button
+                variant="outline"
+                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm col-span-2 sm:col-span-1"
+                onClick={() => navigate('/insights')}
+              >
                 <Lightbulb className="w-4 h-4 sm:w-6 sm:h-6" />
                 <span className="hidden sm:inline">Get Insights</span>
                 <span className="sm:hidden">Insights</span>
@@ -166,7 +172,12 @@ export const Dashboard = () => {
               <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">
                 Recent Transactions
               </CardTitle>
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 text-xs sm:text-sm">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary hover:text-primary/80 text-xs sm:text-sm"
+                onClick={() => navigate('/transactions')}
+              >
                 <span className="hidden sm:inline">View All</span>
                 <span className="sm:hidden">All</span>
                 <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1" />

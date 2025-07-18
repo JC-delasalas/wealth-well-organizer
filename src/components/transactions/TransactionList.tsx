@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, Receipt, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Edit, Trash2, Receipt, ArrowUpRight, ArrowDownRight, ArrowLeft, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { TransactionForm } from './TransactionForm';
@@ -11,6 +12,7 @@ import { Transaction } from '@/types';
 import { cn } from '@/lib/utils';
 
 export const TransactionList = () => {
+  const navigate = useNavigate();
   const { transactions, deleteTransaction, isDeleting } = useTransactions();
   const { categories } = useCategories();
 
@@ -31,11 +33,41 @@ export const TransactionList = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Dashboard</span>
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+              <p className="text-gray-600 mt-1">Manage your income and expenses</p>
+            </div>
+          </div>
+
+          <TransactionForm
+            trigger={
+              <Button className="flex items-center space-x-2">
+                <Plus className="w-4 h-4" />
+                <span>Add Transaction</span>
+              </Button>
+            }
+          />
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>All Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
         <div className="space-y-4">
           {transactions.length === 0 ? (
             <p className="text-center text-gray-500 py-8">
@@ -115,7 +147,9 @@ export const TransactionList = () => {
             })
           )}
         </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
