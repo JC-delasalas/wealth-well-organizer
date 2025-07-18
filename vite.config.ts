@@ -23,29 +23,12 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    assetsDir: 'assets',
     rollupOptions: {
       output: {
         manualChunks: {
-          // Core React libraries
           vendor: ['react', 'react-dom'],
-          // Routing
           router: ['react-router-dom'],
-          // UI components
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-tabs'],
-          // Charts and visualization
-          charts: ['recharts'],
-          // Form handling
-          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
-          // Supabase and data
-          supabase: ['@supabase/supabase-js', '@tanstack/react-query'],
-          // Icons (split large icon library)
-          icons: ['lucide-react'],
         },
-        // Ensure proper file naming for assets
-        assetFileNames: 'assets/[name]-[hash][extname]',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
   },
