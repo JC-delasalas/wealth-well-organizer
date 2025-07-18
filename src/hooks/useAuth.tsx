@@ -229,10 +229,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     
     try {
-      // Use production URL for password reset redirect
-      const redirectUrl = window.location.hostname === 'localhost' 
-        ? 'https://wealth-well-organizer.vercel.app/reset-password'
-        : `${window.location.origin}/reset-password`;
+      // Always use production URL for password reset redirect
+      // This ensures the email link works regardless of development environment
+      const redirectUrl = 'https://wealth-well-organizer.vercel.app/reset-password';
         
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
@@ -272,6 +271,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     
     try {
+      // Verify we have a valid session before updating password
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        const error = { message: 'No valid session found. Please try the password reset process again.' };
+        toast({
+          title: "Session expired",
+          description: error.message,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return { error };
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: password
       });
@@ -285,8 +298,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
       } else {
         toast({
-          title: "Password updated",
-          description: "Your password has been successfully updated.",
+          title: "Password updated successfully",
+          description: "Your password has been updated. You can now sign in with your new password.",
+          duration: 5000,
         });
       }
 

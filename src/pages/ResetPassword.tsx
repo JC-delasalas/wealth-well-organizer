@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2, Lock, CheckCircle } from 'lucide-react';
+import AuthDebug from '@/components/auth/AuthDebug';
 
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -21,9 +22,16 @@ export const ResetPassword = () => {
     if (user) {
       setIsValidSession(true);
     } else {
-      // If no user and no access token in URL, redirect to auth
+      // Check for auth tokens in URL (from email link)
       const accessToken = searchParams.get('access_token');
-      if (!accessToken) {
+      const refreshToken = searchParams.get('refresh_token');
+      const type = searchParams.get('type');
+      
+      if (accessToken && refreshToken && type === 'recovery') {
+        // Valid reset link, user should be able to proceed
+        setIsValidSession(true);
+      } else {
+        // Invalid or expired reset link, redirect to auth
         navigate('/auth');
       }
     }
@@ -41,14 +49,26 @@ export const ResetPassword = () => {
       return; // This will be handled by the form validation
     }
 
+    // Ensure we have a valid session before attempting password update
+    if (!isValidSession) {
+      navigate('/auth');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       console.log('Attempting to update password');
       const result = await updatePassword(password);
       if (!result.error) {
         // Password updated successfully, redirect to dashboard
-        navigate('/');
+        // Add a small delay to ensure the password change is processed
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
       }
+    } catch (error) {
+      console.error('Password update failed:', error);
+      // The error will be handled by the updatePassword function
     } finally {
       setIsSubmitting(false);
     }
@@ -59,7 +79,7 @@ export const ResetPassword = () => {
   const doPasswordsMatch = password === confirmPassword;
   const isFormValid = isPasswordValid && doPasswordsMatch && password && confirmPassword;
 
-  if (!isValidSession && !searchParams.get('access_token')) {
+  if (!isValidSession && !searchParams.get('access_token') && !searchParams.get('type')) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
@@ -68,11 +88,16 @@ export const ResetPassword = () => {
               <Lock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Invalid Reset Link</h2>
               <p className="text-gray-600 mb-4">
-                This password reset link is invalid or has expired.
+                This password reset link is invalid or has expired. Please request a new password reset.
               </p>
-              <Button onClick={() => navigate('/auth')} variant="outline">
-                Back to Sign In
-              </Button>
+              <div className="space-y-2">
+                <Button onClick={() => navigate('/auth')} className="w-full">
+                  Request New Reset Link
+                </Button>
+                <Button onClick={() => navigate('/auth')} variant="outline" className="w-full">
+                  Back to Sign In
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -82,6 +107,7 @@ export const ResetPassword = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+      <AuthDebug />
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
