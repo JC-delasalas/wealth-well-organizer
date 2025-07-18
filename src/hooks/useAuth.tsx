@@ -16,6 +16,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -223,6 +225,81 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        console.error('Reset password error:', error);
+        toast({
+          title: "Reset password failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Reset link sent",
+          description: "Check your email for a password reset link.",
+          duration: 10000,
+        });
+      }
+
+      setLoading(false);
+      return { error };
+    } catch (err) {
+      console.error('Unexpected reset password error:', err);
+      setLoading(false);
+      const error = { message: 'An unexpected error occurred during password reset' };
+      toast({
+        title: "Reset password failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return { error };
+    }
+  };
+
+  const updatePassword = async (password: string) => {
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
+
+      if (error) {
+        console.error('Update password error:', error);
+        toast({
+          title: "Update password failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Password updated",
+          description: "Your password has been successfully updated.",
+        });
+      }
+
+      setLoading(false);
+      return { error };
+    } catch (err) {
+      console.error('Unexpected update password error:', err);
+      setLoading(false);
+      const error = { message: 'An unexpected error occurred during password update' };
+      toast({
+        title: "Update password failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return { error };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -231,6 +308,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       signUp,
       signIn,
       signOut,
+      resetPassword,
+      updatePassword,
     }}>
       {children}
     </AuthContext.Provider>

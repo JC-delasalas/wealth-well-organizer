@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/useAuth';
 import { 
   Loader2, 
@@ -14,15 +15,18 @@ import {
   PiggyBank,
   Target,
   Brain,
-  Zap
+  Zap,
+  Mail
 } from 'lucide-react';
 
 export const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signIn, signUp, loading } = useAuth();
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const { signIn, signUp, resetPassword, loading } = useAuth();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,6 +54,23 @@ export const AuthPage = () => {
       const result = await signUp(email, password, fullName);
       if (result.error) {
         console.error('Sign up failed:', result.error);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting || !forgotPasswordEmail) return;
+    
+    setIsSubmitting(true);
+    try {
+      console.log('Attempting to reset password for:', forgotPasswordEmail);
+      const result = await resetPassword(forgotPasswordEmail);
+      if (!result.error) {
+        setIsResetPasswordOpen(false);
+        setForgotPasswordEmail('');
       }
     } finally {
       setIsSubmitting(false);
@@ -259,6 +280,64 @@ export const AuthPage = () => {
                         <TrendingUp className="ml-2 h-4 w-4" />
                       </Button>
                     </form>
+                    
+                    <div className="mt-4 text-center">
+                      <Dialog open={isResetPasswordOpen} onOpenChange={setIsResetPasswordOpen}>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            className="text-sm text-gray-600 hover:text-primary transition-colors"
+                            disabled={isLoading}
+                          >
+                            Forgot your password?
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Mail className="w-5 h-5" />
+                              Reset Password
+                            </DialogTitle>
+                          </DialogHeader>
+                          <form onSubmit={handleForgotPassword} className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="reset-email">Email Address</Label>
+                              <Input
+                                id="reset-email"
+                                type="email"
+                                value={forgotPasswordEmail}
+                                onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                                placeholder="Enter your email address"
+                                required
+                                disabled={isLoading}
+                              />
+                            </div>
+                            <p className="text-sm text-gray-600">
+                              We'll send you a link to reset your password.
+                            </p>
+                            <div className="flex gap-2">
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                onClick={() => setIsResetPasswordOpen(false)}
+                                disabled={isLoading}
+                                className="flex-1"
+                              >
+                                Cancel
+                              </Button>
+                              <Button 
+                                type="submit" 
+                                disabled={isLoading || !forgotPasswordEmail}
+                                className="flex-1"
+                              >
+                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Send Reset Link
+                              </Button>
+                            </div>
+                          </form>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </TabsContent>
                 </Tabs>
 

@@ -14,6 +14,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 const Dashboard = React.lazy(() => import("./components/Dashboard").then(module => ({ default: module.Dashboard })));
 const AuthPage = React.lazy(() => import("./components/auth/AuthPage").then(module => ({ default: module.AuthPage })));
 const AuthCallback = React.lazy(() => import("./components/auth/AuthCallback").then(module => ({ default: module.AuthCallback })));
+const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const TransactionList = React.lazy(() => import("./components/transactions/TransactionList").then(module => ({ default: module.TransactionList })));
 const ReportsPage = React.lazy(() => import("./components/reports/ReportsPage").then(module => ({ default: module.ReportsPage })));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
@@ -69,6 +70,14 @@ const AppRoutes = () => {
         element={
           <Suspense fallback={<LoadingSpinner size="lg" />}>
             <AuthCallback />
+          </Suspense>
+        } 
+      />
+      <Route 
+        path="/reset-password" 
+        element={
+          <Suspense fallback={<LoadingSpinner size="lg" />}>
+            <ResetPassword />
           </Suspense>
         } 
       />
