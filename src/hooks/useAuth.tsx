@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     
     try {
-      const redirectUrl = `${window.location.origin}/auth/callback`;
+      const redirectUrl = `https://wealth-well-organizer.vercel.app/auth/callback`;
       
       console.log('Signing up with redirect URL:', redirectUrl);
       

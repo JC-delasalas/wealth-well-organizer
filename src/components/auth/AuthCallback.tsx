@@ -28,13 +28,16 @@ export const AuthCallback = () => {
 
         if (data.session?.user) {
           console.log('User authenticated via callback:', data.session.user.email);
+          // Show success popup
+          alert('🎉 Email verified successfully! Welcome to WealthWell Organizer!');
           toast({
             title: "Email Confirmed!",
-            description: "Your email has been successfully verified. Welcome to FinanceTracker!",
+            description: "Your email has been successfully verified. Welcome to WealthWell Organizer!",
           });
           navigate('/');
         } else {
           console.log('No session found in callback');
+          alert('❌ Email verification failed. Please try again.');
           navigate('/auth');
         }
       } catch (error) {
