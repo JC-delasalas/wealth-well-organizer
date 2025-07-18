@@ -113,13 +113,46 @@ export const useFinancialInsights = () => {
     },
   });
 
+  const deleteInsightMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { error } = await supabase
+        .from('financial_insights')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
+      toast({
+        title: "Success",
+        description: "Insight deleted successfully",
+      });
+    },
+    onError: (error: DatabaseError) => {
+      console.error('Error deleting insight');
+      toast({
+        title: "Error",
+        description: "Failed to delete insight. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     insights,
     isLoading,
     createInsight: createInsightMutation.mutate,
     markAsRead: markAsReadMutation.mutate,
     markAllAsRead: markAllAsReadMutation.mutate,
+    deleteInsight: deleteInsightMutation.mutate,
     isMarkingAllAsRead: markAllAsReadMutation.isPending,
+    isDeletingInsight: deleteInsightMutation.isPending,
     unreadCount: insights.filter(i => !i.is_read).length,
   };
 };

@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Target, Plus, Calendar, DollarSign } from 'lucide-react';
+import { ArrowLeft, Target, Plus, Calendar, DollarSign, Trash2, Edit } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
 import { SavingsGoalForm } from './SavingsGoalForm';
@@ -14,7 +25,8 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
  */
 export const SavingsGoalsPage = () => {
   const navigate = useNavigate();
-  const { savingsGoals: goals, isLoading } = useSavingsGoals();
+  const { savingsGoals: goals, isLoading, deleteSavingsGoal, isDeleting } = useSavingsGoals();
+  const [deletingGoalId, setDeletingGoalId] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -51,6 +63,11 @@ export const SavingsGoalsPage = () => {
     const diffTime = target.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  const handleDeleteGoal = (goalId: string) => {
+    setDeletingGoalId(goalId);
+    deleteSavingsGoal(goalId);
   };
 
   return (
@@ -165,15 +182,50 @@ export const SavingsGoalsPage = () => {
 
                     {/* Actions */}
                     <div className="pt-2 border-t">
-                      <SavingsGoalForm
-                        goal={goal}
-                        isEdit={true}
-                        trigger={
-                          <Button variant="outline" size="sm" className="w-full">
-                            Update Goal
-                          </Button>
-                        }
-                      />
+                      <div className="flex gap-2">
+                        <SavingsGoalForm
+                          goal={goal}
+                          isEdit={true}
+                          trigger={
+                            <Button variant="outline" size="sm" className="flex-1">
+                              <Edit className="w-4 h-4 mr-2" />
+                              Edit
+                            </Button>
+                          }
+                        />
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              disabled={isDeleting && deletingGoalId === goal.id}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              {isDeleting && deletingGoalId === goal.id ? 'Deleting...' : 'Delete'}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Savings Goal?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{goal.name}"? This action cannot be undone and will permanently remove this goal and all its progress data.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteGoal(goal.id)}
+                                className="bg-red-600 hover:bg-red-700"
+                                disabled={isDeleting}
+                              >
+                                {isDeleting && deletingGoalId === goal.id ? 'Deleting...' : 'Delete Goal'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

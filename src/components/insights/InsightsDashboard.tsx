@@ -23,7 +23,8 @@ import {
   Target,
   Calendar,
   DollarSign,
-  CheckCheck
+  CheckCheck,
+  Trash2
 } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
@@ -36,7 +37,7 @@ export const InsightsDashboard = () => {
   const { transactions } = useTransactions();
   const { categories } = useCategories();
   const { savingsGoals } = useSavingsGoals();
-  const { insights, createInsight, markAsRead, markAllAsRead, isMarkingAllAsRead, unreadCount } = useFinancialInsights();
+  const { insights, createInsight, markAsRead, markAllAsRead, deleteInsight, isMarkingAllAsRead, isDeletingInsight, unreadCount } = useFinancialInsights();
 
   const currentSavingsGoal = savingsGoals[0]; // Use first savings goal
 
@@ -247,15 +248,47 @@ export const InsightsDashboard = () => {
                         </Badge>
                       )}
                     </div>
-                    {!insight.is_read && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => markAsRead(insight.id)}
-                      >
-                        Mark as read
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {!insight.is_read && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => markAsRead(insight.id)}
+                        >
+                          Mark as read
+                        </Button>
+                      )}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            disabled={isDeletingInsight}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Insight?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this insight "{insight.title}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteInsight(insight.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                              disabled={isDeletingInsight}
+                            >
+                              {isDeletingInsight ? 'Deleting...' : 'Delete Insight'}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
                   <p className={cn(
                     "text-sm transition-colors",

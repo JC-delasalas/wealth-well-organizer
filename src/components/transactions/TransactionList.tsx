@@ -1,10 +1,21 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, Receipt, ArrowUpRight, ArrowDownRight, ArrowLeft, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { TransactionForm } from './TransactionForm';
@@ -15,6 +26,7 @@ export const TransactionList = () => {
   const navigate = useNavigate();
   const { transactions, deleteTransaction, isDeleting } = useTransactions();
   const { categories } = useCategories();
+  const [deletingTransactionId, setDeletingTransactionId] = useState<string | null>(null);
 
   const getCategoryInfo = (categoryId: string | null) => {
     return categories.find(cat => cat.id === categoryId) || {
@@ -25,11 +37,16 @@ export const TransactionList = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', { 
-      month: 'short', 
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
+  };
+
+  const handleDeleteTransaction = (transactionId: string) => {
+    setDeletingTransactionId(transactionId);
+    deleteTransaction(transactionId);
   };
 
   return (
@@ -132,14 +149,36 @@ export const TransactionList = () => {
                           </Button>
                         }
                       />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteTransaction(transaction.id)}
-                        disabled={isDeleting}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={isDeleting && deletingTransactionId === transaction.id}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Transaction?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this transaction "{transaction.description}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteTransaction(transaction.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                              disabled={isDeleting}
+                            >
+                              {isDeleting && deletingTransactionId === transaction.id ? 'Deleting...' : 'Delete Transaction'}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 </div>

@@ -84,9 +84,10 @@ export const useSavingsGoals = () => {
         .eq('user_id', user.id)
         .select()
         .single();
-      
+
       if (error) throw error;
-      return data;    },
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['savings-goals', user?.id] });
       toast({
@@ -103,12 +104,44 @@ export const useSavingsGoals = () => {
     },
   });
 
+  const deleteSavingsGoalMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { error } = await supabase
+        .from('savings_goals')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings-goals', user?.id] });
+      toast({
+        title: "Savings goal deleted",
+        description: "Your savings goal has been deleted successfully.",
+      });
+    },
+    onError: (error: DatabaseError) => {
+      toast({
+        title: "Error deleting savings goal",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     savingsGoals,
     isLoading,
     createSavingsGoal: createSavingsGoalMutation.mutate,
     updateSavingsGoal: updateSavingsGoalMutation.mutate,
+    deleteSavingsGoal: deleteSavingsGoalMutation.mutate,
     isCreating: createSavingsGoalMutation.isPending,
     isUpdating: updateSavingsGoalMutation.isPending,
+    isDeleting: deleteSavingsGoalMutation.isPending,
   };
 };

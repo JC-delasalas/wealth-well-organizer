@@ -38,6 +38,9 @@ const SavingsGoalsPage = React.lazy(() =>
 const InsightsPage = React.lazy(() =>
   import("./components/insights/InsightsPage").then(module => ({ default: module.InsightsPage }))
 );
+const CategoriesPage = React.lazy(() =>
+  import("./components/categories/CategoriesPage").then(module => ({ default: module.CategoriesPage }))
+);
 const NotFound = React.lazy(() =>
   import("./pages/NotFound")
 );
@@ -165,6 +168,16 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner size="lg" />}>
               <InsightsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/categories"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <CategoriesPage />
             </Suspense>
           </ProtectedRoute>
         }
