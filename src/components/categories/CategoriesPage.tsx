@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Tag, Plus, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Tag, Plus, Edit, Trash2, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCategories } from '@/hooks/useCategories';
 import { CategoryForm } from './CategoryForm';
@@ -25,8 +25,32 @@ import {
  */
 export const CategoriesPage = () => {
   const navigate = useNavigate();
-  const { categories, isLoading, deleteCategory, isDeleting } = useCategories();
+  const { categories, isLoading, deleteCategory, getCategoryUsage, isDeleting } = useCategories();
   const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null);
+  const [categoryUsage, setCategoryUsage] = useState<Record<string, { transactionCount: number; budgetCount: number; totalUsage: number }>>({});
+
+  // Load category usage information
+  useEffect(() => {
+    const loadCategoryUsage = async () => {
+      if (!categories.length) return;
+
+      const usageData: Record<string, { transactionCount: number; budgetCount: number; totalUsage: number }> = {};
+
+      for (const category of categories) {
+        try {
+          const usage = await getCategoryUsage(category.id);
+          usageData[category.id] = usage;
+        } catch (error) {
+          console.error(`Error loading usage for category ${category.id}:`, error);
+          usageData[category.id] = { transactionCount: 0, budgetCount: 0, totalUsage: 0 };
+        }
+      }
+
+      setCategoryUsage(usageData);
+    };
+
+    loadCategoryUsage();
+  }, [categories, getCategoryUsage]);
 
   if (isLoading) {
     return (
@@ -103,6 +127,20 @@ export const CategoriesPage = () => {
                           {category.description && (
                             <p className="text-sm text-gray-500">{category.description}</p>
                           )}
+                          {categoryUsage[category.id] && (
+                            <div className="flex items-center gap-2 mt-1">
+                              {categoryUsage[category.id].transactionCount > 0 && (
+                                <Badge variant="outline" className="text-xs">
+                                  {categoryUsage[category.id].transactionCount} transaction{categoryUsage[category.id].transactionCount > 1 ? 's' : ''}
+                                </Badge>
+                              )}
+                              {categoryUsage[category.id].budgetCount > 0 && (
+                                <Badge variant="outline" className="text-xs">
+                                  {categoryUsage[category.id].budgetCount} budget{categoryUsage[category.id].budgetCount > 1 ? 's' : ''}
+                                </Badge>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
@@ -130,20 +168,64 @@ export const CategoriesPage = () => {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Category?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{category.name}"? This action cannot be undone. 
-                                Existing transactions with this category will need to be recategorized.
+                              <AlertDialogTitle className="flex items-center gap-2">
+                                {categoryUsage[category.id]?.totalUsage > 0 && (
+                                  <AlertTriangle className="w-5 h-5 text-amber-500" />
+                                )}
+                                Delete Category?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription className="space-y-2">
+                                <p>Are you sure you want to delete "{category.name}"? This action cannot be undone.</p>
+
+                                {categoryUsage[category.id]?.totalUsage > 0 ? (
+                                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">
+                                    <div className="flex items-start gap-2">
+                                      <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                                      <div className="text-sm">
+                                        <p className="font-medium text-amber-800 mb-1">Category is currently in use:</p>
+                                        <ul className="text-amber-700 space-y-1">
+                                          {categoryUsage[category.id].transactionCount > 0 && (
+                                            <li>• {categoryUsage[category.id].transactionCount} transaction{categoryUsage[category.id].transactionCount > 1 ? 's' : ''}</li>
+                                          )}
+                                          {categoryUsage[category.id].budgetCount > 0 && (
+                                            <li>• {categoryUsage[category.id].budgetCount} budget{categoryUsage[category.id].budgetCount > 1 ? 's' : ''}</li>
+                                          )}
+                                        </ul>
+                                        <p className="mt-2 text-amber-800">
+                                          Deletion will fail. Please reassign or delete these items first.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-4 h-4 bg-green-500 rounded-full flex-shrink-0"></div>
+                                      <p className="text-sm text-green-800">
+                                        This category is not being used and can be safely deleted.
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
+                              <AlertDialogAction
                                 onClick={() => handleDeleteCategory(category.id)}
-                                className="bg-red-600 hover:bg-red-700"
-                                disabled={isDeleting}
+                                className={
+                                  categoryUsage[category.id]?.totalUsage > 0
+                                    ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
+                                    : "bg-red-600 hover:bg-red-700"
+                                }
+                                disabled={isDeleting || (categoryUsage[category.id]?.totalUsage > 0)}
                               >
-                                {isDeleting && deletingCategoryId === category.id ? 'Deleting...' : 'Delete Category'}
+                                {isDeleting && deletingCategoryId === category.id
+                                  ? 'Deleting...'
+                                  : categoryUsage[category.id]?.totalUsage > 0
+                                    ? 'Cannot Delete'
+                                    : 'Delete Category'
+                                }
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -197,6 +279,20 @@ export const CategoriesPage = () => {
                           {category.description && (
                             <p className="text-sm text-gray-500">{category.description}</p>
                           )}
+                          {categoryUsage[category.id] && (
+                            <div className="flex items-center gap-2 mt-1">
+                              {categoryUsage[category.id].transactionCount > 0 && (
+                                <Badge variant="outline" className="text-xs">
+                                  {categoryUsage[category.id].transactionCount} transaction{categoryUsage[category.id].transactionCount > 1 ? 's' : ''}
+                                </Badge>
+                              )}
+                              {categoryUsage[category.id].budgetCount > 0 && (
+                                <Badge variant="outline" className="text-xs">
+                                  {categoryUsage[category.id].budgetCount} budget{categoryUsage[category.id].budgetCount > 1 ? 's' : ''}
+                                </Badge>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
@@ -224,20 +320,64 @@ export const CategoriesPage = () => {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Category?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{category.name}"? This action cannot be undone. 
-                                Existing transactions with this category will need to be recategorized.
+                              <AlertDialogTitle className="flex items-center gap-2">
+                                {categoryUsage[category.id]?.totalUsage > 0 && (
+                                  <AlertTriangle className="w-5 h-5 text-amber-500" />
+                                )}
+                                Delete Category?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription className="space-y-2">
+                                <p>Are you sure you want to delete "{category.name}"? This action cannot be undone.</p>
+
+                                {categoryUsage[category.id]?.totalUsage > 0 ? (
+                                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">
+                                    <div className="flex items-start gap-2">
+                                      <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                                      <div className="text-sm">
+                                        <p className="font-medium text-amber-800 mb-1">Category is currently in use:</p>
+                                        <ul className="text-amber-700 space-y-1">
+                                          {categoryUsage[category.id].transactionCount > 0 && (
+                                            <li>• {categoryUsage[category.id].transactionCount} transaction{categoryUsage[category.id].transactionCount > 1 ? 's' : ''}</li>
+                                          )}
+                                          {categoryUsage[category.id].budgetCount > 0 && (
+                                            <li>• {categoryUsage[category.id].budgetCount} budget{categoryUsage[category.id].budgetCount > 1 ? 's' : ''}</li>
+                                          )}
+                                        </ul>
+                                        <p className="mt-2 text-amber-800">
+                                          Deletion will fail. Please reassign or delete these items first.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-4 h-4 bg-green-500 rounded-full flex-shrink-0"></div>
+                                      <p className="text-sm text-green-800">
+                                        This category is not being used and can be safely deleted.
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
+                              <AlertDialogAction
                                 onClick={() => handleDeleteCategory(category.id)}
-                                className="bg-red-600 hover:bg-red-700"
-                                disabled={isDeleting}
+                                className={
+                                  categoryUsage[category.id]?.totalUsage > 0
+                                    ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed"
+                                    : "bg-red-600 hover:bg-red-700"
+                                }
+                                disabled={isDeleting || (categoryUsage[category.id]?.totalUsage > 0)}
                               >
-                                {isDeleting && deletingCategoryId === category.id ? 'Deleting...' : 'Delete Category'}
+                                {isDeleting && deletingCategoryId === category.id
+                                  ? 'Deleting...'
+                                  : categoryUsage[category.id]?.totalUsage > 0
+                                    ? 'Cannot Delete'
+                                    : 'Delete Category'
+                                }
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

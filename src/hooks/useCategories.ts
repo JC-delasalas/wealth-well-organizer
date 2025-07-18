@@ -94,10 +94,53 @@ export const useCategories = () => {
     },
   });
 
+  // Check how many transactions use a category
+  const checkCategoryUsage = async (categoryId: string) => {
+    const { data: transactions, error: transactionError } = await supabase
+      .from('transactions')
+      .select('id')
+      .eq('category_id', categoryId)
+      .eq('user_id', user?.id);
+
+    if (transactionError) throw transactionError;
+
+    const { data: budgets, error: budgetError } = await supabase
+      .from('budgets')
+      .select('id')
+      .eq('category_id', categoryId)
+      .eq('user_id', user?.id);
+
+    if (budgetError) throw budgetError;
+
+    return {
+      transactionCount: transactions?.length || 0,
+      budgetCount: budgets?.length || 0,
+      totalUsage: (transactions?.length || 0) + (budgets?.length || 0)
+    };
+  };
+
   const deleteCategoryMutation = useMutation({
     mutationFn: async (id: string) => {
       if (!user) {
         throw new Error('User not authenticated');
+      }
+
+      // Check if category is being used
+      const usage = await checkCategoryUsage(id);
+
+      if (usage.totalUsage > 0) {
+        const usageDetails = [];
+        if (usage.transactionCount > 0) {
+          usageDetails.push(`${usage.transactionCount} transaction${usage.transactionCount > 1 ? 's' : ''}`);
+        }
+        if (usage.budgetCount > 0) {
+          usageDetails.push(`${usage.budgetCount} budget${usage.budgetCount > 1 ? 's' : ''}`);
+        }
+
+        throw new Error(
+          `Cannot delete category because it's used by ${usageDetails.join(' and ')}. ` +
+          `Please reassign or delete these items first.`
+        );
       }
 
       const { error } = await supabase
@@ -105,7 +148,16 @@ export const useCategories = () => {
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Category deletion error:', error);
+
+        // Handle specific database errors
+        if (error.code === '23503') {
+          throw new Error('Cannot delete category because it\'s still being used by transactions or budgets.');
+        }
+
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
@@ -115,6 +167,7 @@ export const useCategories = () => {
       });
     },
     onError: (error: DatabaseError) => {
+      console.error('Delete category error:', error);
       toast({
         title: "Error deleting category",
         description: error.message,
@@ -123,12 +176,19 @@ export const useCategories = () => {
     },
   });
 
+  // Get category usage information for UI display
+  const getCategoryUsage = async (categoryId: string) => {
+    if (!user) return { transactionCount: 0, budgetCount: 0, totalUsage: 0 };
+    return await checkCategoryUsage(categoryId);
+  };
+
   return {
     categories,
     isLoading,
     createCategory: createCategoryMutation.mutate,
     updateCategory: updateCategoryMutation.mutate,
     deleteCategory: deleteCategoryMutation.mutate,
+    getCategoryUsage,
     isCreating: createCategoryMutation.isPending,
     isUpdating: updateCategoryMutation.isPending,
     isDeleting: deleteCategoryMutation.isPending,
