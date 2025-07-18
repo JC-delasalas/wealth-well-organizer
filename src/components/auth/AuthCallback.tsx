@@ -12,6 +12,7 @@ export const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Handle the auth callback from email confirmation
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -26,12 +27,14 @@ export const AuthCallback = () => {
         }
 
         if (data.session?.user) {
+          console.log('User authenticated via callback:', data.session.user.email);
           toast({
             title: "Email Confirmed!",
             description: "Your email has been successfully verified. Welcome to FinanceTracker!",
           });
           navigate('/');
         } else {
+          console.log('No session found in callback');
           navigate('/auth');
         }
       } catch (error) {

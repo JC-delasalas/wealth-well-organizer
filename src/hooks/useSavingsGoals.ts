@@ -3,29 +3,39 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SavingsGoal } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export const useSavingsGoals = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: savingsGoals = [], isLoading } = useQuery({
-    queryKey: ['savings-goals'],
+    queryKey: ['savings-goals', user?.id],
     queryFn: async () => {
+      if (!user) return [];
+      
+      console.log('Fetching savings goals for user:', user.id);
+      
       const { data, error } = await supabase
         .from('savings_goals')
         .select('*')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching savings goals:', error);
+        throw error;
+      }
+      
       return data as SavingsGoal[];
     },
+    enabled: !!user,
   });
 
   const createSavingsGoalMutation = useMutation({
     mutationFn: async (goal: Omit<SavingsGoal, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError || !user) {
+      if (!user) {
         throw new Error('User not authenticated');
       }
 
@@ -39,7 +49,7 @@ export const useSavingsGoals = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['savings-goals'] });
+      queryClient.invalidateQueries({ queryKey: ['savings-goals', user?.id] });
       toast({
         title: "Savings goal created",
         description: "Your savings goal has been set successfully.",
@@ -56,18 +66,22 @@ export const useSavingsGoals = () => {
 
   const updateSavingsGoalMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<SavingsGoal> & { id: string }) => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       const { data, error } = await supabase
         .from('savings_goals')
         .update(updates)
         .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
       
       if (error) throw error;
-      return data;
-    },
+      return data;    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['savings-goals'] });
+      queryClient.invalidateQueries({ queryKey: ['savings-goals', user?.id] });
       toast({
         title: "Savings goal updated",
         description: "Your savings goal has been updated successfully.",

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,7 +30,11 @@ export const AuthPage = () => {
     
     setIsSubmitting(true);
     try {
-      await signIn(email, password);
+      console.log('Attempting to sign in with:', email);
+      const result = await signIn(email, password);
+      if (result.error) {
+        console.error('Sign in failed:', result.error);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -43,7 +46,11 @@ export const AuthPage = () => {
     
     setIsSubmitting(true);
     try {
-      await signUp(email, password, fullName);
+      console.log('Attempting to sign up with:', email, fullName);
+      const result = await signUp(email, password, fullName);
+      if (result.error) {
+        console.error('Sign up failed:', result.error);
+      }
     } finally {
       setIsSubmitting(false);
     }

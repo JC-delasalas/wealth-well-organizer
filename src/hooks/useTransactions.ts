@@ -1,33 +1,42 @@
 
-import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Transaction } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 export const useTransactions = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: transactions = [], isLoading } = useQuery({
-    queryKey: ['transactions'],
+    queryKey: ['transactions', user?.id],
     queryFn: async () => {
+      if (!user) return [];
+      
+      console.log('Fetching transactions for user:', user.id);
+      
       const { data, error } = await supabase
         .from('transactions')
         .select('*')
+        .eq('user_id', user.id)
         .order('date', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching transactions:', error);
+        throw error;
+      }
+      
+      console.log('Fetched transactions:', data);
       return data as Transaction[];
     },
+    enabled: !!user,
   });
 
   const addTransactionMutation = useMutation({
     mutationFn: async (transaction: Omit<Transaction, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
-      // Get current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError || !user) {
+      if (!user) {
         throw new Error('User not authenticated');
       }
 
@@ -51,7 +60,7 @@ export const useTransactions = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions', user?.id] });
       toast({
         title: "Transaction added",
         description: "Your transaction has been successfully added.",
@@ -69,12 +78,17 @@ export const useTransactions = () => {
 
   const updateTransactionMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Transaction> & { id: string }) => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       console.log('Updating transaction:', { id, updates });
 
       const { data, error } = await supabase
         .from('transactions')
         .update(updates)
         .eq('id', id)
+        .eq('user_id', user.id)
         .select()
         .single();
       
@@ -85,7 +99,7 @@ export const useTransactions = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions', user?.id] });
       toast({
         title: "Transaction updated",
         description: "Your transaction has been successfully updated.",
@@ -103,12 +117,17 @@ export const useTransactions = () => {
 
   const deleteTransactionMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
+
       console.log('Deleting transaction:', id);
 
       const { error } = await supabase
         .from('transactions')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id);
       
       if (error) {
         console.error('Transaction delete error:', error);
@@ -116,7 +135,7 @@ export const useTransactions = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions', user?.id] });
       toast({
         title: "Transaction deleted",
         description: "Your transaction has been successfully deleted.",

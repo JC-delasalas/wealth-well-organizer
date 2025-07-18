@@ -29,10 +29,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  const seedUserData = async (session: Session) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('seed-user-data', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error('Error seeding user data:', error);
+      } else {
+        console.log('User data seeded successfully:', data);
+      }
+    } catch (error) {
+      console.error('Error calling seed function:', error);
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
@@ -42,24 +59,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(session?.user ?? null);
           setLoading(false);
           
-          // Handle email confirmation
-          if (event === 'SIGNED_IN' && session?.user && !session.user.email_confirmed_at) {
-            toast({
-              title: "Email confirmation required",
-              description: "Please check your email and click the confirmation link to complete your registration.",
-              variant: "default",
-            });
-          } else if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
+          if (event === 'SIGNED_IN' && session?.user) {
+            // Seed user data for new users
+            setTimeout(() => {
+              seedUserData(session);
+            }, 1000);
+            
             toast({
               title: "Welcome!",
               description: "You have successfully signed in.",
+            });
+          }
+          
+          if (event === 'SIGNED_OUT') {
+            toast({
+              title: "Signed out",
+              description: "You have been signed out successfully.",
             });
           }
         }
       }
     );
 
-    // Get initial session
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
@@ -91,7 +112,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     
     try {
-      // Use the current origin for redirect
       const redirectUrl = `${window.location.origin}/auth/callback`;
       
       console.log('Signing up with redirect URL:', redirectUrl);
@@ -156,17 +176,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: error.message,
           variant: "destructive",
         });
-      } else if (data.user && !data.user.email_confirmed_at) {
-        toast({
-          title: "Email not confirmed",
-          description: "Please check your email and click the confirmation link before signing in.",
-          variant: "destructive",
-        });
-      } else if (data.user) {
-        toast({
-          title: "Welcome back!",
-          description: "You have been signed in successfully.",
-        });
       }
 
       setLoading(false);
@@ -195,11 +204,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           title: "Sign out failed",
           description: error.message,
           variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully.",
         });
       }
       setLoading(false);
