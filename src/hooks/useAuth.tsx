@@ -229,8 +229,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     
     try {
+      // Use production URL for password reset redirect
+      const redirectUrl = window.location.hostname === 'localhost' 
+        ? 'https://wealth-well-organizer.vercel.app/reset-password'
+        : `${window.location.origin}/reset-password`;
+        
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: redirectUrl,
       });
 
       if (error) {
