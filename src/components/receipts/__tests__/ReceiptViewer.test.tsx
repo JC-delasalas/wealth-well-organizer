@@ -104,7 +104,7 @@ describe('ReceiptViewer', () => {
     expect(image).toHaveAttribute('src', 'https://example.com/receipt.jpg');
   });
 
-  it('displays PDF preview for PDF files', () => {
+  it('displays PDF download options instead of preview', () => {
     const pdfTransaction = {
       ...mockTransaction,
       receipt_name: 'receipt.pdf',
@@ -118,12 +118,16 @@ describe('ReceiptViewer', () => {
 
     fireEvent.click(screen.getByText('View Receipt'));
 
-    const iframe = screen.getByTitle('receipt.pdf');
-    expect(iframe).toBeInTheDocument();
-    expect(iframe).toHaveAttribute('src', 'https://example.com/receipt.pdf');
+    expect(screen.getByText('PDF Document')).toBeInTheDocument();
+    expect(screen.getByText('PDF files cannot be previewed directly')).toBeInTheDocument();
+    expect(screen.getByText('Download PDF')).toBeInTheDocument();
+    expect(screen.getByText('Open in PDF Reader')).toBeInTheDocument();
+
+    // Should not have iframe
+    expect(screen.queryByTitle('receipt.pdf')).not.toBeInTheDocument();
   });
 
-  it('shows file preview for unsupported file types', () => {
+  it('shows download option for unsupported file types', () => {
     const docTransaction = {
       ...mockTransaction,
       receipt_name: 'receipt.doc',
@@ -137,8 +141,28 @@ describe('ReceiptViewer', () => {
 
     fireEvent.click(screen.getByText('View Receipt'));
 
-    expect(screen.getByText('Preview not available for this file type')).toBeInTheDocument();
+    expect(screen.getByText('Preview not available')).toBeInTheDocument();
     expect(screen.getByText('receipt.doc')).toBeInTheDocument();
+    expect(screen.getByText('Download File')).toBeInTheDocument();
+  });
+
+  it('supports additional image formats', () => {
+    const webpTransaction = {
+      ...mockTransaction,
+      receipt_name: 'receipt.webp',
+      receipt_url: 'https://example.com/receipt.webp',
+    };
+
+    render(
+      <ReceiptViewer transaction={webpTransaction} />,
+      { wrapper: createWrapper() }
+    );
+
+    fireEvent.click(screen.getByText('View Receipt'));
+
+    const image = screen.getByAltText('receipt.webp');
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute('src', 'https://example.com/receipt.webp');
   });
 
   it('provides download functionality', () => {

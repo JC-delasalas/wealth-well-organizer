@@ -49,12 +49,18 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
 
   const getFileType = (fileName: string) => {
     const extension = fileName.split('.').pop()?.toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
+
+    // Image formats that browsers can display
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(extension || '')) {
       return 'image';
     }
+
+    // PDF format
     if (extension === 'pdf') {
       return 'pdf';
     }
+
+    // Other formats (documents, spreadsheets, etc.)
     return 'other';
   };
 
@@ -196,23 +202,37 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
                 <img
                   src={transaction.receipt_url}
                   alt={transaction.receipt_name}
-                  className="w-full h-auto"
+                  className="w-full h-auto object-contain"
                   onError={() => setImageError(true)}
                 />
               </div>
             ) : fileType === 'pdf' ? (
-              <div className="h-96">
-                <iframe
-                  src={transaction.receipt_url}
-                  className="w-full h-full"
-                  title={transaction.receipt_name}
-                />
+              <div className="flex flex-col items-center justify-center h-48 text-gray-600 bg-red-50">
+                <FileText className="w-12 h-12 text-red-600 mb-3" />
+                <p className="text-lg font-medium mb-2">PDF Document</p>
+                <p className="text-sm text-gray-600 mb-4 text-center max-w-sm">
+                  PDF files cannot be previewed directly. Use the buttons below to download or open in a PDF reader.
+                </p>
+                <div className="flex gap-2">
+                  <Button onClick={handleDownload} size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download PDF
+                  </Button>
+                  <Button onClick={handleOpenInNewTab} variant="outline" size="sm">
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Open in PDF Reader
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-48 text-gray-500">
                 {getFileIcon(transaction.receipt_name)}
-                <p className="mt-2 text-sm">Preview not available for this file type</p>
-                <p className="text-xs text-gray-400">{transaction.receipt_name}</p>
+                <p className="mt-2 text-sm font-medium">Preview not available</p>
+                <p className="text-xs text-gray-400 mb-4">{transaction.receipt_name}</p>
+                <Button onClick={handleDownload} size="sm" variant="outline">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download File
+                </Button>
               </div>
             )}
           </div>
@@ -220,20 +240,40 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
           {/* Actions */}
           <div className="flex items-center justify-between pt-4 border-t">
             <div className="flex items-center gap-2">
-              <Button onClick={handleDownload} variant="outline" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Download
-              </Button>
-              <Button onClick={handleOpenInNewTab} variant="outline" size="sm">
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Open in New Tab
-              </Button>
+              {/* Only show these buttons for images, as PDFs have their own buttons above */}
+              {fileType === 'image' && (
+                <>
+                  <Button onClick={handleDownload} variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Image
+                  </Button>
+                  <Button onClick={handleOpenInNewTab} variant="outline" size="sm">
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Open in New Tab
+                  </Button>
+                </>
+              )}
+
+              {/* For non-images (except PDF which has buttons above), show download */}
+              {fileType !== 'image' && fileType !== 'pdf' && (
+                <Button onClick={handleDownload} variant="outline" size="sm">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download File
+                </Button>
+              )}
+
+              {/* PDF gets its own set of actions */}
+              {fileType === 'pdf' && (
+                <div className="text-sm text-gray-600">
+                  Use the buttons above to download or open the PDF
+                </div>
+              )}
             </div>
-            
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   disabled={deleting}
@@ -246,13 +286,13 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
                 <AlertDialogHeader>
                   <AlertDialogTitle>Delete Receipt?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to delete this receipt "{transaction.receipt_name}"? 
+                    Are you sure you want to delete this receipt "{transaction.receipt_name}"?
                     This action cannot be undone and will permanently remove the file from storage.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction 
+                  <AlertDialogAction
                     onClick={handleDeleteReceipt}
                     className="bg-red-600 hover:bg-red-700"
                     disabled={deleting}

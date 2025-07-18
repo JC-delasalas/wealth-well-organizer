@@ -89,12 +89,18 @@ export const ReceiptsPage = () => {
 
   const getFileIcon = (fileName: string) => {
     const extension = fileName.split('.').pop()?.toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
+
+    // Image formats
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(extension || '')) {
       return <ImageIcon className="w-4 h-4 text-blue-600" />;
     }
+
+    // PDF format
     if (extension === 'pdf') {
       return <FileText className="w-4 h-4 text-red-600" />;
     }
+
+    // Other formats
     return <File className="w-4 h-4 text-gray-600" />;
   };
 
@@ -109,7 +115,7 @@ export const ReceiptsPage = () => {
   const handleBulkDownload = async () => {
     // This would require a more complex implementation with zip files
     // For now, we'll show a message about the feature
-    alert('Bulk download feature coming soon! For now, download receipts individually.');
+    alert('Bulk download feature coming soon! For now, download receipts individually by viewing each receipt.');
   };
 
   if (isLoading) {
