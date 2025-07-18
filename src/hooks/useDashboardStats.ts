@@ -39,7 +39,12 @@ export const useDashboardStats = (): DashboardStats => {
     const totalBalance = totalIncome - totalExpenses;
 
     // Calculate category stats for expenses
-    const categoryTotals = {};
+    const categoryTotals: Record<string, {
+      category: string;
+      amount: number;
+      count: number;
+      color: string;
+    }> = {};
     const expenseTransactions = currentMonthTransactions.filter(t => t.type === 'expense');
     
     expenseTransactions.forEach(transaction => {
@@ -61,7 +66,7 @@ export const useDashboardStats = (): DashboardStats => {
 
     // Convert to array and calculate percentages
     const topCategories: CategoryStats[] = Object.values(categoryTotals)
-      .map((cat: any) => ({
+      .map((cat) => ({
         ...cat,
         percentage: monthlyExpenses > 0 ? Math.round((cat.amount / monthlyExpenses) * 100) : 0
       }))

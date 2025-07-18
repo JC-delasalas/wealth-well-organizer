@@ -1,18 +1,22 @@
 
+import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
-import { Dashboard } from "./components/Dashboard";
-import { AuthPage } from "./components/auth/AuthPage";
-import { AuthCallback } from "./components/auth/AuthCallback";
-import { TransactionList } from "./components/transactions/TransactionList";
-import { ReportsPage } from "./components/reports/ReportsPage";
 import { Navbar } from "./components/layout/Navbar";
 import { LoadingSpinner } from "./components/ui/loading-spinner";
-import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/ErrorBoundary";
+
+// Lazy load components for better performance
+const Dashboard = React.lazy(() => import("./components/Dashboard").then(module => ({ default: module.Dashboard })));
+const AuthPage = React.lazy(() => import("./components/auth/AuthPage").then(module => ({ default: module.AuthPage })));
+const AuthCallback = React.lazy(() => import("./components/auth/AuthCallback").then(module => ({ default: module.AuthCallback })));
+const TransactionList = React.lazy(() => import("./components/transactions/TransactionList").then(module => ({ default: module.TransactionList })));
+const ReportsPage = React.lazy(() => import("./components/reports/ReportsPage").then(module => ({ default: module.ReportsPage })));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -54,17 +58,27 @@ const AppRoutes = () => {
     <Routes>
       <Route 
         path="/auth" 
-        element={user ? <Navigate to="/" replace /> : <AuthPage />} 
+        element={user ? <Navigate to="/" replace /> : (
+          <Suspense fallback={<LoadingSpinner size="lg" />}>
+            <AuthPage />
+          </Suspense>
+        )} 
       />
       <Route 
         path="/auth/callback" 
-        element={<AuthCallback />} 
+        element={
+          <Suspense fallback={<LoadingSpinner size="lg" />}>
+            <AuthCallback />
+          </Suspense>
+        } 
       />
       <Route 
         path="/" 
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <Dashboard />
+            </Suspense>
           </ProtectedRoute>
         } 
       />
@@ -72,7 +86,9 @@ const AppRoutes = () => {
         path="/transactions" 
         element={
           <ProtectedRoute>
-            <TransactionList />
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <TransactionList />
+            </Suspense>
           </ProtectedRoute>
         } 
       />
@@ -80,27 +96,38 @@ const AppRoutes = () => {
         path="/reports" 
         element={
           <ProtectedRoute>
-            <ReportsPage />
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <ReportsPage />
+            </Suspense>
           </ProtectedRoute>
         } 
       />
-      <Route path="*" element={<NotFound />} />
+      <Route 
+        path="*" 
+        element={
+          <Suspense fallback={<LoadingSpinner size="lg" />}>
+            <NotFound />
+          </Suspense>
+        } 
+      />
     </Routes>
   );
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

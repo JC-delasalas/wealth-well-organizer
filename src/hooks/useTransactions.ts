@@ -5,6 +5,13 @@ import { Transaction } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
+interface DatabaseError {
+  message: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+}
+
 export const useTransactions = () => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -66,7 +73,7 @@ export const useTransactions = () => {
         description: "Your transaction has been successfully added.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: DatabaseError) => {
       console.error('Add transaction error:', error);
       toast({
         title: "Error adding transaction",
@@ -105,7 +112,7 @@ export const useTransactions = () => {
         description: "Your transaction has been successfully updated.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: DatabaseError) => {
       console.error('Update transaction error:', error);
       toast({
         title: "Error updating transaction",
@@ -141,7 +148,7 @@ export const useTransactions = () => {
         description: "Your transaction has been successfully deleted.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: DatabaseError) => {
       console.error('Delete transaction error:', error);
       toast({
         title: "Error deleting transaction",

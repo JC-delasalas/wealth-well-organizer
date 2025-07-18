@@ -7,8 +7,15 @@ interface CategoryChartProps {
   data: CategoryStats[];
 }
 
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: CategoryStats;
+  }>;
+}
+
 export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -29,10 +36,10 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
     return null;
   };
 
-  const CustomLegend = ({ payload }: any) => {
+  const CustomLegend = ({ payload }: { payload?: Array<{ value: string; color: string }> }) => {
     return (
       <div className="flex flex-wrap gap-3 mt-4 justify-center">
-        {payload.map((entry: any, index: number) => (
+        {payload?.map((entry, index: number) => (
           <div key={index} className="flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full"

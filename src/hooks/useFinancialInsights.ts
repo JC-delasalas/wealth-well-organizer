@@ -5,6 +5,13 @@ import { FinancialInsight } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
+interface DatabaseError {
+  message: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+}
+
 export const useFinancialInsights = () => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -51,7 +58,7 @@ export const useFinancialInsights = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
     },
-    onError: (error: any) => {
+    onError: (error: DatabaseError) => {
       console.error('Error creating insight:', error);
     },
   });

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -28,6 +28,9 @@ export const InsightsDashboard = () => {
 
   const currentSavingsGoal = savingsGoals[0]; // Use first savings goal
 
+  // Memoize the createInsight function
+  const memoizedCreateInsight = useCallback(createInsight, [createInsight]);
+
   // Generate new insights when data changes
   useEffect(() => {
     if (transactions.length > 0 && categories.length > 0) {
@@ -39,7 +42,7 @@ export const InsightsDashboard = () => {
 
       // Create insights in database
       aiInsights.forEach(insight => {
-        createInsight({
+        memoizedCreateInsight({
           insight_type: 'monthly',
           title: insight.title,
           content: insight.description,
@@ -48,7 +51,7 @@ export const InsightsDashboard = () => {
         });
       });
     }
-  }, [transactions.length, categories.length, currentSavingsGoal?.id]);
+  }, [transactions, categories, currentSavingsGoal, memoizedCreateInsight]);
 
   // Check savings threshold
   const thresholdCheck = currentSavingsGoal 
@@ -58,7 +61,7 @@ export const InsightsDashboard = () => {
   // Generate threshold alert if needed
   useEffect(() => {
     if (thresholdCheck?.belowThreshold && currentSavingsGoal) {
-      createInsight({
+      memoizedCreateInsight({
         insight_type: 'threshold_alert',
         title: 'Savings Threshold Alert',
         content: `Your current savings rate is ${thresholdCheck.currentRate.toFixed(1)}%, below your ${currentSavingsGoal.savings_percentage_threshold}% target. You have ${thresholdCheck.daysUntilSalary} days until your next salary.`,
@@ -66,7 +69,7 @@ export const InsightsDashboard = () => {
         is_read: false
       });
     }
-  }, [thresholdCheck?.belowThreshold, currentSavingsGoal?.id]);
+  }, [thresholdCheck, currentSavingsGoal, memoizedCreateInsight]);
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {

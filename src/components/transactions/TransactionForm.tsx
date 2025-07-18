@@ -112,11 +112,12 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
         receiptName = receipt.name;
         
         console.log('Receipt uploaded successfully:', { receiptUrl, receiptName });
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Receipt upload failed:', error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to upload receipt. Please try again.";
         toast({
           title: "Receipt upload failed",
-          description: error.message || "Failed to upload receipt. Please try again.",
+          description: errorMessage,
           variant: "destructive",
         });
         setUploading(false);

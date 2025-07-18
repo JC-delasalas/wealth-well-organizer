@@ -5,6 +5,13 @@ import { SavingsGoal } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
+interface DatabaseError {
+  message: string;
+  details?: string;
+  hint?: string;
+  code?: string;
+}
+
 export const useSavingsGoals = () => {
   const { toast } = useToast();
   const { user } = useAuth();
@@ -55,7 +62,7 @@ export const useSavingsGoals = () => {
         description: "Your savings goal has been set successfully.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: DatabaseError) => {
       toast({
         title: "Error creating savings goal",
         description: error.message,
@@ -87,7 +94,7 @@ export const useSavingsGoals = () => {
         description: "Your savings goal has been updated successfully.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: DatabaseError) => {
       toast({
         title: "Error updating savings goal",
         description: error.message,
