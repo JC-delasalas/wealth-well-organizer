@@ -14,6 +14,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 const Dashboard = React.lazy(() => import("./components/Dashboard").then(module => ({ default: module.Dashboard })));
 const AuthPage = React.lazy(() => import("./components/auth/AuthPage").then(module => ({ default: module.AuthPage })));
 const AuthCallback = React.lazy(() => import("./components/auth/AuthCallback").then(module => ({ default: module.AuthCallback })));
+const LocalhostRedirectHandler = React.lazy(() => import("./components/auth/LocalhostRedirectHandler"));
 const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
 const TransactionList = React.lazy(() => import("./components/transactions/TransactionList").then(module => ({ default: module.TransactionList })));
 const ReportsPage = React.lazy(() => import("./components/reports/ReportsPage").then(module => ({ default: module.ReportsPage })));
@@ -52,6 +53,21 @@ const AppRoutes = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <LoadingSpinner size="lg" />
       </div>
+    );
+  }
+
+  // Check if we're on localhost with auth errors and show redirect handler
+  const isLocalhost = window.location.hostname === 'localhost';
+  const hasAuthError = window.location.hash.includes('error=access_denied') || 
+                      window.location.hash.includes('error_code=otp_expired');
+  const hasAuthTokens = window.location.hash.includes('access_token=') && 
+                        window.location.hash.includes('type=recovery');
+
+  if (isLocalhost && (hasAuthError || hasAuthTokens)) {
+    return (
+      <Suspense fallback={<LoadingSpinner size="lg" />}>
+        <LocalhostRedirectHandler />
+      </Suspense>
     );
   }
 
