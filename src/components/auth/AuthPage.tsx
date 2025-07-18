@@ -22,22 +22,34 @@ export const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signIn, signUp, loading } = useAuth();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    await signIn(email, password);
-    setLoading(false);
+    if (isSubmitting || !email || !password) return;
+    
+    setIsSubmitting(true);
+    try {
+      await signIn(email, password);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    await signUp(email, password, fullName);
-    setLoading(false);
+    if (isSubmitting || !email || !password) return;
+    
+    setIsSubmitting(true);
+    try {
+      await signUp(email, password, fullName);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const isLoading = loading || isSubmitting;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
@@ -79,7 +91,6 @@ export const AuthPage = () => {
               Take control of your finances with AI-powered insights, smart budgeting, and personalized recommendations.
             </p>
 
-            {/* Features grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
               {[
                 { icon: Brain, title: "AI Insights", desc: "Smart financial advice" },
@@ -95,7 +106,6 @@ export const AuthPage = () => {
               ))}
             </div>
 
-            {/* Stats */}
             <div className="flex justify-center lg:justify-start gap-8 text-center">
               <div>
                 <div className="text-2xl md:text-3xl font-bold text-primary">10K+</div>
@@ -154,11 +164,12 @@ export const AuthPage = () => {
                           onChange={(e) => setFullName(e.target.value)}
                           className="bg-white/50 backdrop-blur-sm border-white/30 focus:bg-white/70 transition-all"
                           placeholder="Enter your full name"
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-email" className="text-gray-700 font-medium">
-                          Email
+                          Email *
                         </Label>
                         <Input
                           id="signup-email"
@@ -168,11 +179,12 @@ export const AuthPage = () => {
                           required
                           className="bg-white/50 backdrop-blur-sm border-white/30 focus:bg-white/70 transition-all"
                           placeholder="Enter your email"
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-password" className="text-gray-700 font-medium">
-                          Password
+                          Password *
                         </Label>
                         <Input
                           id="signup-password"
@@ -180,16 +192,18 @@ export const AuthPage = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
+                          minLength={6}
                           className="bg-white/50 backdrop-blur-sm border-white/30 focus:bg-white/70 transition-all"
-                          placeholder="Create a password"
+                          placeholder="Create a password (min 6 characters)"
+                          disabled={isLoading}
                         />
                       </div>
                       <Button 
                         type="submit" 
                         className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]" 
-                        disabled={loading}
+                        disabled={isLoading || !email || !password}
                       >
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Create Account
                         <Zap className="ml-2 h-4 w-4" />
                       </Button>
@@ -200,7 +214,7 @@ export const AuthPage = () => {
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="signin-email" className="text-gray-700 font-medium">
-                          Email
+                          Email *
                         </Label>
                         <Input
                           id="signin-email"
@@ -210,11 +224,12 @@ export const AuthPage = () => {
                           required
                           className="bg-white/50 backdrop-blur-sm border-white/30 focus:bg-white/70 transition-all"
                           placeholder="Enter your email"
+                          disabled={isLoading}
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signin-password" className="text-gray-700 font-medium">
-                          Password
+                          Password *
                         </Label>
                         <Input
                           id="signin-password"
@@ -224,14 +239,15 @@ export const AuthPage = () => {
                           required
                           className="bg-white/50 backdrop-blur-sm border-white/30 focus:bg-white/70 transition-all"
                           placeholder="Enter your password"
+                          disabled={isLoading}
                         />
                       </div>
                       <Button 
                         type="submit" 
                         className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]" 
-                        disabled={loading}
+                        disabled={isLoading || !email || !password}
                       >
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Sign In
                         <TrendingUp className="ml-2 h-4 w-4" />
                       </Button>
@@ -255,7 +271,6 @@ export const AuthPage = () => {
               </CardContent>
             </Card>
 
-            {/* Mobile app promotion */}
             <div className="mt-6 text-center">
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
                 <Smartphone className="w-6 h-6 text-primary mx-auto mb-2" />
