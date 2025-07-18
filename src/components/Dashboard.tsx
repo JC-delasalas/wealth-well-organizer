@@ -46,7 +46,8 @@ export const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-              <TransactionForm 
+              <TransactionForm
+                defaultType="income"
                 trigger={
                   <Button variant="outline" className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm">
                     <Plus className="w-4 h-4 sm:w-6 sm:h-6" />
@@ -55,7 +56,8 @@ export const Dashboard = () => {
                   </Button>
                 }
               />
-              <TransactionForm 
+              <TransactionForm
+                defaultType="expense"
                 trigger={
                   <Button variant="outline" className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm">
                     <Receipt className="w-4 h-4 sm:w-6 sm:h-6" />
@@ -64,13 +66,21 @@ export const Dashboard = () => {
                   </Button>
                 }
               />
-              <Button variant="outline" className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm">
+              <Button
+                variant="outline"
+                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm"
+                onClick={() => navigate('/reports')}
+              >
                 <TrendingUp className="w-4 h-4 sm:w-6 sm:h-6" />
                 <span className="hidden sm:inline">View Reports</span>
                 <span className="sm:hidden">Reports</span>
               </Button>
               {hasSavingsGoal ? (
-                <Button variant="outline" className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm">
+                <Button
+                  variant="outline"
+                  className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm"
+                  onClick={() => navigate('/goals')}
+                >
                   <Target className="w-4 h-4 sm:w-6 sm:h-6" />
                   <span className="hidden sm:inline">Update Goal</span>
                   <span className="sm:hidden">Goal</span>

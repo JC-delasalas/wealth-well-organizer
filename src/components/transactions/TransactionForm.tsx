@@ -18,13 +18,14 @@ interface TransactionFormProps {
   transaction?: Transaction;
   isEdit?: boolean;
   trigger?: React.ReactNode;
+  defaultType?: 'income' | 'expense';
 }
 
-export const TransactionForm = ({ transaction, isEdit = false, trigger }: TransactionFormProps) => {
+export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultType = 'expense' }: TransactionFormProps) => {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     amount: transaction?.amount || '',
-    type: transaction?.type || 'expense',
+    type: transaction?.type || defaultType,
     category_id: transaction?.category_id || '',
     description: transaction?.description || '',
     date: transaction?.date || new Date().toISOString().split('T')[0],
