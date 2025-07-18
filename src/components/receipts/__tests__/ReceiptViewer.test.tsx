@@ -10,6 +10,14 @@ jest.mock('@/integrations/supabase/client', () => ({
     storage: {
       from: jest.fn(() => ({
         remove: jest.fn().mockResolvedValue({ error: null }),
+        download: jest.fn().mockResolvedValue({
+          data: new Blob(['test'], { type: 'image/jpeg' }),
+          error: null
+        }),
+        createSignedUrl: jest.fn().mockResolvedValue({
+          data: { signedUrl: 'https://signed-url.com/test.jpg' },
+          error: null
+        }),
       })),
     },
     from: jest.fn(() => ({
@@ -91,7 +99,7 @@ describe('ReceiptViewer', () => {
     expect(screen.getByText('$25.99 • 1/15/2024')).toBeInTheDocument();
   });
 
-  it('displays image preview for image files', () => {
+  it('displays image preview for image files with signed URL', async () => {
     render(
       <ReceiptViewer transaction={mockTransaction} />,
       { wrapper: createWrapper() }
@@ -99,9 +107,15 @@ describe('ReceiptViewer', () => {
 
     fireEvent.click(screen.getByText('View Receipt'));
 
-    const image = screen.getByAltText('coffee_receipt.jpg');
-    expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute('src', 'https://example.com/receipt.jpg');
+    // Should show loading state first
+    expect(screen.getByText('Loading image...')).toBeInTheDocument();
+
+    // Wait for signed URL to load
+    await waitFor(() => {
+      const image = screen.getByAltText('coffee_receipt.jpg');
+      expect(image).toBeInTheDocument();
+      expect(image).toHaveAttribute('src', 'https://signed-url.com/test.jpg');
+    });
   });
 
   it('displays PDF download options instead of preview', () => {
@@ -165,11 +179,8 @@ describe('ReceiptViewer', () => {
     expect(image).toHaveAttribute('src', 'https://example.com/receipt.webp');
   });
 
-  it('provides download functionality', () => {
-    // Mock fetch and URL.createObjectURL
-    global.fetch = jest.fn().mockResolvedValue({
-      blob: () => Promise.resolve(new Blob(['test'], { type: 'image/jpeg' })),
-    });
+  it('provides download functionality using Supabase storage', async () => {
+    // Mock URL.createObjectURL
     global.URL.createObjectURL = jest.fn().mockReturnValue('blob:test-url');
     global.URL.revokeObjectURL = jest.fn();
 
@@ -178,6 +189,7 @@ describe('ReceiptViewer', () => {
       href: '',
       download: '',
       click: jest.fn(),
+      style: { display: '' },
     };
     jest.spyOn(document, 'createElement').mockReturnValue(mockAnchor as any);
     jest.spyOn(document.body, 'appendChild').mockImplementation(() => mockAnchor as any);
@@ -189,10 +201,17 @@ describe('ReceiptViewer', () => {
     );
 
     fireEvent.click(screen.getByText('View Receipt'));
-    fireEvent.click(screen.getByText('Download'));
 
-    expect(fetch).toHaveBeenCalledWith('https://example.com/receipt.jpg');
-    expect(mockAnchor.click).toHaveBeenCalled();
+    // Wait for the component to load
+    await waitFor(() => {
+      expect(screen.getByText('Download Image')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText('Download Image'));
+
+    await waitFor(() => {
+      expect(mockAnchor.click).toHaveBeenCalled();
+    });
   });
 
   it('provides open in new tab functionality', () => {
