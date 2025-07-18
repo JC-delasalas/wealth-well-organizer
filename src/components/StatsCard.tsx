@@ -4,15 +4,31 @@ import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+/**
+ * Props for the StatsCard component
+ */
 interface StatsCardProps {
+  /** The title/label for the statistic */
   title: string;
+  /** The formatted value to display */
   value: string;
+  /** Percentage change from previous period */
   change: number;
+  /** Lucide icon component to display */
   icon: LucideIcon;
+  /** Whether the trend is positive or negative */
   trend: 'up' | 'down';
+  /** Optional CSS classes for styling */
   className?: string;
 }
 
+/**
+ * StatsCard component displays a financial statistic with trend information
+ * Features responsive design, hover effects, and trend indicators
+ *
+ * @param props - StatsCard properties
+ * @returns JSX element representing a statistics card
+ */
 export const StatsCard: React.FC<StatsCardProps> = ({
   title,
   value,

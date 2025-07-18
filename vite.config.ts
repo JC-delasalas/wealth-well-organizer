@@ -26,8 +26,20 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core React libraries
           vendor: ['react', 'react-dom'],
+          // Routing
           router: ['react-router-dom'],
+          // UI components
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-select', '@radix-ui/react-tabs'],
+          // Charts and visualization
+          charts: ['recharts'],
+          // Form handling
+          forms: ['react-hook-form', '@hookform/resolvers', 'zod'],
+          // Supabase and data
+          supabase: ['@supabase/supabase-js', '@tanstack/react-query'],
+          // Icons (split large icon library)
+          icons: ['lucide-react'],
         },
       },
     },

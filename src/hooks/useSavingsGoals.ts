@@ -22,7 +22,7 @@ export const useSavingsGoals = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      console.log('Fetching savings goals for user:', user.id);
+      // Fetching savings goals for user - logging removed for security
       
       const { data, error } = await supabase
         .from('savings_goals')
@@ -31,7 +31,7 @@ export const useSavingsGoals = () => {
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('Error fetching savings goals:', error);
+        console.error('Error fetching savings goals');
         throw error;
       }
       

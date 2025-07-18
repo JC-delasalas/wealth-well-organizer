@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
@@ -7,6 +7,7 @@ interface ErrorBoundaryState {
   hasError: boolean;
   error?: Error;
   errorInfo?: React.ErrorInfo;
+  errorId?: string;
 }
 
 interface ErrorBoundaryProps {
@@ -21,16 +22,27 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+    // Generate a unique error ID for tracking
+    const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    return { hasError: true, error, errorId };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo);
+    // Log error with sanitized information (no sensitive data)
+    console.error('Error caught by boundary:', {
+      message: error.message,
+      errorId: this.state.errorId,
+    });
     this.setState({ error, errorInfo });
   }
 
   handleRetry = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined, errorId: undefined });
+  };
+
+  handleGoHome = () => {
+    window.location.href = '/';
   };
 
   render() {
@@ -46,8 +58,13 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
             <Alert variant="destructive" className="mb-4">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Something went wrong</AlertTitle>
-              <AlertDescription>
-                {this.state.error?.message || 'An unexpected error occurred'}
+              <AlertDescription className="space-y-2">
+                <p>{this.state.error?.message || 'An unexpected error occurred'}</p>
+                {this.state.errorId && (
+                  <p className="text-xs text-gray-500">
+                    Error ID: {this.state.errorId}
+                  </p>
+                )}
               </AlertDescription>
             </Alert>
             
@@ -57,12 +74,21 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                 Try again
               </Button>
               
-              <Button 
-                variant="outline" 
-                onClick={() => window.location.reload()} 
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
                 className="w-full"
               >
                 Refresh page
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={this.handleGoHome}
+                className="w-full"
+              >
+                <Home className="mr-2 h-4 w-4" />
+                Go to Dashboard
               </Button>
             </div>
             

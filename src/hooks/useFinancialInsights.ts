@@ -22,7 +22,7 @@ export const useFinancialInsights = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      console.log('Fetching financial insights for user:', user.id);
+      // Fetching financial insights for user - logging removed for security
       
       const { data, error } = await supabase
         .from('financial_insights')
@@ -31,7 +31,7 @@ export const useFinancialInsights = () => {
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('Error fetching insights:', error);
+        console.error('Error fetching insights');
         throw error;
       }
       
@@ -59,7 +59,7 @@ export const useFinancialInsights = () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
     },
     onError: (error: DatabaseError) => {
-      console.error('Error creating insight:', error);
+      console.error('Error creating insight');
     },
   });
 

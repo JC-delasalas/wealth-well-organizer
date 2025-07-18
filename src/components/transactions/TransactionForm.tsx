@@ -12,6 +12,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { Transaction } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { sanitizeString, sanitizeNumber } from '@/lib/validation';
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -71,7 +72,29 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // Sanitize and validate form data
+    const sanitizedAmount = sanitizeNumber(parseFloat(formData.amount), 0.01, 1000000);
+    const sanitizedDescription = sanitizeString(formData.description);
+
+    if (!sanitizedAmount || sanitizedAmount <= 0) {
+      toast({
+        title: "Invalid amount",
+        description: "Please enter a valid positive amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!sanitizedDescription.trim()) {
+      toast({
+        title: "Invalid description",
+        description: "Please enter a description.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     let receiptUrl = transaction?.receipt_url;
     let receiptName = transaction?.receipt_name;
 
@@ -90,7 +113,7 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `${user.id}/${fileName}`;
 
-        console.log('Uploading file to path:', filePath);
+        // Uploading file to path - logging removed for security
 
         const { error: uploadError } = await supabase.storage
           .from('receipts')
@@ -100,7 +123,7 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
           });
 
         if (uploadError) {
-          console.error('Upload error:', uploadError);
+          console.error('Upload error');
           throw uploadError;
         }
 
@@ -111,9 +134,9 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
         receiptUrl = publicUrl;
         receiptName = receipt.name;
         
-        console.log('Receipt uploaded successfully:', { receiptUrl, receiptName });
+        // Receipt uploaded successfully - logging removed for security
       } catch (error: unknown) {
-        console.error('Receipt upload failed:', error);
+        console.error('Receipt upload failed');
         const errorMessage = error instanceof Error ? error.message : "Failed to upload receipt. Please try again.";
         toast({
           title: "Receipt upload failed",
@@ -128,7 +151,8 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger }: Transa
 
     const transactionData = {
       ...formData,
-      amount: parseFloat(formData.amount as string),
+      amount: sanitizedAmount,
+      description: sanitizedDescription,
       receipt_url: receiptUrl,
       receipt_name: receiptName,
     };

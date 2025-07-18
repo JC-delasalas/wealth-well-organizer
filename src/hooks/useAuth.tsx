@@ -4,24 +4,44 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+/**
+ * Custom error interface for authentication operations
+ */
 interface AuthError {
   message: string;
   status?: number;
 }
 
+/**
+ * Authentication context type definition
+ * Provides all authentication-related state and methods
+ */
 interface AuthContextType {
+  /** Current authenticated user or null */
   user: User | null;
+  /** Current session or null */
   session: Session | null;
+  /** Loading state for authentication operations */
   loading: boolean;
+  /** Sign up a new user */
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
+  /** Sign in an existing user */
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  /** Sign out the current user */
   signOut: () => Promise<void>;
+  /** Send password reset email */
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  /** Update user password */
   updatePassword: (password: string) => Promise<{ error: AuthError | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Custom hook to access authentication context
+ * @returns Authentication context with user state and auth methods
+ * @throws Error if used outside of AuthProvider
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -45,12 +65,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Error seeding user data:', error);
-      } else {
-        console.log('User data seeded successfully:', data);
+        console.error('Error seeding user data');
       }
     } catch (error) {
-      console.error('Error calling seed function:', error);
+      console.error('Error calling seed function');
     }
   };
 
@@ -59,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+        // Auth state changed - logging removed for security
         
         if (mounted) {
           setSession(session);
@@ -92,7 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
-          console.error('Error getting session:', error);
+          console.error('Error getting session');
         }
         if (mounted) {
           setSession(session);
@@ -100,7 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setLoading(false);
         }
       } catch (error) {
-        console.error('Error in getInitialSession:', error);
+        console.error('Error in getInitialSession');
         if (mounted) {
           setLoading(false);
         }
@@ -121,7 +139,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const redirectUrl = `https://wealth-well-organizer.vercel.app/auth/callback`;
       
-      console.log('Signing up with redirect URL:', redirectUrl);
+      // Signing up with redirect URL - logging removed for security
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -177,7 +195,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Sign in error:', error);
+        console.error('Sign in error');
         toast({
           title: "Sign in failed",
           description: error.message,
@@ -188,7 +206,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       return { error };
     } catch (err) {
-      console.error('Unexpected sign in error:', err);
+      console.error('Unexpected sign in error');
       setLoading(false);
       const error = { message: 'An unexpected error occurred during sign in' };
       toast({

@@ -20,17 +20,11 @@ export const AuthCallback = () => {
         const error = searchParams.get('error');
         const errorDescription = searchParams.get('error_description');
 
-        console.log('Auth callback params:', {
-          type,
-          accessToken: accessToken ? 'present' : 'missing',
-          refreshToken: refreshToken ? 'present' : 'missing',
-          error,
-          errorDescription
-        });
+        // Auth callback params logged - removed for security
 
         // Handle errors from URL
         if (error) {
-          console.error('Auth callback error from URL:', error, errorDescription);
+          console.error('Auth callback error from URL');
           
           if (error === 'access_denied' && errorDescription?.includes('expired')) {
             toast({
@@ -54,7 +48,7 @@ export const AuthCallback = () => {
 
         // Handle password reset flow
         if (type === 'recovery' && accessToken && refreshToken) {
-          console.log('Password reset flow detected, setting session...');
+          // Password reset flow detected - logging removed for security
           
           // Set the session using the tokens from URL
           const { data, error: sessionError } = await supabase.auth.setSession({
@@ -63,7 +57,7 @@ export const AuthCallback = () => {
           });
 
           if (sessionError) {
-            console.error('Session setup error:', sessionError);
+            console.error('Session setup error');
             toast({
               title: "Session Error",
               description: "Unable to authenticate for password reset. Please try again.",
@@ -74,7 +68,7 @@ export const AuthCallback = () => {
           }
 
           if (data.session) {
-            console.log('Session established for password reset');
+            // Session established for password reset - logging removed for security
             toast({
               title: "Reset Link Verified",
               description: "Please enter your new password below.",
@@ -88,7 +82,7 @@ export const AuthCallback = () => {
         const { data, error: authError } = await supabase.auth.getSession();
         
         if (authError) {
-          console.error('Auth callback error:', authError);
+          console.error('Auth callback error');
           toast({
             title: "Authentication Error",
             description: authError.message,
@@ -99,14 +93,14 @@ export const AuthCallback = () => {
         }
 
         if (data.session?.user) {
-          console.log('User authenticated via callback:', data.session.user.email);
+          // User authenticated via callback - logging removed for security
           toast({
             title: "Email Confirmed!",
             description: "Your email has been successfully verified. Welcome to WealthWell Organizer!",
           });
           navigate('/');
         } else {
-          console.log('No session found in callback');
+          // No session found in callback - logging removed for security
           toast({
             title: "Authentication Failed",
             description: "Email verification failed. Please try again.",
@@ -115,7 +109,7 @@ export const AuthCallback = () => {
           navigate('/auth');
         }
       } catch (error) {
-        console.error('Unexpected error in auth callback:', error);
+        console.error('Unexpected error in auth callback');
         toast({
           title: "Authentication Error",
           description: "An unexpected error occurred. Please try again.",

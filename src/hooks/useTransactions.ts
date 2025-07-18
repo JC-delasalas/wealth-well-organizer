@@ -22,7 +22,7 @@ export const useTransactions = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      console.log('Fetching transactions for user:', user.id);
+      // Fetching transactions for user - logging removed for security
       
       const { data, error } = await supabase
         .from('transactions')
@@ -31,11 +31,11 @@ export const useTransactions = () => {
         .order('date', { ascending: false });
       
       if (error) {
-        console.error('Error fetching transactions:', error);
+        console.error('Error fetching transactions');
         throw error;
       }
-      
-      console.log('Fetched transactions:', data);
+
+      // Fetched transactions - logging removed for security
       return data as Transaction[];
     },
     enabled: !!user,
@@ -52,7 +52,7 @@ export const useTransactions = () => {
         user_id: user.id
       };
 
-      console.log('Adding transaction:', transactionWithUserId);
+      // Adding transaction - logging removed for security
 
       const { data, error } = await supabase
         .from('transactions')
@@ -89,7 +89,7 @@ export const useTransactions = () => {
         throw new Error('User not authenticated');
       }
 
-      console.log('Updating transaction:', { id, updates });
+      // Updating transaction - logging removed for security
 
       const { data, error } = await supabase
         .from('transactions')
@@ -128,7 +128,7 @@ export const useTransactions = () => {
         throw new Error('User not authenticated');
       }
 
-      console.log('Deleting transaction:', id);
+      // Deleting transaction - logging removed for security
 
       const { error } = await supabase
         .from('transactions')

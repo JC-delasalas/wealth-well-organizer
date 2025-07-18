@@ -39,7 +39,7 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
   const CustomLegend = ({ payload }: { payload?: Array<{ value: string; color: string }> }) => {
     return (
       <div className="flex flex-wrap gap-3 mt-4 justify-center">
-        {payload?.map((entry, index: number) => (
+        {payload?.map((entry, index) => (
           <div key={index} className="flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full"

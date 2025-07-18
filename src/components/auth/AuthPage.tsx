@@ -34,10 +34,10 @@ export const AuthPage = () => {
     
     setIsSubmitting(true);
     try {
-      console.log('Attempting to sign in with:', email);
+      // Attempting to sign in - logging removed for security
       const result = await signIn(email, password);
       if (result.error) {
-        console.error('Sign in failed:', result.error);
+        console.error('Sign in failed');
       }
     } finally {
       setIsSubmitting(false);
@@ -50,10 +50,10 @@ export const AuthPage = () => {
     
     setIsSubmitting(true);
     try {
-      console.log('Attempting to sign up with:', email, fullName);
+      // Attempting to sign up - logging removed for security
       const result = await signUp(email, password, fullName);
       if (result.error) {
-        console.error('Sign up failed:', result.error);
+        console.error('Sign up failed');
       }
     } finally {
       setIsSubmitting(false);

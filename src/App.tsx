@@ -10,15 +10,31 @@ import { Navbar } from "./components/layout/Navbar";
 import { LoadingSpinner } from "./components/ui/loading-spinner";
 import ErrorBoundary from "./components/ErrorBoundary";
 
-// Lazy load components for better performance
-const Dashboard = React.lazy(() => import("./components/Dashboard").then(module => ({ default: module.Dashboard })));
-const AuthPage = React.lazy(() => import("./components/auth/AuthPage").then(module => ({ default: module.AuthPage })));
-const AuthCallback = React.lazy(() => import("./components/auth/AuthCallback").then(module => ({ default: module.AuthCallback })));
-const LocalhostRedirectHandler = React.lazy(() => import("./components/auth/LocalhostRedirectHandler"));
-const ResetPassword = React.lazy(() => import("./pages/ResetPassword"));
-const TransactionList = React.lazy(() => import("./components/transactions/TransactionList").then(module => ({ default: module.TransactionList })));
-const ReportsPage = React.lazy(() => import("./components/reports/ReportsPage").then(module => ({ default: module.ReportsPage })));
-const NotFound = React.lazy(() => import("./pages/NotFound"));
+// Lazy load components for better performance and code splitting
+const Dashboard = React.lazy(() =>
+  import("./components/Dashboard").then(module => ({ default: module.Dashboard }))
+);
+const AuthPage = React.lazy(() =>
+  import("./components/auth/AuthPage").then(module => ({ default: module.AuthPage }))
+);
+const AuthCallback = React.lazy(() =>
+  import("./components/auth/AuthCallback").then(module => ({ default: module.AuthCallback }))
+);
+const LocalhostRedirectHandler = React.lazy(() =>
+  import("./components/auth/LocalhostRedirectHandler")
+);
+const ResetPassword = React.lazy(() =>
+  import("./pages/ResetPassword")
+);
+const TransactionList = React.lazy(() =>
+  import("./components/transactions/TransactionList").then(module => ({ default: module.TransactionList }))
+);
+const ReportsPage = React.lazy(() =>
+  import("./components/reports/ReportsPage").then(module => ({ default: module.ReportsPage }))
+);
+const NotFound = React.lazy(() =>
+  import("./pages/NotFound")
+);
 
 const queryClient = new QueryClient();
 
