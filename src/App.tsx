@@ -41,6 +41,9 @@ const InsightsPage = React.lazy(() =>
 const CategoriesPage = React.lazy(() =>
   import("./components/categories/CategoriesPage").then(module => ({ default: module.CategoriesPage }))
 );
+const ReceiptsPage = React.lazy(() =>
+  import("./components/receipts/ReceiptsPage").then(module => ({ default: module.ReceiptsPage }))
+);
 const NotFound = React.lazy(() =>
   import("./pages/NotFound")
 );
@@ -178,6 +181,16 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner size="lg" />}>
               <CategoriesPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/receipts"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <ReceiptsPage />
             </Suspense>
           </ProtectedRoute>
         }

@@ -19,6 +19,7 @@ import {
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { TransactionForm } from './TransactionForm';
+import { ReceiptViewer } from '../receipts/ReceiptViewer';
 import { Transaction } from '@/types';
 import { cn } from '@/lib/utils';
 
@@ -123,7 +124,18 @@ export const TransactionList = () => {
                           {formatDate(transaction.date)}
                         </span>
                         {transaction.receipt_url && (
-                          <Receipt className="w-4 h-4 text-gray-400" />
+                          <ReceiptViewer
+                            transaction={transaction}
+                            trigger={
+                              <button className="flex items-center text-blue-600 hover:text-blue-700 transition-colors">
+                                <Receipt className="w-4 h-4" />
+                                <span className="ml-1 text-xs">View</span>
+                              </button>
+                            }
+                            onReceiptDeleted={() => {
+                              // The transaction list will automatically refresh via React Query
+                            }}
+                          />
                         )}
                       </div>
                     </div>

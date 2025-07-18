@@ -21,12 +21,17 @@ import { SavingsGoalForm } from './savings/SavingsGoalForm';
 import { InsightsDashboard } from './insights/InsightsDashboard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
+import { useTransactions } from '@/hooks/useTransactions';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const stats = useDashboardStats();
   const { savingsGoals } = useSavingsGoals();
+  const { transactions } = useTransactions();
   const hasSavingsGoal = savingsGoals.length > 0;
+
+  // Count transactions with receipts
+  const receiptsCount = transactions.filter(t => t.receipt_url).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -45,7 +50,7 @@ export const Dashboard = () => {
             <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
               <TransactionForm
                 defaultType="income"
                 trigger={
@@ -98,7 +103,19 @@ export const Dashboard = () => {
               )}
               <Button
                 variant="outline"
-                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm col-span-2 sm:col-span-1"
+                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm"
+                onClick={() => navigate('/receipts')}
+              >
+                <Receipt className="w-4 h-4 sm:w-6 sm:h-6" />
+                <span className="hidden sm:inline">View Receipts</span>
+                <span className="sm:hidden">Receipts</span>
+                {receiptsCount > 0 && (
+                  <span className="text-xs text-gray-500">({receiptsCount})</span>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm"
                 onClick={() => navigate('/insights')}
               >
                 <Lightbulb className="w-4 h-4 sm:w-6 sm:h-6" />

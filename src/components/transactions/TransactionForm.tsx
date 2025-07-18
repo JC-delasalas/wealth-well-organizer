@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Upload, Loader2, X } from 'lucide-react';
+import { Plus, Upload, Loader2, X, Eye } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { Transaction } from '@/types';
+import { ReceiptViewer } from '../receipts/ReceiptViewer';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { sanitizeString, sanitizeNumber } from '@/lib/validation';
@@ -272,6 +273,34 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultT
           <div className="space-y-2">
             <Label htmlFor="receipt">Receipt (Optional)</Label>
             <div className="space-y-2">
+              {/* Show existing receipt if editing and has receipt */}
+              {isEdit && transaction?.receipt_url && !receipt && (
+                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2">
+                    <Upload className="w-4 h-4 text-blue-600" />
+                    <div className="text-sm">
+                      <p className="font-medium text-gray-900">{transaction.receipt_name}</p>
+                      <p className="text-blue-600">Current receipt</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ReceiptViewer
+                      transaction={transaction}
+                      trigger={
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-600 hover:text-blue-700"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
               {!receipt ? (
                 <div className="flex items-center gap-2">
                   <Input
@@ -303,7 +332,10 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultT
                 </div>
               )}
               <p className="text-xs text-gray-500">
-                Upload any file type (images, PDFs, documents, etc.). Max size: 10MB
+                {isEdit && transaction?.receipt_url && !receipt
+                  ? "Upload a new file to replace the current receipt, or leave empty to keep existing receipt."
+                  : "Upload any file type (images, PDFs, documents, etc.). Max size: 10MB"
+                }
               </p>
             </div>
           </div>

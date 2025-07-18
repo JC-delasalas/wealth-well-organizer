@@ -80,6 +80,14 @@ export const Navbar = () => {
             >
               Categories
             </Link>
+            <Link
+              to="/receipts"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive('/receipts') ? 'bg-primary text-white' : 'text-gray-700 hover:text-primary'
+              }`}
+            >
+              Receipts
+            </Link>
           </div>
         </div>
 
