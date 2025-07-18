@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -41,6 +42,10 @@ export default defineConfig(({ mode }) => ({
           // Icons (split large icon library)
           icons: ['lucide-react'],
         },
+        // Ensure proper file naming for assets
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
   },

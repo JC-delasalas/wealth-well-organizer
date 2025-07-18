@@ -33,6 +33,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     console.error('Error caught by boundary:', {
       message: error.message,
       errorId: this.state.errorId,
+      isModuleError: error.message.includes('Failed to fetch dynamically imported module'),
+      isChunkError: error.message.includes('Loading chunk'),
     });
     this.setState({ error, errorInfo });
   }
@@ -59,7 +61,13 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Something went wrong</AlertTitle>
               <AlertDescription className="space-y-2">
-                <p>{this.state.error?.message || 'An unexpected error occurred'}</p>
+                <p>
+                  {this.state.error?.message?.includes('Failed to fetch dynamically imported module') ||
+                   this.state.error?.message?.includes('Loading chunk')
+                    ? 'Failed to load application resources. This may be due to a network issue or deployment update.'
+                    : this.state.error?.message || 'An unexpected error occurred'
+                  }
+                </p>
                 {this.state.errorId && (
                   <p className="text-xs text-gray-500">
                     Error ID: {this.state.errorId}
