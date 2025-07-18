@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { 
-  DollarSign, 
   Loader2, 
   TrendingUp, 
   Shield, 
@@ -54,7 +53,11 @@ export const AuthPage = () => {
         <header className="p-4 md:p-8">
           <div className="flex items-center justify-center md:justify-start">
             <div className="bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/30">
-              <DollarSign className="w-8 h-8 text-primary" />
+              <img 
+                src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png" 
+                alt="FinanceTracker Logo" 
+                className="w-8 h-8 object-contain"
+              />
             </div>
             <h1 className="ml-3 text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               FinanceTracker

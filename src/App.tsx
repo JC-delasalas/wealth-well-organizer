@@ -10,6 +10,7 @@ import { AuthPage } from "./components/auth/AuthPage";
 import { TransactionList } from "./components/transactions/TransactionList";
 import { ReportsPage } from "./components/reports/ReportsPage";
 import { Navbar } from "./components/layout/Navbar";
+import { LoadingSpinner } from "./components/ui/loading-spinner";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,8 +20,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
@@ -42,8 +43,8 @@ const AppRoutes = () => {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
