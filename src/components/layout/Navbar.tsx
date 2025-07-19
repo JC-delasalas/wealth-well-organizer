@@ -2,15 +2,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Link, useLocation } from 'react-router-dom';
+import { MobileNavigation } from './MobileNavigation';
 
 export const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -21,11 +22,14 @@ export const Navbar = () => {
   return (
     <nav className="bg-white border-b border-gray-200 px-4 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-4">
+          {/* Mobile Navigation */}
+          <MobileNavigation />
+
           <Link to="/" className="flex items-center space-x-3">
-            <img 
-              src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png" 
-              alt="FinanceTracker Logo" 
+            <img
+              src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
+              alt="FinanceTracker Logo"
               className="w-8 h-8 object-contain"
             />
             <span className="text-xl font-bold text-gray-900">FinanceTracker</span>

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Target, Settings } from 'lucide-react';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
+import { useToast } from '@/hooks/use-toast';
 import { SavingsGoal } from '@/types';
 
 interface SavingsGoalFormProps {
@@ -17,6 +18,7 @@ interface SavingsGoalFormProps {
 
 export const SavingsGoalForm = ({ trigger, goal, isEdit = false }: SavingsGoalFormProps) => {
   const [open, setOpen] = useState(false);
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: goal?.name || '',
     description: goal?.description || '',
@@ -33,9 +35,51 @@ export const SavingsGoalForm = ({ trigger, goal, isEdit = false }: SavingsGoalFo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate form data before submission
+    if (!formData.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Goal name is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.target_amount || parseFloat(formData.target_amount) <= 0) {
+      toast({
+        title: "Validation Error",
+        description: "Target amount must be greater than 0.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.target_date) {
+      toast({
+        title: "Validation Error",
+        description: "Target date is required.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate target date is in the future
+    const targetDate = new Date(formData.target_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (targetDate <= today) {
+      toast({
+        title: "Validation Error",
+        description: "Target date must be in the future.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const goalData = {
-      name: formData.name,
-      description: formData.description || undefined,
+      name: formData.name.trim(),
+      description: formData.description?.trim() || undefined,
       target_amount: parseFloat(formData.target_amount),
       current_amount: parseFloat(formData.current_amount || '0'),
       target_date: formData.target_date,

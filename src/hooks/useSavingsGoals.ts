@@ -46,13 +46,43 @@ export const useSavingsGoals = () => {
         throw new Error('User not authenticated');
       }
 
+      // Validate required fields
+      if (!goal.name || goal.name.trim() === '') {
+        throw new Error('Goal name is required');
+      }
+      if (!goal.target_amount || goal.target_amount <= 0) {
+        throw new Error('Target amount must be greater than 0');
+      }
+      if (!goal.target_date) {
+        throw new Error('Target date is required');
+      }
+
+      // Ensure proper data types and handle null/undefined values
+      const goalData = {
+        ...goal,
+        user_id: user.id,
+        name: goal.name.trim(),
+        description: goal.description?.trim() || null,
+        target_amount: Number(goal.target_amount),
+        current_amount: Number(goal.current_amount || 0),
+        target_date: goal.target_date,
+        savings_percentage_threshold: Number(goal.savings_percentage_threshold || 20),
+        salary_date_1: Number(goal.salary_date_1 || 15),
+        salary_date_2: Number(goal.salary_date_2 || 30),
+      };
+
+      console.log('Creating savings goal with data:', goalData);
+
       const { data, error } = await supabase
         .from('savings_goals')
-        .insert([{ ...goal, user_id: user.id }])
+        .insert([goalData])
         .select()
         .single();
-      
-      if (error) throw error;
+
+      if (error) {
+        console.error('Supabase error creating savings goal:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -63,9 +93,10 @@ export const useSavingsGoals = () => {
       });
     },
     onError: (error: DatabaseError) => {
+      console.error('Create savings goal mutation error:', error);
       toast({
         title: "Error creating savings goal",
-        description: error.message,
+        description: error.message || "Failed to create savings goal. Please check your input and try again.",
         variant: "destructive",
       });
     },
@@ -77,15 +108,68 @@ export const useSavingsGoals = () => {
         throw new Error('User not authenticated');
       }
 
+      if (!id) {
+        throw new Error('Goal ID is required for update');
+      }
+
+      // Clean and validate update data
+      const cleanUpdates: any = {};
+
+      if (updates.name !== undefined) {
+        if (!updates.name || updates.name.trim() === '') {
+          throw new Error('Goal name cannot be empty');
+        }
+        cleanUpdates.name = updates.name.trim();
+      }
+
+      if (updates.description !== undefined) {
+        cleanUpdates.description = updates.description?.trim() || null;
+      }
+
+      if (updates.target_amount !== undefined) {
+        if (updates.target_amount <= 0) {
+          throw new Error('Target amount must be greater than 0');
+        }
+        cleanUpdates.target_amount = Number(updates.target_amount);
+      }
+
+      if (updates.current_amount !== undefined) {
+        cleanUpdates.current_amount = Number(updates.current_amount || 0);
+      }
+
+      if (updates.target_date !== undefined) {
+        if (!updates.target_date) {
+          throw new Error('Target date is required');
+        }
+        cleanUpdates.target_date = updates.target_date;
+      }
+
+      if (updates.savings_percentage_threshold !== undefined) {
+        cleanUpdates.savings_percentage_threshold = Number(updates.savings_percentage_threshold || 20);
+      }
+
+      if (updates.salary_date_1 !== undefined) {
+        cleanUpdates.salary_date_1 = Number(updates.salary_date_1 || 15);
+      }
+
+      if (updates.salary_date_2 !== undefined) {
+        cleanUpdates.salary_date_2 = Number(updates.salary_date_2 || 30);
+      }
+
+      console.log('Updating savings goal with data:', { id, updates: cleanUpdates });
+
       const { data, error } = await supabase
         .from('savings_goals')
-        .update(updates)
+        .update(cleanUpdates)
         .eq('id', id)
         .eq('user_id', user.id)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error updating savings goal:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: () => {
@@ -96,9 +180,10 @@ export const useSavingsGoals = () => {
       });
     },
     onError: (error: DatabaseError) => {
+      console.error('Update savings goal mutation error:', error);
       toast({
         title: "Error updating savings goal",
-        description: error.message,
+        description: error.message || "Failed to update savings goal. Please check your input and try again.",
         variant: "destructive",
       });
     },
