@@ -37,97 +37,160 @@ export const normalizeInsightContent = (insight: CreateInsightInput): string => 
   return normalized;
 };
 
+// Cache for duplicate checks to prevent excessive API calls
+const duplicateCheckCache = new Map<string, { result: DuplicateCheckResult; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Request throttling to prevent API overload
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 100; // 100ms between requests
+
 /**
- * Check if an insight is a duplicate based on period and content
+ * Throttle requests to prevent API overload
+ */
+const throttleRequest = async (): Promise<void> => {
+  const now = Date.now();
+  const timeSinceLastRequest = now - lastRequestTime;
+
+  if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+    const delay = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  lastRequestTime = Date.now();
+};
+
+/**
+ * Check if an insight is a duplicate based on period and content with caching and throttling
  */
 export const checkForDuplicateInsight = async (
   userId: string,
   insight: CreateInsightInput
 ): Promise<DuplicateCheckResult> => {
   try {
-    // Generate content hash
+    // Generate cache key
     const normalizedContent = normalizeInsightContent(insight);
-    const contentHash = await generateContentHash(normalizedContent);
+    const cacheKey = `${userId}-${insight.insight_type}-${normalizedContent}`;
 
-    // Check for exact period match first
-    if (insight.period_start && insight.period_end) {
-      const { data: periodDuplicates, error: periodError } = await supabase
-        .from('financial_insights')
-        .select('id, title, content')
-        .eq('user_id', userId)
-        .eq('insight_type', insight.insight_type)
-        .eq('period_start', insight.period_start)
-        .eq('period_end', insight.period_end)
-        .limit(1);
-
-      if (periodError) {
-        console.error('Error checking for period duplicates:', periodError);
-      } else if (periodDuplicates && periodDuplicates.length > 0) {
-        return {
-          is_duplicate: true,
-          duplicate_type: 'period',
-          existing_insight_id: periodDuplicates[0].id
-        };
-      }
+    // Check cache first
+    const cached = duplicateCheckCache.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+      console.log('Using cached duplicate check result');
+      return cached.result;
     }
 
-    // Check for content hash match (recent insights only)
+    // Throttle request to prevent API overload
+    await throttleRequest();
+
+    // Generate content hash
+    const contentHash = await generateContentHash(normalizedContent);
+
+    // Single optimized query to check for duplicates
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    const { data: contentDuplicates, error: contentError } = await supabase
+    const { data: existingInsights, error } = await supabase
       .from('financial_insights')
-      .select('id, title, content, content_hash')
+      .select('id, title, content, content_hash, period_start, period_end')
       .eq('user_id', userId)
       .eq('insight_type', insight.insight_type)
-      .eq('content_hash', contentHash)
       .gte('created_at', sevenDaysAgo.toISOString())
-      .limit(1);
+      .limit(20);
 
-    if (contentError) {
-      console.error('Error checking for content duplicates:', contentError);
-    } else if (contentDuplicates && contentDuplicates.length > 0) {
-      return {
-        is_duplicate: true,
-        duplicate_type: 'content',
-        existing_insight_id: contentDuplicates[0].id
-      };
+    if (error) {
+      console.error('Error checking for duplicates:', error);
+
+      // Handle specific error types
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+        console.warn('API rate limit or resource exhaustion detected, skipping duplicate check');
+        return {
+          is_duplicate: false,
+          duplicate_type: 'none'
+        };
+      }
+
+      throw error;
     }
 
-    // Check for similar content using text similarity
-    const { data: recentInsights, error: recentError } = await supabase
-      .from('financial_insights')
-      .select('id, title, content')
-      .eq('user_id', userId)
-      .eq('insight_type', insight.insight_type)
-      .gte('created_at', sevenDaysAgo.toISOString())
-      .limit(10);
+    if (!existingInsights || existingInsights.length === 0) {
+      const result = {
+        is_duplicate: false,
+        duplicate_type: 'none' as const
+      };
 
-    if (recentError) {
-      console.error('Error checking for recent insights:', recentError);
-    } else if (recentInsights && recentInsights.length > 0) {
-      // Check for high similarity with recent insights
-      for (const recentInsight of recentInsights) {
+      // Cache the result
+      duplicateCheckCache.set(cacheKey, { result, timestamp: Date.now() });
+      return result;
+    }
+
+    // Check for exact period match
+    if (insight.period_start && insight.period_end) {
+      const periodMatch = existingInsights.find(existing =>
+        existing.period_start === insight.period_start &&
+        existing.period_end === insight.period_end
+      );
+
+      if (periodMatch) {
+        const result = {
+          is_duplicate: true,
+          duplicate_type: 'period' as const,
+          existing_insight_id: periodMatch.id
+        };
+
+        // Cache the result
+        duplicateCheckCache.set(cacheKey, { result, timestamp: Date.now() });
+        return result;
+      }
+    }
+
+    // Check for content hash match
+    const contentMatch = existingInsights.find(existing =>
+      existing.content_hash === contentHash
+    );
+
+    if (contentMatch) {
+      const result = {
+        is_duplicate: true,
+        duplicate_type: 'content' as const,
+        existing_insight_id: contentMatch.id
+      };
+
+      // Cache the result
+      duplicateCheckCache.set(cacheKey, { result, timestamp: Date.now() });
+      return result;
+    }
+
+    // Check for high similarity (only if we have few existing insights to avoid performance issues)
+    if (existingInsights.length <= 10) {
+      for (const existing of existingInsights) {
         const similarity = calculateTextSimilarity(
           insight.content.toLowerCase(),
-          recentInsight.content.toLowerCase()
+          existing.content.toLowerCase()
         );
-        
+
         if (similarity > 0.85) { // 85% similarity threshold
-          return {
+          const result = {
             is_duplicate: true,
-            duplicate_type: 'content',
-            existing_insight_id: recentInsight.id,
+            duplicate_type: 'content' as const,
+            existing_insight_id: existing.id,
             similarity_score: similarity
           };
+
+          // Cache the result
+          duplicateCheckCache.set(cacheKey, { result, timestamp: Date.now() });
+          return result;
         }
       }
     }
 
-    return {
+    const result = {
       is_duplicate: false,
-      duplicate_type: 'none'
+      duplicate_type: 'none' as const
     };
+
+    // Cache the result
+    duplicateCheckCache.set(cacheKey, { result, timestamp: Date.now() });
+    return result;
 
   } catch (error) {
     console.error('Error in duplicate check:', error);
@@ -139,6 +202,8 @@ export const checkForDuplicateInsight = async (
         console.error('Database column missing - content_hash field may not exist');
       } else if (dbError.code === '42P01') {
         console.error('Database table missing - financial_insights table may not exist');
+      } else if (dbError.message?.includes('Failed to fetch')) {
+        console.error('Network error - API may be overloaded');
       } else {
         console.error('Database error details:', {
           code: dbError.code,
@@ -308,91 +373,183 @@ export const validateInsightContent = (insight: CreateInsightInput): string[] =>
   return errors;
 };
 
+// Request queue to prevent simultaneous requests
+const requestQueue: Array<() => Promise<any>> = [];
+let isProcessingQueue = false;
+
 /**
- * Create insight with duplicate prevention
+ * Process request queue to prevent API overload
+ */
+const processRequestQueue = async (): Promise<void> => {
+  if (isProcessingQueue || requestQueue.length === 0) {
+    return;
+  }
+
+  isProcessingQueue = true;
+
+  while (requestQueue.length > 0) {
+    const request = requestQueue.shift();
+    if (request) {
+      try {
+        await request();
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 50));
+      } catch (error) {
+        console.error('Error processing queued request:', error);
+      }
+    }
+  }
+
+  isProcessingQueue = false;
+};
+
+/**
+ * Create insight with duplicate prevention and request throttling
  */
 export const createInsightWithDeduplication = async (
   userId: string,
   insight: CreateInsightInput
 ): Promise<{ success: boolean; insight?: FinancialInsight; error?: string; skipped?: boolean }> => {
-  try {
-    // Validate content
-    const validationErrors = validateInsightContent(insight);
-    if (validationErrors.length > 0) {
-      return {
-        success: false,
-        error: validationErrors.join(', ')
-      };
-    }
+  return new Promise((resolve) => {
+    // Add to request queue to prevent API overload
+    requestQueue.push(async () => {
+      try {
+        // Validate content
+        const validationErrors = validateInsightContent(insight);
+        if (validationErrors.length > 0) {
+          resolve({
+            success: false,
+            error: validationErrors.join(', ')
+          });
+          return;
+        }
 
-    // Check for duplicates
-    const duplicateCheck = await checkForDuplicateInsight(userId, insight);
-    if (duplicateCheck.is_duplicate) {
-      console.log(`Skipping duplicate insight for user ${userId}:`, duplicateCheck);
-      return {
-        success: true,
-        skipped: true,
-        error: `Duplicate insight detected (${duplicateCheck.duplicate_type})`
-      };
-    }
+        // Check for duplicates with throttling
+        const duplicateCheck = await checkForDuplicateInsight(userId, insight);
+        if (duplicateCheck.is_duplicate) {
+          console.log(`Skipping duplicate insight for user ${userId}:`, duplicateCheck);
+          resolve({
+            success: true,
+            skipped: true,
+            error: `Duplicate insight detected (${duplicateCheck.duplicate_type})`
+          });
+          return;
+        }
 
-    // Generate content hash
-    const normalizedContent = normalizeInsightContent(insight);
-    const contentHash = await generateContentHash(normalizedContent);
+        // Generate content hash
+        const normalizedContent = normalizeInsightContent(insight);
+        const contentHash = await generateContentHash(normalizedContent);
 
-    // Create the insight with fallback for missing columns
-    const insertData: any = {
-      user_id: userId,
-      insight_type: insight.insight_type,
-      title: insight.title,
-      content: insight.content,
-      priority: insight.priority || 'medium',
-      period_start: insight.period_start || null,
-      period_end: insight.period_end || null,
-      is_read: false
-    };
+        // Throttle the insert request
+        await throttleRequest();
 
-    // Only add enhanced fields if they might exist
-    try {
-      insertData.content_hash = contentHash;
-      insertData.generation_trigger = insight.generation_trigger || 'manual';
-    } catch (error) {
-      console.warn('Enhanced insight fields not available, using basic fields only');
-    }
+        // Create the insight with fallback for missing columns
+        const insertData: any = {
+          user_id: userId,
+          insight_type: insight.insight_type,
+          title: insight.title,
+          content: insight.content,
+          priority: insight.priority || 'medium',
+          period_start: insight.period_start || null,
+          period_end: insight.period_end || null,
+          is_read: false
+        };
 
-    const { data, error } = await supabase
-      .from('financial_insights')
-      .insert([insertData])
-      .select()
-      .single();
+        // Only add enhanced fields if they might exist
+        try {
+          insertData.content_hash = contentHash;
+          insertData.generation_trigger = insight.generation_trigger || 'manual';
+        } catch (error) {
+          console.warn('Enhanced insight fields not available, using basic fields only');
+        }
 
-    if (error) {
-      console.error('Error creating insight:', error);
+        const { data, error } = await supabase
+          .from('financial_insights')
+          .insert([insertData])
+          .select()
+          .single();
 
-      // Provide specific error messages
-      let errorMessage = error.message;
-      if (error.code === '42703') {
-        errorMessage = 'Database schema mismatch - some insight features may not be available';
-      } else if (error.code === '42P01') {
-        errorMessage = 'Financial insights table not found - please contact support';
+        if (error) {
+          console.error('Error creating insight:', error);
+
+          // Handle specific error types
+          let errorMessage = error.message;
+
+          if (error.message?.includes('Failed to fetch') || error.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+            errorMessage = 'API rate limit exceeded. Please try again in a moment.';
+          } else if (error.code === '42703') {
+            errorMessage = 'Database schema mismatch - some insight features may not be available';
+          } else if (error.code === '42P01') {
+            errorMessage = 'Financial insights table not found - please contact support';
+          } else if (error.code === '23505') {
+            errorMessage = 'Duplicate insight detected by database constraint';
+          }
+
+          resolve({
+            success: false,
+            error: errorMessage
+          });
+          return;
+        }
+
+        resolve({
+          success: true,
+          insight: data as FinancialInsight
+        });
+
+      } catch (error) {
+        console.error('Error in createInsightWithDeduplication:', error);
+
+        let errorMessage = 'Unknown error occurred';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+
+          if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network error - please check your connection and try again';
+          }
+        }
+
+        resolve({
+          success: false,
+          error: errorMessage
+        });
       }
+    });
 
-      return {
-        success: false,
-        error: errorMessage
-      };
+    // Start processing the queue
+    processRequestQueue();
+  });
+};
+
+/**
+ * Clear duplicate check cache to prevent memory leaks
+ */
+export const clearDuplicateCheckCache = (): void => {
+  duplicateCheckCache.clear();
+  console.log('Duplicate check cache cleared');
+};
+
+/**
+ * Clean up expired cache entries
+ */
+export const cleanupExpiredCache = (): void => {
+  const now = Date.now();
+  const expiredKeys: string[] = [];
+
+  duplicateCheckCache.forEach((value, key) => {
+    if (now - value.timestamp > CACHE_DURATION) {
+      expiredKeys.push(key);
     }
+  });
 
-    return {
-      success: true,
-      insight: data as FinancialInsight
-    };
+  expiredKeys.forEach(key => duplicateCheckCache.delete(key));
 
-  } catch (error) {
-    console.error('Error in createInsightWithDeduplication:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
-    };
+  if (expiredKeys.length > 0) {
+    console.log(`Cleaned up ${expiredKeys.length} expired cache entries`);
   }
 };
+
+// Automatically clean up expired cache entries every 5 minutes
+if (typeof window !== 'undefined') {
+  setInterval(cleanupExpiredCache, 5 * 60 * 1000);
+}

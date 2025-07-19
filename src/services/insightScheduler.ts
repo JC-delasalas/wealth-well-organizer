@@ -17,6 +17,9 @@ export class InsightScheduler {
   private static instance: InsightScheduler;
   private schedulerInterval: NodeJS.Timeout | null = null;
   private isRunning = false;
+  private isGenerating = false; // Prevent concurrent generations
+  private lastGenerationTime = 0;
+  private readonly MIN_GENERATION_INTERVAL = 30000; // 30 seconds between generations
 
   private constructor() {}
 
@@ -115,11 +118,38 @@ export class InsightScheduler {
     return nextDue <= now;
   }
 
-  // Generate insights for a specific user
+  // Generate insights for a specific user with concurrency protection
   async generateInsightsForUser(
-    userId: string, 
+    userId: string,
     preferences?: UserInsightPreferences
   ): Promise<InsightGenerationResult> {
+    // Prevent concurrent generations
+    if (this.isGenerating) {
+      console.log('Insight generation already in progress, skipping...');
+      return {
+        success: false,
+        insights_generated: 0,
+        insights_skipped: 0,
+        errors: ['Insight generation already in progress']
+      };
+    }
+
+    // Check minimum interval between generations
+    const now = Date.now();
+    if (now - this.lastGenerationTime < this.MIN_GENERATION_INTERVAL) {
+      const remainingTime = this.MIN_GENERATION_INTERVAL - (now - this.lastGenerationTime);
+      console.log(`Generation rate limited, ${remainingTime}ms remaining`);
+      return {
+        success: false,
+        insights_generated: 0,
+        insights_skipped: 0,
+        errors: [`Rate limited - please wait ${Math.ceil(remainingTime / 1000)} seconds`]
+      };
+    }
+
+    this.isGenerating = true;
+    this.lastGenerationTime = now;
+
     try {
       console.log(`Generating insights for user: ${userId}`);
 
@@ -139,7 +169,7 @@ export class InsightScheduler {
 
       // Get user data for analysis
       const context = await this.getUserDataContext(userId, preferences);
-      
+
       // Generate insights based on enabled types
       const results: InsightGenerationResult = {
         success: true,
@@ -148,21 +178,40 @@ export class InsightScheduler {
         errors: []
       };
 
+      // Process insight types sequentially to prevent API overload
       for (const insightType of preferences.enabled_insight_types) {
         try {
           const insights = await this.generateInsightsByType(insightType, context);
-          
-          for (const insight of insights) {
+
+          // Process insights sequentially with delays
+          for (let i = 0; i < insights.length; i++) {
+            const insight = insights[i];
+
+            // Add delay between insight creations to prevent API overload
+            if (i > 0) {
+              await new Promise(resolve => setTimeout(resolve, 200));
+            }
+
             const result = await createInsightWithDeduplication(userId, insight);
-            
+
             if (result.success && !result.skipped) {
               results.insights_generated++;
             } else if (result.skipped) {
               results.insights_skipped++;
             } else if (result.error) {
               results.errors.push(result.error);
+
+              // If we hit rate limits, stop generating more insights
+              if (result.error.includes('rate limit') || result.error.includes('ERR_INSUFFICIENT_RESOURCES')) {
+                console.log('Rate limit detected, stopping insight generation');
+                break;
+              }
             }
           }
+
+          // Add delay between insight types
+          await new Promise(resolve => setTimeout(resolve, 500));
+
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           results.errors.push(`Error generating ${insightType} insights: ${errorMessage}`);
@@ -183,6 +232,8 @@ export class InsightScheduler {
         insights_skipped: 0,
         errors: [error instanceof Error ? error.message : 'Unknown error']
       };
+    } finally {
+      this.isGenerating = false;
     }
   }
 

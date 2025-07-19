@@ -171,7 +171,7 @@ export const useFinancialInsights = () => {
     },
   });
 
-  // Manual insight generation mutation
+  // Manual insight generation mutation with rate limiting
   const generateInsightsMutation = useMutation({
     mutationFn: async (): Promise<InsightGenerationResult> => {
       if (!user) {
@@ -190,16 +190,57 @@ export const useFinancialInsights = () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['insight-preferences', user?.id] });
 
-      toast({
-        title: "Insights Generated",
-        description: `Generated ${result.insights_generated} new insights${result.insights_skipped > 0 ? `, skipped ${result.insights_skipped} duplicates` : ''}.`,
-      });
+      if (result.success) {
+        if (result.insights_generated > 0) {
+          toast({
+            title: "Insights Generated",
+            description: `Generated ${result.insights_generated} new insights${result.insights_skipped > 0 ? `, skipped ${result.insights_skipped} duplicates` : ''}.`,
+          });
+        } else if (result.insights_skipped > 0) {
+          toast({
+            title: "No New Insights",
+            description: `All ${result.insights_skipped} insights were duplicates and skipped.`,
+          });
+        } else {
+          toast({
+            title: "No Insights Generated",
+            description: "No new insights were created. Try again later.",
+          });
+        }
+      } else {
+        // Handle partial success with errors
+        const errorMessages = result.errors.join(', ');
+        if (errorMessages.includes('rate limit') || errorMessages.includes('already in progress')) {
+          toast({
+            title: "Generation Rate Limited",
+            description: "Please wait a moment before generating more insights.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Generation Issues",
+            description: errorMessages,
+            variant: "destructive",
+          });
+        }
+      }
     },
     onError: (error: DatabaseError) => {
       console.error('Error generating insights:', error);
+
+      let errorMessage = "Failed to generate insights. Please try again.";
+
+      if (error.message?.includes('rate limit') || error.message?.includes('ERR_INSUFFICIENT_RESOURCES')) {
+        errorMessage = "API rate limit exceeded. Please wait a moment and try again.";
+      } else if (error.message?.includes('already in progress')) {
+        errorMessage = "Insight generation is already in progress. Please wait.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
         title: "Error generating insights",
-        description: error.message || "Failed to generate insights. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     },
