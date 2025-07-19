@@ -1,9 +1,10 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { SavingsGoal } from '@/types';
+import { SavingsGoal, SavingsGoalProgress } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useCurrency } from './useCurrency';
 
 interface DatabaseError {
   message: string;
@@ -15,6 +16,7 @@ interface DatabaseError {
 export const useSavingsGoals = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { userCurrency } = useCurrency();
   const queryClient = useQueryClient();
 
   const { data: savingsGoals = [], isLoading } = useQuery({
@@ -36,6 +38,28 @@ export const useSavingsGoals = () => {
       }
       
       return data as SavingsGoal[];
+    },
+    enabled: !!user,
+  });
+
+  // Get savings goals with progress analytics
+  const { data: savingsGoalsWithProgress = [], isLoading: isLoadingProgress } = useQuery({
+    queryKey: ['savings-goals-progress', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from('savings_goal_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching savings goals progress');
+        throw error;
+      }
+
+      return data as SavingsGoalProgress[];
     },
     enabled: !!user,
   });
@@ -263,7 +287,9 @@ export const useSavingsGoals = () => {
 
   return {
     savingsGoals,
-    isLoading,
+    savingsGoalsWithProgress,
+    isLoading: isLoading || isLoadingProgress,
+    isLoadingProgress,
     createSavingsGoal: createSavingsGoalMutation.mutate,
     updateSavingsGoal: updateSavingsGoalMutation.mutate,
     deleteSavingsGoal: deleteSavingsGoalMutation.mutate,

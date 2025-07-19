@@ -132,7 +132,7 @@ export const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 animate-slide-up mb-6 lg:mb-8">
           <StatsCard
             title="Total Balance"
-            value={`$${stats.totalBalance.toLocaleString()}`}
+            value={formatCurrency(stats.totalBalance)}
             change={+12.5}
             icon={DollarSign}
             trend="up"
@@ -140,7 +140,7 @@ export const Dashboard = () => {
           />
           <StatsCard
             title="Monthly Income"
-            value={`$${stats.monthlyIncome.toLocaleString()}`}
+            value={formatCurrency(stats.monthlyIncome)}
             change={+8.2}
             icon={TrendingUp}
             trend="up"
@@ -148,7 +148,7 @@ export const Dashboard = () => {
           />
           <StatsCard
             title="Monthly Expenses"
-            value={`$${stats.monthlyExpenses.toLocaleString()}`}
+            value={formatCurrency(stats.monthlyExpenses)}
             change={-3.1}
             icon={TrendingDown}
             trend="down"

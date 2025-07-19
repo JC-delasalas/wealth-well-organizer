@@ -30,6 +30,7 @@ import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
 import { useFinancialInsights } from '@/hooks/useFinancialInsights';
+import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { FinancialAdvisorService } from '@/services/financialAdvisor';
 import { cn } from '@/lib/utils';
 
@@ -38,6 +39,7 @@ export const InsightsDashboard = () => {
   const { categories } = useCategories();
   const { savingsGoals } = useSavingsGoals();
   const { insights, createInsight, markAsRead, markAllAsRead, deleteInsight, isMarkingAllAsRead, isDeletingInsight, unreadCount } = useFinancialInsights();
+  const { standard: formatCurrency } = useCurrencyFormatter();
 
   const currentSavingsGoal = savingsGoals[0]; // Use first savings goal
 

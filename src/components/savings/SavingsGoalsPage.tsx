@@ -26,7 +26,13 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
  */
 export const SavingsGoalsPage = () => {
   const navigate = useNavigate();
-  const { savingsGoals: goals, isLoading, deleteSavingsGoal, isDeleting } = useSavingsGoals();
+  const {
+    savingsGoals: goals,
+    savingsGoalsWithProgress,
+    isLoading,
+    deleteSavingsGoal,
+    isDeleting
+  } = useSavingsGoals();
   const { standard: formatCurrency } = useCurrencyFormatter();
   const [deletingGoalId, setDeletingGoalId] = useState<string | null>(null);
 

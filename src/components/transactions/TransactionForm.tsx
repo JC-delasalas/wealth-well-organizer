@@ -6,9 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Upload, Loader2, X, Eye } from 'lucide-react';
+import { Plus, Upload, Loader2, X, Eye, Target } from 'lucide-react';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
+import { useSavingsGoals } from '@/hooks/useSavingsGoals';
+import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { Transaction } from '@/types';
 import { ReceiptViewer } from '../receipts/ReceiptViewer';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,10 +26,13 @@ interface TransactionFormProps {
 
 export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultType = 'expense' }: TransactionFormProps) => {
   const [open, setOpen] = useState(false);
+  const { savingsGoals } = useSavingsGoals();
+  const { standard: formatCurrency } = useCurrencyFormatter();
   const [formData, setFormData] = useState({
     amount: transaction?.amount || '',
     type: transaction?.type || defaultType,
     category_id: transaction?.category_id || '',
+    savings_goal_id: transaction?.savings_goal_id || '',
     description: transaction?.description || '',
     date: transaction?.date || new Date().toISOString().split('T')[0],
   });
@@ -171,6 +176,7 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultT
         amount: '',
         type: 'expense',
         category_id: '',
+        savings_goal_id: '',
         description: '',
         date: new Date().toISOString().split('T')[0],
       });
@@ -248,6 +254,40 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultT
               </SelectContent>
             </Select>
           </div>
+
+          {/* Savings Goal Selection - only show for expense transactions with Savings category */}
+          {formData.type === 'expense' && categories.find(cat => cat.id === formData.category_id)?.name === 'Savings' && (
+            <div className="space-y-2">
+              <Label htmlFor="savings_goal_id" className="flex items-center gap-2">
+                <Target className="w-4 h-4" />
+                Savings Goal (Optional)
+              </Label>
+              <Select
+                value={formData.savings_goal_id}
+                onValueChange={(value) => setFormData({ ...formData, savings_goal_id: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a savings goal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No specific goal</SelectItem>
+                  {savingsGoals.map((goal) => (
+                    <SelectItem key={goal.id} value={goal.id}>
+                      <div className="flex items-center justify-between w-full">
+                        <span>{goal.name}</span>
+                        <span className="text-xs text-gray-500 ml-2">
+                          {formatCurrency(goal.current_amount)} / {formatCurrency(goal.target_amount)}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-gray-500">
+                Link this transaction to a specific savings goal to track progress automatically.
+              </p>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>

@@ -8,6 +8,8 @@ export interface Transaction {
   date: string;
   receipt_url?: string;
   receipt_name?: string;
+  savings_goal_id?: string | null;
+  currency?: string;
   created_at?: string;
   updated_at?: string;
   user_id?: string;
@@ -32,6 +34,7 @@ export interface Budget {
   period: 'monthly' | 'weekly' | 'yearly';
   start_date: string;
   end_date?: string;
+  currency?: string;
   created_at?: string;
 }
 
@@ -55,8 +58,27 @@ export interface SavingsGoal {
   savings_percentage_threshold: number;
   salary_date_1: number;
   salary_date_2: number;
+  currency?: string;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface SavingsGoalProgress {
+  id: string;
+  user_id: string;
+  name: string;
+  description?: string;
+  target_amount: number;
+  current_amount: number;
+  target_date: string;
+  currency: string;
+  created_at: string;
+  updated_at: string;
+  progress_percentage: number;
+  remaining_amount: number;
+  days_remaining: number;
+  monthly_savings_needed: number;
+  status: 'completed' | 'overdue' | 'urgent' | 'active';
 }
 
 export interface FinancialInsight {
