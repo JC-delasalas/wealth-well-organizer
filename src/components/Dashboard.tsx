@@ -22,12 +22,14 @@ import { InsightsDashboard } from './insights/InsightsDashboard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
 import { useTransactions } from '@/hooks/useTransactions';
+import { useCurrencyFormatter } from '@/hooks/useCurrency';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const stats = useDashboardStats();
   const { savingsGoals } = useSavingsGoals();
   const { transactions } = useTransactions();
+  const { standard: formatCurrency, compact: formatCompactCurrency } = useCurrencyFormatter();
   const hasSavingsGoal = savingsGoals.length > 0;
 
   // Count transactions with receipts

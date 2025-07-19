@@ -21,15 +21,25 @@ import { useIndividualTax, useTaxCalculations } from '@/hooks/usePhilippineTax';
 import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useToast } from '@/hooks/use-toast';
+import {
+  PeriodSelector,
+  PeriodAwareLabel,
+  getPeriodAwarePlaceholder,
+  getPeriodAwareHelpText,
+  ConversionDisplay,
+  PeriodBadge
+} from './PeriodSelector';
 
 export const IndividualTaxCalculator: React.FC = () => {
-  const { 
-    taxInput, 
-    taxResult, 
-    isCalculating, 
-    calculateTax, 
-    updateInput, 
-    resetCalculation 
+  const {
+    taxInput,
+    taxResult,
+    isCalculating,
+    period,
+    updatePeriod,
+    calculateTax,
+    updateInput,
+    resetCalculation
   } = useIndividualTax();
   
   const { saveCalculation, isSaving } = useTaxCalculations();
@@ -84,6 +94,13 @@ export const IndividualTaxCalculator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Period Selection */}
+      <PeriodSelector
+        period={period}
+        onPeriodChange={updatePeriod}
+        exampleAmount={50000}
+      />
+
       {/* Input Form */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Income Inputs */}
@@ -96,45 +113,95 @@ export const IndividualTaxCalculator: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="grossIncome">Gross Annual Income</Label>
+              <Label htmlFor="grossIncome">
+                <PeriodAwareLabel period={period} baseLabel="Gross Income">
+                  <PeriodBadge period={period} />
+                </PeriodAwareLabel>
+              </Label>
               <Input
                 id="grossIncome"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 50000,
+                  formatCurrency
+                })}
                 value={taxInput.grossAnnualIncome || ''}
                 onChange={(e) => updateInput('grossAnnualIncome', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                Total salary, wages, and other compensation before deductions
+                {getPeriodAwareHelpText(
+                  period,
+                  'Total salary, wages, and other compensation before deductions',
+                  '₱50,000/month',
+                  '₱600,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={taxInput.grossAnnualIncome}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="thirteenthMonth">13th Month Pay & Bonuses</Label>
+              <Label htmlFor="thirteenthMonth">
+                <PeriodAwareLabel period={period} baseLabel="13th Month Pay & Bonuses" />
+              </Label>
               <Input
                 id="thirteenthMonth"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 4167,
+                  formatCurrency
+                })}
                 value={taxInput.thirteenthMonthPay || ''}
                 onChange={(e) => updateInput('thirteenthMonthPay', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                13th month pay and other bonuses (up to ₱90,000 exempt)
+                {getPeriodAwareHelpText(
+                  period,
+                  '13th month pay and other bonuses (up to ₱90,000 annual exempt)',
+                  '₱4,167/month',
+                  '₱50,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={taxInput.thirteenthMonthPay}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="otherBenefits">Other Benefits</Label>
+              <Label htmlFor="otherBenefits">
+                <PeriodAwareLabel period={period} baseLabel="Other Benefits" />
+              </Label>
               <Input
                 id="otherBenefits"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 2000,
+                  formatCurrency
+                })}
                 value={taxInput.otherBenefits || ''}
                 onChange={(e) => updateInput('otherBenefits', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                Other taxable benefits and allowances
+                {getPeriodAwareHelpText(
+                  period,
+                  'Other taxable benefits and allowances',
+                  '₱2,000/month',
+                  '₱24,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={taxInput.otherBenefits}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="space-y-2">
@@ -183,32 +250,64 @@ export const IndividualTaxCalculator: React.FC = () => {
 
             {taxInput.deductionType === 'itemized' && (
               <div className="space-y-2">
-                <Label htmlFor="itemizedDeductions">Itemized Deductions</Label>
+                <Label htmlFor="itemizedDeductions">
+                  <PeriodAwareLabel period={period} baseLabel="Itemized Deductions" />
+                </Label>
                 <Input
                   id="itemizedDeductions"
                   type="number"
-                  placeholder="0.00"
+                  placeholder={getPeriodAwarePlaceholder({
+                    period,
+                    baseAmount: 10000,
+                    formatCurrency
+                  })}
                   value={taxInput.itemizedDeductions || ''}
                   onChange={(e) => updateInput('itemizedDeductions', parseFloat(e.target.value) || 0)}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Total allowable itemized deductions
+                  {getPeriodAwareHelpText(
+                    period,
+                    'Total allowable itemized deductions',
+                    '₱10,000/month',
+                    '₱120,000/year'
+                  )}
                 </p>
+                <ConversionDisplay
+                  period={period}
+                  amount={taxInput.itemizedDeductions || 0}
+                  formatCurrency={formatCurrency}
+                />
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="withholdingTax">Withholding Tax Paid</Label>
+              <Label htmlFor="withholdingTax">
+                <PeriodAwareLabel period={period} baseLabel="Withholding Tax Paid" />
+              </Label>
               <Input
                 id="withholdingTax"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 3000,
+                  formatCurrency
+                })}
                 value={taxInput.withholdingTax || ''}
                 onChange={(e) => updateInput('withholdingTax', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                Total tax withheld by your employer during the year
+                {getPeriodAwareHelpText(
+                  period,
+                  'Total tax withheld by your employer',
+                  '₱3,000/month',
+                  '₱36,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={taxInput.withholdingTax || 0}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="pt-4">
@@ -370,50 +469,70 @@ export const IndividualTaxCalculator: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="p-4 h-auto flex-col items-start"
               onClick={() => {
-                updateInput('grossAnnualIncome', 300000);
-                updateInput('thirteenthMonthPay', 25000);
+                const grossIncome = period === 'monthly' ? 25000 : 300000;
+                const thirteenthMonth = period === 'monthly' ? 2083 : 25000;
+                updateInput('grossAnnualIncome', grossIncome);
+                updateInput('thirteenthMonthPay', thirteenthMonth);
                 updateInput('otherBenefits', 0);
                 updateInput('deductionType', 'standard');
                 updateInput('withholdingTax', 0);
               }}
             >
               <div className="font-medium">Minimum Wage Earner</div>
-              <div className="text-sm text-muted-foreground">₱300,000 annual income</div>
+              <div className="text-sm text-muted-foreground">
+                {period === 'monthly' ? '₱25,000/month' : '₱300,000/year'}
+              </div>
+              <PeriodBadge period={period} className="mt-1" />
             </Button>
             
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="p-4 h-auto flex-col items-start"
               onClick={() => {
-                updateInput('grossAnnualIncome', 600000);
-                updateInput('thirteenthMonthPay', 50000);
-                updateInput('otherBenefits', 20000);
+                const grossIncome = period === 'monthly' ? 50000 : 600000;
+                const thirteenthMonth = period === 'monthly' ? 4167 : 50000;
+                const otherBenefits = period === 'monthly' ? 1667 : 20000;
+                const withholdingTax = period === 'monthly' ? 3750 : 45000;
+                updateInput('grossAnnualIncome', grossIncome);
+                updateInput('thirteenthMonthPay', thirteenthMonth);
+                updateInput('otherBenefits', otherBenefits);
                 updateInput('deductionType', 'standard');
-                updateInput('withholdingTax', 45000);
+                updateInput('withholdingTax', withholdingTax);
               }}
             >
               <div className="font-medium">Middle Class Professional</div>
-              <div className="text-sm text-muted-foreground">₱600,000 annual income</div>
+              <div className="text-sm text-muted-foreground">
+                {period === 'monthly' ? '₱50,000/month' : '₱600,000/year'}
+              </div>
+              <PeriodBadge period={period} className="mt-1" />
             </Button>
             
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="p-4 h-auto flex-col items-start"
               onClick={() => {
-                updateInput('grossAnnualIncome', 1200000);
-                updateInput('thirteenthMonthPay', 90000);
-                updateInput('otherBenefits', 50000);
+                const grossIncome = period === 'monthly' ? 100000 : 1200000;
+                const thirteenthMonth = period === 'monthly' ? 7500 : 90000;
+                const otherBenefits = period === 'monthly' ? 4167 : 50000;
+                const itemizedDeductions = period === 'monthly' ? 12500 : 150000;
+                const withholdingTax = period === 'monthly' ? 15000 : 180000;
+                updateInput('grossAnnualIncome', grossIncome);
+                updateInput('thirteenthMonthPay', thirteenthMonth);
+                updateInput('otherBenefits', otherBenefits);
                 updateInput('deductionType', 'itemized');
-                updateInput('itemizedDeductions', 150000);
-                updateInput('withholdingTax', 180000);
+                updateInput('itemizedDeductions', itemizedDeductions);
+                updateInput('withholdingTax', withholdingTax);
               }}
             >
               <div className="font-medium">High Income Individual</div>
-              <div className="text-sm text-muted-foreground">₱1,200,000 annual income</div>
+              <div className="text-sm text-muted-foreground">
+                {period === 'monthly' ? '₱100,000/month' : '₱1,200,000/year'}
+              </div>
+              <PeriodBadge period={period} className="mt-1" />
             </Button>
           </div>
         </CardContent>

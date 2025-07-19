@@ -23,15 +23,25 @@ import { useBusinessTax, useTaxCalculations } from '@/hooks/usePhilippineTax';
 import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useToast } from '@/hooks/use-toast';
+import {
+  PeriodSelector,
+  PeriodAwareLabel,
+  getPeriodAwarePlaceholder,
+  getPeriodAwareHelpText,
+  ConversionDisplay,
+  PeriodBadge
+} from './PeriodSelector';
 
 export const BusinessTaxCalculator: React.FC = () => {
-  const { 
-    businessInput, 
-    businessResult, 
-    isCalculating, 
-    calculateTax, 
-    updateInput, 
-    resetCalculation 
+  const {
+    businessInput,
+    businessResult,
+    isCalculating,
+    period,
+    updatePeriod,
+    calculateTax,
+    updateInput,
+    resetCalculation
   } = useBusinessTax();
   
   const { saveCalculation, isSaving } = useTaxCalculations();
@@ -84,6 +94,13 @@ export const BusinessTaxCalculator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Period Selection */}
+      <PeriodSelector
+        period={period}
+        onPeriodChange={updatePeriod}
+        exampleAmount={100000}
+      />
+
       {/* Input Form */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Business Information */}
@@ -115,31 +132,65 @@ export const BusinessTaxCalculator: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="grossReceipts">Gross Receipts/Sales</Label>
+              <Label htmlFor="grossReceipts">
+                <PeriodAwareLabel period={period} baseLabel="Gross Receipts/Sales">
+                  <PeriodBadge period={period} />
+                </PeriodAwareLabel>
+              </Label>
               <Input
                 id="grossReceipts"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 100000,
+                  formatCurrency
+                })}
                 value={businessInput.grossReceipts || ''}
                 onChange={(e) => updateInput('grossReceipts', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                Total gross receipts or sales for the year
+                {getPeriodAwareHelpText(
+                  period,
+                  'Total gross receipts or sales',
+                  '₱100,000/month',
+                  '₱1,200,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={businessInput.grossReceipts}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="totalDeductions">Total Deductions</Label>
+              <Label htmlFor="totalDeductions">
+                <PeriodAwareLabel period={period} baseLabel="Total Deductions" />
+              </Label>
               <Input
                 id="totalDeductions"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 60000,
+                  formatCurrency
+                })}
                 value={businessInput.totalDeductions || ''}
                 onChange={(e) => updateInput('totalDeductions', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                Total allowable business deductions and expenses
+                {getPeriodAwareHelpText(
+                  period,
+                  'Total allowable business deductions and expenses',
+                  '₱60,000/month',
+                  '₱720,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={businessInput.totalDeductions}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="space-y-2">

@@ -22,13 +22,23 @@ import { useWithholdingTax, useTaxCalculations } from '@/hooks/usePhilippineTax'
 import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useToast } from '@/hooks/use-toast';
+import {
+  PeriodSelector,
+  PeriodAwareLabel,
+  getPeriodAwarePlaceholder,
+  getPeriodAwareHelpText,
+  ConversionDisplay,
+  PeriodBadge
+} from './PeriodSelector';
 
 export const WithholdingTaxCalculator: React.FC = () => {
-  const { 
-    withholdingInput, 
-    withholdingResult, 
-    calculateTax, 
-    updateInput 
+  const {
+    withholdingInput,
+    withholdingResult,
+    period,
+    updatePeriod,
+    calculateTax,
+    updateInput
   } = useWithholdingTax();
   
   const { saveCalculation, isSaving } = useTaxCalculations();
@@ -102,6 +112,13 @@ export const WithholdingTaxCalculator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Period Selection */}
+      <PeriodSelector
+        period={period}
+        onPeriodChange={updatePeriod}
+        exampleAmount={50000}
+      />
+
       {/* Input Form */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Income Information */}
@@ -114,17 +131,35 @@ export const WithholdingTaxCalculator: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="amount">Income Amount</Label>
+              <Label htmlFor="amount">
+                <PeriodAwareLabel period={period} baseLabel="Income Amount">
+                  <PeriodBadge period={period} />
+                </PeriodAwareLabel>
+              </Label>
               <Input
                 id="amount"
                 type="number"
-                placeholder="0.00"
+                placeholder={getPeriodAwarePlaceholder({
+                  period,
+                  baseAmount: 50000,
+                  formatCurrency
+                })}
                 value={withholdingInput.amount || ''}
                 onChange={(e) => updateInput('amount', parseFloat(e.target.value) || 0)}
               />
               <p className="text-xs text-muted-foreground">
-                Gross amount before withholding tax
+                {getPeriodAwareHelpText(
+                  period,
+                  'Gross amount before withholding tax',
+                  '₱50,000/month',
+                  '₱600,000/year'
+                )}
               </p>
+              <ConversionDisplay
+                period={period}
+                amount={withholdingInput.amount}
+                formatCurrency={formatCurrency}
+              />
             </div>
 
             <div className="space-y-2">
