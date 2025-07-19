@@ -58,18 +58,27 @@ export const useSavingsGoals = () => {
       }
 
       // Ensure proper data types and handle null/undefined values
-      const goalData = {
-        ...goal,
+      const goalData: any = {
         user_id: user.id,
-        name: goal.name.trim(),
-        description: goal.description?.trim() || null,
         target_amount: Number(goal.target_amount),
         current_amount: Number(goal.current_amount || 0),
-        target_date: goal.target_date,
         savings_percentage_threshold: Number(goal.savings_percentage_threshold || 20),
         salary_date_1: Number(goal.salary_date_1 || 15),
         salary_date_2: Number(goal.salary_date_2 || 30),
       };
+
+      // Only add fields that exist in the database schema
+      if (goal.name) {
+        goalData.name = goal.name.trim();
+      }
+
+      if (goal.description !== undefined) {
+        goalData.description = goal.description?.trim() || null;
+      }
+
+      if (goal.target_date) {
+        goalData.target_date = goal.target_date;
+      }
 
       console.log('Creating savings goal with data:', goalData);
 

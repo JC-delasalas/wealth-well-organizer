@@ -58,8 +58,18 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
     try {
       // Extract file path from the public URL
       const url = new URL(transaction.receipt_url!);
-      const pathParts = url.pathname.split('/');
-      const filePath = pathParts.slice(-2).join('/'); // user_id/filename
+      let filePath = '';
+
+      // Handle different URL formats from Supabase storage
+      if (url.pathname.includes('/storage/v1/object/public/receipts/')) {
+        // Format: /storage/v1/object/public/receipts/user_id/filename
+        const pathAfterReceipts = url.pathname.split('/storage/v1/object/public/receipts/')[1];
+        filePath = pathAfterReceipts;
+      } else {
+        // Fallback: assume last two parts are user_id/filename
+        const pathParts = url.pathname.split('/').filter(part => part.length > 0);
+        filePath = pathParts.slice(-2).join('/');
+      }
 
       console.log('Getting signed URL for:', filePath);
 
@@ -140,8 +150,18 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
 
       // Extract file path from the public URL to use with authenticated download
       const url = new URL(transaction.receipt_url!);
-      const pathParts = url.pathname.split('/');
-      const filePath = pathParts.slice(-2).join('/'); // user_id/filename
+      let filePath = '';
+
+      // Handle different URL formats from Supabase storage
+      if (url.pathname.includes('/storage/v1/object/public/receipts/')) {
+        // Format: /storage/v1/object/public/receipts/user_id/filename
+        const pathAfterReceipts = url.pathname.split('/storage/v1/object/public/receipts/')[1];
+        filePath = pathAfterReceipts;
+      } else {
+        // Fallback: assume last two parts are user_id/filename
+        const pathParts = url.pathname.split('/').filter(part => part.length > 0);
+        filePath = pathParts.slice(-2).join('/');
+      }
 
       console.log('Extracted file path:', filePath);
 
@@ -206,8 +226,18 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
     try {
       // Extract file path from URL
       const url = new URL(transaction.receipt_url!);
-      const pathParts = url.pathname.split('/');
-      const filePath = pathParts.slice(-2).join('/'); // user_id/filename
+      let filePath = '';
+
+      // Handle different URL formats from Supabase storage
+      if (url.pathname.includes('/storage/v1/object/public/receipts/')) {
+        // Format: /storage/v1/object/public/receipts/user_id/filename
+        const pathAfterReceipts = url.pathname.split('/storage/v1/object/public/receipts/')[1];
+        filePath = pathAfterReceipts;
+      } else {
+        // Fallback: assume last two parts are user_id/filename
+        const pathParts = url.pathname.split('/').filter(part => part.length > 0);
+        filePath = pathParts.slice(-2).join('/');
+      }
 
       // Delete from storage
       const { error: storageError } = await supabase.storage
