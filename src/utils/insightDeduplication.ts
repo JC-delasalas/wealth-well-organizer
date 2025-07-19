@@ -131,6 +131,23 @@ export const checkForDuplicateInsight = async (
 
   } catch (error) {
     console.error('Error in duplicate check:', error);
+
+    // Log specific error details for debugging
+    if (error && typeof error === 'object') {
+      const dbError = error as any;
+      if (dbError.code === '42703') {
+        console.error('Database column missing - content_hash field may not exist');
+      } else if (dbError.code === '42P01') {
+        console.error('Database table missing - financial_insights table may not exist');
+      } else {
+        console.error('Database error details:', {
+          code: dbError.code,
+          message: dbError.message,
+          details: dbError.details
+        });
+      }
+    }
+
     // In case of error, assume not duplicate to avoid blocking insight generation
     return {
       is_duplicate: false,
@@ -323,29 +340,46 @@ export const createInsightWithDeduplication = async (
     const normalizedContent = normalizeInsightContent(insight);
     const contentHash = await generateContentHash(normalizedContent);
 
-    // Create the insight
+    // Create the insight with fallback for missing columns
+    const insertData: any = {
+      user_id: userId,
+      insight_type: insight.insight_type,
+      title: insight.title,
+      content: insight.content,
+      priority: insight.priority || 'medium',
+      period_start: insight.period_start || null,
+      period_end: insight.period_end || null,
+      is_read: false
+    };
+
+    // Only add enhanced fields if they might exist
+    try {
+      insertData.content_hash = contentHash;
+      insertData.generation_trigger = insight.generation_trigger || 'manual';
+    } catch (error) {
+      console.warn('Enhanced insight fields not available, using basic fields only');
+    }
+
     const { data, error } = await supabase
       .from('financial_insights')
-      .insert([{
-        user_id: userId,
-        insight_type: insight.insight_type,
-        title: insight.title,
-        content: insight.content,
-        priority: insight.priority || 'medium',
-        period_start: insight.period_start || null,
-        period_end: insight.period_end || null,
-        content_hash: contentHash,
-        generation_trigger: insight.generation_trigger || 'manual',
-        is_read: false
-      }])
+      .insert([insertData])
       .select()
       .single();
 
     if (error) {
       console.error('Error creating insight:', error);
+
+      // Provide specific error messages
+      let errorMessage = error.message;
+      if (error.code === '42703') {
+        errorMessage = 'Database schema mismatch - some insight features may not be available';
+      } else if (error.code === '42P01') {
+        errorMessage = 'Financial insights table not found - please contact support';
+      }
+
       return {
         success: false,
-        error: error.message
+        error: errorMessage
       };
     }
 

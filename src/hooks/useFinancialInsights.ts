@@ -69,7 +69,24 @@ export const useFinancialInsights = () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
     },
     onError: (error: DatabaseError) => {
-      console.error('Error creating insight');
+      console.error('Error creating insight:', error);
+
+      // Provide specific error messages
+      let errorMessage = "Failed to create insight. Please try again.";
+
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.code === '42703') {
+        errorMessage = "Database schema issue detected. Some features may not be available.";
+      } else if (error.code === '42P01') {
+        errorMessage = "Required database tables are missing. Please contact support.";
+      }
+
+      toast({
+        title: "Error creating insight",
+        description: errorMessage,
+        variant: "destructive",
+      });
     },
   });
 

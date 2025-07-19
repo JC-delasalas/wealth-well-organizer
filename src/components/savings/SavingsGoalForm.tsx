@@ -35,43 +35,81 @@ export const SavingsGoalForm = ({ trigger, goal, isEdit = false }: SavingsGoalFo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form data before submission
+    // Comprehensive form validation
+    const validationErrors: string[] = [];
+
+    // Name validation
     if (!formData.name.trim()) {
-      toast({
-        title: "Validation Error",
-        description: "Goal name is required.",
-        variant: "destructive",
-      });
-      return;
+      validationErrors.push("Goal name is required.");
+    } else if (formData.name.trim().length > 100) {
+      validationErrors.push("Goal name must be 100 characters or less.");
     }
 
-    if (!formData.target_amount || parseFloat(formData.target_amount) <= 0) {
-      toast({
-        title: "Validation Error",
-        description: "Target amount must be greater than 0.",
-        variant: "destructive",
-      });
-      return;
+    // Target amount validation
+    const targetAmount = parseFloat(formData.target_amount);
+    if (!formData.target_amount || isNaN(targetAmount) || targetAmount <= 0) {
+      validationErrors.push("Target amount must be greater than 0.");
+    } else if (targetAmount > 1000000) {
+      validationErrors.push("Target amount cannot exceed $1,000,000.");
     }
 
+    // Current amount validation
+    const currentAmount = parseFloat(formData.current_amount || '0');
+    if (isNaN(currentAmount) || currentAmount < 0) {
+      validationErrors.push("Current amount cannot be negative.");
+    } else if (currentAmount > targetAmount) {
+      validationErrors.push("Current amount cannot exceed target amount.");
+    }
+
+    // Target date validation
     if (!formData.target_date) {
-      toast({
-        title: "Validation Error",
-        description: "Target date is required.",
-        variant: "destructive",
-      });
-      return;
+      validationErrors.push("Target date is required.");
+    } else {
+      const targetDate = new Date(formData.target_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      targetDate.setHours(0, 0, 0, 0);
+
+      if (targetDate <= today) {
+        validationErrors.push("Target date must be in the future.");
+      }
+
+      // Check if date is too far in the future (more than 50 years)
+      const maxDate = new Date();
+      maxDate.setFullYear(maxDate.getFullYear() + 50);
+      if (targetDate > maxDate) {
+        validationErrors.push("Target date cannot be more than 50 years in the future.");
+      }
     }
 
-    // Validate target date is in the future
-    const targetDate = new Date(formData.target_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Savings percentage threshold validation
+    const threshold = parseFloat(formData.savings_percentage_threshold);
+    if (isNaN(threshold) || threshold < 0 || threshold > 100) {
+      validationErrors.push("Savings percentage threshold must be between 0 and 100.");
+    }
 
-    if (targetDate <= today) {
+    // Salary dates validation
+    const salaryDate1 = parseInt(formData.salary_date_1);
+    const salaryDate2 = parseInt(formData.salary_date_2);
+
+    if (isNaN(salaryDate1) || salaryDate1 < 1 || salaryDate1 > 31) {
+      validationErrors.push("First salary date must be between 1 and 31.");
+    }
+
+    if (isNaN(salaryDate2) || salaryDate2 < 1 || salaryDate2 > 31) {
+      validationErrors.push("Second salary date must be between 1 and 31.");
+    }
+
+    // Description validation (optional but limited)
+    if (formData.description && formData.description.length > 500) {
+      validationErrors.push("Description must be 500 characters or less.");
+    }
+
+    // Show validation errors if any
+    if (validationErrors.length > 0) {
       toast({
         title: "Validation Error",
-        description: "Target date must be in the future.",
+        description: validationErrors.join(" "),
         variant: "destructive",
       });
       return;
@@ -186,8 +224,13 @@ export const SavingsGoalForm = ({ trigger, goal, isEdit = false }: SavingsGoalFo
               type="date"
               value={formData.target_date}
               onChange={(e) => setFormData({ ...formData, target_date: e.target.value })}
+              min={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]} // Tomorrow
+              max={new Date(Date.now() + 50 * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]} // 50 years from now
               required
             />
+            <p className="text-sm text-gray-500">
+              Target date must be in the future
+            </p>
           </div>
 
           <div className="space-y-2">

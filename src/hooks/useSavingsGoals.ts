@@ -57,6 +57,23 @@ export const useSavingsGoals = () => {
         throw new Error('Target date is required');
       }
 
+      // Validate target date is in the future
+      const targetDate = new Date(goal.target_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      targetDate.setHours(0, 0, 0, 0);
+
+      if (targetDate <= today) {
+        throw new Error('Target date must be in the future');
+      }
+
+      // Validate target date is not too far in the future
+      const maxDate = new Date();
+      maxDate.setFullYear(maxDate.getFullYear() + 50);
+      if (targetDate > maxDate) {
+        throw new Error('Target date cannot be more than 50 years in the future');
+      }
+
       // Ensure proper data types and handle null/undefined values
       const goalData: any = {
         user_id: user.id,
@@ -103,9 +120,25 @@ export const useSavingsGoals = () => {
     },
     onError: (error: DatabaseError) => {
       console.error('Create savings goal mutation error:', error);
+
+      // Provide specific error messages based on error type
+      let errorMessage = "Failed to create savings goal. Please try again.";
+
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.code === '23505') {
+        errorMessage = "A savings goal with this name already exists.";
+      } else if (error.code === '23514') {
+        errorMessage = "Invalid data provided. Please check your input values.";
+      } else if (error.code === '42703') {
+        errorMessage = "Database schema issue. Please contact support.";
+      } else if (error.details) {
+        errorMessage = error.details;
+      }
+
       toast({
         title: "Error creating savings goal",
-        description: error.message || "Failed to create savings goal. Please check your input and try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     },
