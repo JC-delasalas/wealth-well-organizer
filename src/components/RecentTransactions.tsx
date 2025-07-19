@@ -2,6 +2,7 @@
 import React from 'react';
 import { Transaction } from '@/types';
 import { useCategories } from '@/hooks/useCategories';
+import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +12,7 @@ interface RecentTransactionsProps {
 
 export const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transactions }) => {
   const { categories } = useCategories();
+  const { standard: formatCurrency } = useCurrencyFormatter();
 
   const getCategoryInfo = (categoryId: string | null) => {
     return categories.find(cat => cat.id === categoryId) || {
@@ -76,7 +78,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transact
                 "font-semibold text-xs sm:text-sm",
                 isIncome ? "text-green-600" : "text-red-600"
               )}>
-                {isIncome ? '+' : '-'}${transaction.amount.toLocaleString()}
+                {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
               </p>
             </div>
           </div>

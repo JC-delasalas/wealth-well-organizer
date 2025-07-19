@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { useSavingsGoals } from '@/hooks/useSavingsGoals';
+import { useCurrencyFormatter } from '@/hooks/useCurrency';
 import { SavingsGoalForm } from './SavingsGoalForm';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
@@ -26,6 +27,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 export const SavingsGoalsPage = () => {
   const navigate = useNavigate();
   const { savingsGoals: goals, isLoading, deleteSavingsGoal, isDeleting } = useSavingsGoals();
+  const { standard: formatCurrency } = useCurrencyFormatter();
   const [deletingGoalId, setDeletingGoalId] = useState<string | null>(null);
 
   if (isLoading) {
@@ -38,12 +40,7 @@ export const SavingsGoalsPage = () => {
 
 
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
