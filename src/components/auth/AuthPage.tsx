@@ -141,7 +141,7 @@ export const AuthPage = () => {
                 { icon: Shield, title: "Secure", desc: "Bank-level security and data protection" }
               ].map((feature, index) => (
                 <div key={index} className="glass-card rounded-xl p-4 hover:glass-card-green transition-all duration-300 group">
-                  <feature.icon className="w-6 h-6 text-finance-green-400 mb-2 group-hover:text-finance-green-300 transition-colors" />
+                  <feature.icon className="w-6 h-6 mb-2 group-hover:text-finance-green-300 transition-colors" style={{ color: '#4ade80' }} />
                   <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
                   <p className="text-xs text-white/80">{feature.desc}</p>
                 </div>
@@ -181,13 +181,13 @@ export const AuthPage = () => {
                   <TabsList className="grid w-full grid-cols-2 glass-card">
                     <TabsTrigger
                       value="signup"
-                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-white transition-all duration-300"
+                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-finance-gray-700 text-finance-gray-600 transition-all duration-300"
                     >
                       Sign Up
                     </TabsTrigger>
                     <TabsTrigger
                       value="signin"
-                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-white transition-all duration-300"
+                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-finance-gray-700 text-finance-gray-600 transition-all duration-300"
                     >
                       Sign In
                     </TabsTrigger>
