@@ -48,22 +48,22 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium opacity-80 mb-1 truncate">{title}</p>
-            <p className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 truncate">{value}</p>
+            <p className="text-xs sm:text-sm font-medium text-white/80 mb-1 truncate">{title}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 truncate text-white">{value}</p>
             <div className="flex items-center text-xs sm:text-sm">
-              <TrendIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
+              <TrendIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0 text-white/70" />
               <span className={cn(
                 "font-medium",
-                isPositive ? "text-green-300" : "text-red-300"
+                isPositive ? "text-finance-green-300" : "text-red-300"
               )}>
                 {isPositive ? '+' : ''}{change}%
               </span>
-              <span className="opacity-60 ml-1 hidden sm:inline">vs last month</span>
-              <span className="opacity-60 ml-1 sm:hidden">vs last</span>
+              <span className="text-white/60 ml-1 hidden sm:inline">vs last month</span>
+              <span className="text-white/60 ml-1 sm:hidden">vs last</span>
             </div>
           </div>
-          <div className="p-2 sm:p-3 rounded-full bg-white/20 backdrop-blur-sm flex-shrink-0 ml-2">
-            <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+          <div className="p-2 sm:p-3 rounded-full bg-finance-green-500/20 backdrop-blur-sm flex-shrink-0 ml-2">
+            <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-finance-green-400" />
           </div>
         </div>
       </CardContent>

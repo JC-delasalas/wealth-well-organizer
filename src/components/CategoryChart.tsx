@@ -19,16 +19,16 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white p-3 rounded-lg shadow-lg border">
-          <p className="font-medium text-gray-900">{data.category}</p>
-          <p className="text-sm text-gray-600">
-            Amount: <span className="font-semibold">${data.amount.toLocaleString()}</span>
+        <div className="glass-card p-3 rounded-lg shadow-lg border border-finance-gray-600/30">
+          <p className="font-medium text-white">{data.category}</p>
+          <p className="text-sm text-finance-gray-300">
+            Amount: <span className="font-semibold text-finance-green-400">${data.amount.toLocaleString()}</span>
           </p>
-          <p className="text-sm text-gray-600">
-            Percentage: <span className="font-semibold">{data.percentage}%</span>
+          <p className="text-sm text-finance-gray-300">
+            Percentage: <span className="font-semibold text-finance-green-400">{data.percentage}%</span>
           </p>
-          <p className="text-sm text-gray-600">
-            Transactions: <span className="font-semibold">{data.count}</span>
+          <p className="text-sm text-finance-gray-300">
+            Transactions: <span className="font-semibold text-finance-green-400">{data.count}</span>
           </p>
         </div>
       );
@@ -41,11 +41,11 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
       <div className="flex flex-wrap gap-3 mt-4 justify-center">
         {payload?.map((entry, index) => (
           <div key={index} className="flex items-center gap-2">
-            <div 
+            <div
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-sm text-gray-600 font-medium">
+            <span className="text-sm text-white font-medium">
               {entry.value}
             </span>
           </div>
