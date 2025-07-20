@@ -23,15 +23,15 @@ export const Dashboard = () => {
   const { standard: formatCurrency } = useCurrencyFormatter();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-finance-gray-900 via-finance-gray-800 to-finance-gray-900">
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Header */}
         <div className="mb-6 lg:mb-8">
           <div className="animate-fade-in">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-              Financial <span className="text-finance-green-400">Dashboard</span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+              Financial <span className="text-finance-green-600">Dashboard</span>
             </h1>
-            <p className="text-finance-gray-300 mt-1 text-sm sm:text-base">
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">
               Welcome back! Here's your comprehensive financial overview.
             </p>
           </div>
@@ -45,7 +45,7 @@ export const Dashboard = () => {
             change={+12.5}
             icon={DollarSign}
             trend="up"
-            className="glass-card-green border-finance-green-500/30"
+            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
           />
           <StatsCard
             title="Monthly Income"
@@ -53,7 +53,7 @@ export const Dashboard = () => {
             change={+8.2}
             icon={TrendingUp}
             trend="up"
-            className="glass-card border-finance-green-400/20"
+            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
           />
           <StatsCard
             title="Monthly Expenses"
@@ -61,7 +61,7 @@ export const Dashboard = () => {
             change={-3.1}
             icon={TrendingDown}
             trend="down"
-            className="glass-card border-finance-gray-600/30"
+            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
           />
           <StatsCard
             title="Transactions"
@@ -69,7 +69,7 @@ export const Dashboard = () => {
             change={+15.3}
             icon={Receipt}
             trend="up"
-            className="glass-card border-finance-gray-600/30"
+            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
           />
         </div>
 
@@ -81,11 +81,11 @@ export const Dashboard = () => {
         {/* Financial Analytics and Activity */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           {/* Category Breakdown */}
-          <Card className="xl:col-span-2 glass-card border-finance-gray-600/30 hover:border-finance-green-500/40 transition-all duration-200">
+          <Card className="xl:col-span-2 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
             <CardHeader className="pb-3">
-              <CardTitle className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-                <TrendingDown className="w-5 h-5 text-finance-green-400" />
-                Expense <span className="text-finance-green-400">Categories</span>
+              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <TrendingDown className="w-5 h-5 text-finance-green-600" />
+                Expense <span className="text-finance-green-600">Categories</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -94,11 +94,11 @@ export const Dashboard = () => {
                   <CategoryChart data={stats.topCategories} />
                 </div>
               ) : (
-                <div className="h-64 sm:h-72 lg:h-80 flex items-center justify-center text-finance-gray-400">
+                <div className="h-64 sm:h-72 lg:h-80 flex items-center justify-center text-gray-500">
                   <div className="text-center">
-                    <Receipt className="w-12 h-12 mx-auto mb-4 text-finance-gray-500" />
-                    <p className="text-sm sm:text-base text-white">No expense data available for this month</p>
-                    <p className="text-xs sm:text-sm text-finance-gray-400 mt-1">Add some expenses to see the breakdown</p>
+                    <Receipt className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                    <p className="text-sm sm:text-base text-gray-900">No expense data available for this month</p>
+                    <p className="text-xs sm:text-sm text-gray-500 mt-1">Add some expenses to see the breakdown</p>
                   </div>
                 </div>
               )}
@@ -106,16 +106,16 @@ export const Dashboard = () => {
           </Card>
 
           {/* Recent Transactions */}
-          <Card className="glass-card border-finance-gray-600/30 hover:border-finance-green-500/40 transition-all duration-200">
+          <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-lg sm:text-xl font-semibold text-white flex items-center gap-2">
-                <Receipt className="w-5 h-5 text-finance-green-400" />
-                Recent <span className="text-finance-green-400">Activity</span>
+              <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <Receipt className="w-5 h-5 text-finance-green-600" />
+                Recent <span className="text-finance-green-600">Activity</span>
               </CardTitle>
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-finance-green-400 hover:text-finance-green-300 hover:bg-finance-green-500/10 text-xs sm:text-sm transition-colors"
+                className="text-finance-green-600 hover:text-finance-green-700 hover:bg-finance-green-50 text-xs sm:text-sm transition-colors"
                 onClick={() => navigate('/transactions')}
               >
                 <span className="hidden sm:inline">View All</span>

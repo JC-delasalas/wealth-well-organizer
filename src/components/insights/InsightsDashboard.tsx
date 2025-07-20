@@ -112,16 +112,16 @@ export const InsightsDashboard = () => {
     <div className="space-y-6">
       {/* Savings Threshold Alert */}
       {thresholdCheck?.belowThreshold && (
-        <Alert className="border-red-400/30 bg-red-500/10 glass-card">
-          <AlertTriangle className="h-4 w-4 text-red-400" />
-          <AlertDescription className="text-white">
-            <div className="font-semibold mb-2 text-red-300">Savings Alert: Below {currentSavingsGoal?.savings_percentage_threshold}% Target</div>
+        <Alert className="border-red-300 bg-red-50 border">
+          <AlertTriangle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-gray-900">
+            <div className="font-semibold mb-2 text-red-700">Savings Alert: Below {currentSavingsGoal?.savings_percentage_threshold}% Target</div>
             <div className="space-y-1 text-sm">
-              <p>Current savings rate: <span className="text-finance-green-400">{thresholdCheck.currentRate.toFixed(1)}%</span></p>
-              <p>Days until next salary: <span className="text-finance-green-400">{thresholdCheck.daysUntilSalary}</span></p>
+              <p>Current savings rate: <span className="text-finance-green-600">{thresholdCheck.currentRate.toFixed(1)}%</span></p>
+              <p>Days until next salary: <span className="text-finance-green-600">{thresholdCheck.daysUntilSalary}</span></p>
               <div className="mt-3">
-                <p className="font-medium mb-1 text-white">Recommendations:</p>
-                <ul className="list-disc list-inside space-y-1 text-finance-gray-300">
+                <p className="font-medium mb-1 text-gray-900">Recommendations:</p>
+                <ul className="list-disc list-inside space-y-1 text-gray-700">
                   {thresholdCheck.recommendations.slice(0, 3).map((rec, index) => (
                     <li key={index}>{rec}</li>
                   ))}
@@ -134,32 +134,32 @@ export const InsightsDashboard = () => {
 
       {/* Savings Overview */}
       {currentSavingsGoal && (
-        <Card className="glass-card border-finance-gray-600/30">
+        <Card className="bg-white border border-gray-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <Target className="w-5 h-5 text-finance-green-400" />
-              Savings Goal <span className="text-finance-green-400">Progress</span>
+            <CardTitle className="flex items-center gap-2 text-gray-900">
+              <Target className="w-5 h-5 text-finance-green-600" />
+              Savings Goal <span className="text-finance-green-600">Progress</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-finance-green-400">
+                <div className="text-2xl font-bold text-finance-green-600">
                   {thresholdCheck?.currentRate.toFixed(1)}%
                 </div>
-                <div className="text-sm text-finance-gray-300">Current Rate</div>
+                <div className="text-sm text-gray-600">Current Rate</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">
+                <div className="text-2xl font-bold text-gray-900">
                   {currentSavingsGoal.savings_percentage_threshold}%
                 </div>
-                <div className="text-sm text-finance-gray-300">Target Rate</div>
+                <div className="text-sm text-gray-600">Target Rate</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-finance-green-400">
+                <div className="text-2xl font-bold text-finance-green-600">
                   {thresholdCheck?.daysUntilSalary}
                 </div>
-                <div className="text-sm text-finance-gray-300">Days to Salary</div>
+                <div className="text-sm text-gray-600">Days to Salary</div>
               </div>
             </div>
           </CardContent>
@@ -167,14 +167,14 @@ export const InsightsDashboard = () => {
       )}
 
       {/* Financial Insights */}
-      <Card className="glass-card border-finance-gray-600/30">
+      <Card className="bg-white border border-gray-200 shadow-sm">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-white">
-              <Lightbulb className="w-5 h-5 text-finance-green-400" />
-              Financial <span className="text-finance-green-400">Insights</span>
+            <CardTitle className="flex items-center gap-2 text-gray-900">
+              <Lightbulb className="w-5 h-5 text-finance-green-600" />
+              Financial <span className="text-finance-green-600">Insights</span>
               {unreadCount > 0 && (
-                <Badge variant="destructive" className="bg-finance-green-500 text-white">{unreadCount} new</Badge>
+                <Badge variant="destructive" className="bg-finance-green-600 text-white">{unreadCount} new</Badge>
               )}
             </CardTitle>
 
@@ -215,10 +215,10 @@ export const InsightsDashboard = () => {
         </CardHeader>
         <CardContent>
           {insights.length === 0 ? (
-            <div className="text-center py-8 text-finance-gray-400">
-              <Lightbulb className="w-12 h-12 mx-auto mb-3 opacity-50 text-finance-gray-500" />
-              <p className="text-white">No insights available yet</p>
-              <p className="text-sm text-finance-gray-400">Add more transactions to get personalized recommendations</p>
+            <div className="text-center py-8 text-gray-500">
+              <Lightbulb className="w-12 h-12 mx-auto mb-3 opacity-50 text-gray-400" />
+              <p className="text-gray-900">No insights available yet</p>
+              <p className="text-sm text-gray-500">Add more transactions to get personalized recommendations</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -228,8 +228,8 @@ export const InsightsDashboard = () => {
                   className={cn(
                     "p-4 rounded-lg border transition-all duration-300",
                     insight.is_read
-                      ? "bg-finance-gray-800/30 border-finance-gray-600/30 opacity-75"
-                      : "bg-finance-green-500/10 border-finance-green-500/30 shadow-sm"
+                      ? "bg-gray-50 border-gray-200 opacity-75"
+                      : "bg-finance-green-50 border-finance-green-200 shadow-sm"
                   )}
                 >
                   <div className="flex items-start justify-between mb-2">
@@ -237,15 +237,15 @@ export const InsightsDashboard = () => {
                       {getPriorityIcon(insight.priority)}
                       <h4 className={cn(
                         "font-semibold transition-colors",
-                        insight.is_read ? "text-finance-gray-400" : "text-white"
+                        insight.is_read ? "text-gray-500" : "text-gray-900"
                       )}>
                         {insight.title}
                       </h4>
-                      <Badge variant={getPriorityColor(insight.priority)} className="bg-finance-green-500/20 text-finance-green-300 border-finance-green-500/30">
+                      <Badge variant={getPriorityColor(insight.priority)} className="bg-finance-green-100 text-finance-green-700 border-finance-green-200">
                         {insight.priority}
                       </Badge>
                       {insight.is_read && (
-                        <Badge variant="secondary" className="text-xs bg-finance-gray-700/50 text-finance-gray-300">
+                        <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
                           Read
                         </Badge>
                       )}
@@ -256,7 +256,7 @@ export const InsightsDashboard = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => markAsRead(insight.id)}
-                          className="text-finance-green-400 hover:text-finance-green-300 hover:bg-finance-green-500/10"
+                          className="text-finance-green-600 hover:text-finance-green-700 hover:bg-finance-green-50"
                         >
                           Mark as read
                         </Button>
@@ -266,7 +266,7 @@ export const InsightsDashboard = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
                             disabled={isDeletingInsight}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -295,7 +295,7 @@ export const InsightsDashboard = () => {
                   </div>
                   <p className={cn(
                     "text-sm transition-colors",
-                    insight.is_read ? "text-finance-gray-400" : "text-finance-gray-200"
+                    insight.is_read ? "text-gray-500" : "text-gray-700"
                   )}>
                     {insight.content}
                   </p>
