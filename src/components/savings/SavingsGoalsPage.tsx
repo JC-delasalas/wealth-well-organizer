@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Target, Plus, Calendar, DollarSign, Trash2, Edit } from 'lucide-react';
+import { Target, Plus, Calendar, DollarSign, Trash2, Edit } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -74,35 +74,23 @@ export const SavingsGoalsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Dashboard</span>
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Savings Goals</h1>
-              <p className="text-gray-600 mt-1">Track and manage your financial objectives</p>
-            </div>
-          </div>
-          
-          <SavingsGoalForm
-            trigger={
-              <Button className="flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>New Goal</span>
-              </Button>
-            }
-          />
+    <div className="container mx-auto py-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Savings Goals</h1>
+          <p className="text-gray-600 mt-1">Track and manage your financial objectives</p>
         </div>
+
+        <SavingsGoalForm
+          trigger={
+            <Button className="flex items-center space-x-2">
+              <Plus className="w-4 h-4" />
+              <span>New Goal</span>
+            </Button>
+          }
+        />
+      </div>
 
         {/* Goals Grid */}
         {goals && goals.length > 0 ? (
@@ -254,7 +242,6 @@ export const SavingsGoalsPage = () => {
             </CardContent>
           </Card>
         )}
-      </div>
     </div>
   );
 };
