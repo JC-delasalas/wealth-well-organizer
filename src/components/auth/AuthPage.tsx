@@ -141,7 +141,7 @@ export const AuthPage = () => {
                 { icon: Shield, title: "Secure", desc: "Bank-level security and data protection" }
               ].map((feature, index) => (
                 <div key={index} className="glass-card rounded-xl p-4 hover:glass-card-green transition-all duration-300 group">
-                  <feature.icon className="w-6 h-6 mb-2 group-hover:text-finance-green-300 transition-colors" style={{ color: '#4ade80' }} />
+                  <feature.icon className="w-6 h-6 text-finance-green-400 mb-2 group-hover:text-finance-green-300 transition-colors" />
                   <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
                   <p className="text-xs text-white/80">{feature.desc}</p>
                 </div>
