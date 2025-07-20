@@ -168,10 +168,10 @@ export const AuthPage = () => {
           <div className="w-full max-w-md">
             <Card className="glass-card-green shadow-2xl border-0">
               <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl font-bold text-finance-gray-900">
+                <CardTitle className="text-2xl font-bold text-white">
                   Welcome to FinanceTracker
                 </CardTitle>
-                <p className="text-finance-gray-600 text-sm">
+                <p className="text-white text-sm">
                   Join thousands of users already mastering their finances with our comprehensive wealth management platform
                 </p>
               </CardHeader>
@@ -181,13 +181,13 @@ export const AuthPage = () => {
                   <TabsList className="grid w-full grid-cols-2 glass-card">
                     <TabsTrigger
                       value="signup"
-                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-finance-gray-700 text-finance-gray-600 transition-all duration-300"
+                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-white text-white transition-all duration-300"
                     >
                       Sign Up
                     </TabsTrigger>
                     <TabsTrigger
                       value="signin"
-                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-finance-gray-700 text-finance-gray-600 transition-all duration-300"
+                      className="data-[state=active]:btn-finance-primary data-[state=active]:text-white text-white transition-all duration-300"
                     >
                       Sign In
                     </TabsTrigger>
@@ -223,7 +223,7 @@ export const AuthPage = () => {
                               <SelectItem key={country.code} value={country.code} className="hover:bg-finance-green-50">
                                 <div className="flex items-center justify-between w-full">
                                   <span>{country.name}</span>
-                                  <span className="text-xs text-finance-gray-500 ml-2">{country.code}</span>
+                                  <span className="text-xs text-white ml-2">{country.code}</span>
                                 </div>
                               </SelectItem>
                             ))}
@@ -271,9 +271,9 @@ export const AuthPage = () => {
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? (
-                              <EyeOff className="w-4 h-4 text-finance-gray-500" />
+                              <EyeOff className="w-4 h-4 text-white" />
                             ) : (
-                              <Eye className="w-4 h-4 text-finance-gray-500" />
+                              <Eye className="w-4 h-4 text-white" />
                             )}
                           </Button>
                         </div>
@@ -333,9 +333,9 @@ export const AuthPage = () => {
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? (
-                              <EyeOff className="w-4 h-4 text-finance-gray-500" />
+                              <EyeOff className="w-4 h-4 text-white" />
                             ) : (
-                              <Eye className="w-4 h-4 text-finance-gray-500" />
+                              <Eye className="w-4 h-4 text-white" />
                             )}
                           </Button>
                         </div>
@@ -357,7 +357,7 @@ export const AuthPage = () => {
                         <DialogTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="text-sm text-finance-gray-600 hover:text-finance-green-600 transition-colors"
+                            className="text-sm text-white hover:text-finance-green-400 transition-colors"
                             disabled={isLoading}
                           >
                             Forgot your password?
@@ -365,8 +365,8 @@ export const AuthPage = () => {
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-md glass-card border-0">
                           <DialogHeader>
-                            <DialogTitle className="flex items-center gap-2 text-finance-gray-900">
-                              <Mail className="w-5 h-5 text-finance-green-600" />
+                            <DialogTitle className="flex items-center gap-2 text-white">
+                              <Mail className="w-5 h-5 text-finance-green-400" />
                               Reset Password
                             </DialogTitle>
                           </DialogHeader>
@@ -415,13 +415,13 @@ export const AuthPage = () => {
 
                 {/* Trust indicators */}
                 <div className="mt-6 pt-6 border-t border-finance-green-200/30">
-                  <div className="flex items-center justify-center gap-4 text-xs text-finance-gray-600">
+                  <div className="flex items-center justify-center gap-4 text-xs text-white">
                     <div className="flex items-center gap-1">
-                      <Shield className="w-3 h-3 text-finance-green-600" />
+                      <Shield className="w-3 h-3 text-finance-green-400" />
                       <span>256-bit SSL</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <PiggyBank className="w-3 h-3 text-finance-green-600" />
+                      <PiggyBank className="w-3 h-3 text-finance-green-400" />
                       <span>Bank-level Security</span>
                     </div>
                   </div>
@@ -441,10 +441,10 @@ export const AuthPage = () => {
 
         {/* Footer */}
         <footer className="p-4 md:p-8 text-center">
-          <p className="text-sm text-finance-gray-600">
+          <p className="text-sm text-white">
             By signing up, you agree to our terms of service and privacy policy
           </p>
-          <p className="text-xs text-finance-gray-500 mt-2">
+          <p className="text-xs text-white mt-2">
             © 2024 FinanceTracker - Wealth Well Organizer. Developed by Millennial_TV.
           </p>
         </footer>
