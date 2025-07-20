@@ -114,7 +114,7 @@ export const AuthPage = () => {
               FinanceTracker
             </h1>
           </div>
-          <p className="text-center md:text-left text-finance-gray-600 mt-2 text-sm">
+          <p className="text-center md:text-left text-white mt-2 text-sm">
             Wealth Well Organizer - Your Personal Finance Management Solution
           </p>
         </header>
@@ -122,14 +122,14 @@ export const AuthPage = () => {
         <div className="flex-1 flex flex-col lg:flex-row items-center justify-center px-4 md:px-8 py-8 gap-8 lg:gap-16">
           {/* Left side - Hero content */}
           <div className="flex-1 max-w-lg lg:max-w-xl text-center lg:text-left">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-finance-gray-900 mb-6 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
               Master Your
-              <span className="bg-gradient-to-r from-finance-green-600 to-finance-green-800 bg-clip-text text-transparent block">
+              <span className="text-finance-green-400 block">
                 Financial Future
               </span>
             </h2>
 
-            <p className="text-lg md:text-xl text-finance-gray-600 mb-8 leading-relaxed">
+            <p className="text-lg md:text-xl text-white mb-8 leading-relaxed">
               Take control of your finances with AI-powered insights, smart budgeting, and personalized recommendations designed for your success.
             </p>
 
@@ -141,25 +141,25 @@ export const AuthPage = () => {
                 { icon: Shield, title: "Secure", desc: "Bank-level security and data protection" }
               ].map((feature, index) => (
                 <div key={index} className="glass-card rounded-xl p-4 hover:glass-card-green transition-all duration-300 group">
-                  <feature.icon className="w-6 h-6 text-finance-green-600 mb-2 group-hover:text-finance-green-700 transition-colors" />
-                  <h3 className="font-semibold text-finance-gray-900 text-sm">{feature.title}</h3>
-                  <p className="text-xs text-finance-gray-600">{feature.desc}</p>
+                  <feature.icon className="w-6 h-6 text-finance-green-400 mb-2 group-hover:text-finance-green-300 transition-colors" />
+                  <h3 className="font-semibold text-white text-sm">{feature.title}</h3>
+                  <p className="text-xs text-white/80">{feature.desc}</p>
                 </div>
               ))}
             </div>
 
             <div className="flex justify-center lg:justify-start gap-8 text-center">
               <div className="glass-card p-4 rounded-lg">
-                <div className="text-2xl md:text-3xl font-bold text-finance-green-600">10K+</div>
-                <div className="text-sm text-finance-gray-600">Active Users</div>
+                <div className="text-2xl md:text-3xl font-bold text-finance-green-400">10K+</div>
+                <div className="text-sm text-white">Active Users</div>
               </div>
               <div className="glass-card p-4 rounded-lg">
-                <div className="text-2xl md:text-3xl font-bold text-finance-green-600">₱2M+</div>
-                <div className="text-sm text-finance-gray-600">Money Managed</div>
+                <div className="text-2xl md:text-3xl font-bold text-finance-green-400">₱2M+</div>
+                <div className="text-sm text-white">Money Managed</div>
               </div>
               <div className="glass-card p-4 rounded-lg">
-                <div className="text-2xl md:text-3xl font-bold text-finance-green-600">4.9★</div>
-                <div className="text-sm text-finance-gray-600">User Rating</div>
+                <div className="text-2xl md:text-3xl font-bold text-finance-green-400">4.9★</div>
+                <div className="text-sm text-white">User Rating</div>
               </div>
             </div>
           </div>
