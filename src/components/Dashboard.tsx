@@ -45,7 +45,7 @@ export const Dashboard = () => {
             change={+12.5}
             icon={DollarSign}
             trend="up"
-            className="glass-card-green text-white border-finance-green-500/30"
+            className="glass-card-green border-finance-green-500/30"
           />
           <StatsCard
             title="Monthly Income"
@@ -53,7 +53,7 @@ export const Dashboard = () => {
             change={+8.2}
             icon={TrendingUp}
             trend="up"
-            className="glass-card text-white border-finance-green-400/20"
+            className="glass-card border-finance-green-400/20"
           />
           <StatsCard
             title="Monthly Expenses"
@@ -61,7 +61,7 @@ export const Dashboard = () => {
             change={-3.1}
             icon={TrendingDown}
             trend="down"
-            className="glass-card text-white border-finance-gray-600/30"
+            className="glass-card border-finance-gray-600/30"
           />
           <StatsCard
             title="Transactions"
@@ -69,7 +69,7 @@ export const Dashboard = () => {
             change={+15.3}
             icon={Receipt}
             trend="up"
-            className="glass-card text-white border-finance-gray-600/30"
+            className="glass-card border-finance-gray-600/30"
           />
         </div>
 

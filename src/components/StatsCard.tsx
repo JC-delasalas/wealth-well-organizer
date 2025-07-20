@@ -48,22 +48,22 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium text-white/80 mb-1 truncate">{title}</p>
-            <p className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 truncate text-white">{value}</p>
+            <p className="text-xs sm:text-sm font-medium text-finance-gray-700 mb-1 truncate">{title}</p>
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 truncate text-finance-gray-900">{value}</p>
             <div className="flex items-center text-xs sm:text-sm">
-              <TrendIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0 text-white/70" />
+              <TrendIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0 text-finance-gray-600" />
               <span className={cn(
                 "font-medium",
-                isPositive ? "text-finance-green-300" : "text-red-300"
+                isPositive ? "text-finance-green-600" : "text-red-600"
               )}>
                 {isPositive ? '+' : ''}{change}%
               </span>
-              <span className="text-white/60 ml-1 hidden sm:inline">vs last month</span>
-              <span className="text-white/60 ml-1 sm:hidden">vs last</span>
+              <span className="text-finance-gray-600 ml-1 hidden sm:inline">vs last month</span>
+              <span className="text-finance-gray-600 ml-1 sm:hidden">vs last</span>
             </div>
           </div>
           <div className="p-2 sm:p-3 rounded-full bg-finance-green-500/20 backdrop-blur-sm flex-shrink-0 ml-2">
-            <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-finance-green-400" />
+            <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-finance-green-600" />
           </div>
         </div>
       </CardContent>
