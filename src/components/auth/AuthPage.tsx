@@ -5,28 +5,33 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
-import { 
-  Loader2, 
-  TrendingUp, 
-  Shield, 
-  Smartphone, 
+import { useCountryCurrency } from '@/hooks/useCurrency';
+import {
+  Loader2,
+  TrendingUp,
+  Shield,
+  Smartphone,
   BarChart3,
   PiggyBank,
   Target,
   Brain,
   Zap,
-  Mail
+  Mail,
+  Globe
 } from 'lucide-react';
 
 export const AuthPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('PH'); // Default to Philippines
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const { signIn, signUp, resetPassword, loading } = useAuth();
+  const { countries, getCountryDefaultCurrency } = useCountryCurrency();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,12 +51,12 @@ export const AuthPage = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting || !email || !password) return;
-    
+    if (isSubmitting || !email || !password || !selectedCountry) return;
+
     setIsSubmitting(true);
     try {
       // Attempting to sign up - logging removed for security
-      const result = await signUp(email, password, fullName);
+      const result = await signUp(email, password, fullName, selectedCountry);
       if (result.error) {
         console.error('Sign up failed');
       }
@@ -196,6 +201,27 @@ export const AuthPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
+                        <Label htmlFor="signup-country" className="text-gray-700 font-medium flex items-center gap-2">
+                          <Globe className="w-4 h-4" />
+                          Country *
+                        </Label>
+                        <Select value={selectedCountry} onValueChange={setSelectedCountry} disabled={isLoading}>
+                          <SelectTrigger className="bg-white/50 backdrop-blur-sm border-white/30 focus:bg-white/70 transition-all">
+                            <SelectValue placeholder="Select your country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {countries.map((country) => (
+                              <SelectItem key={country.code} value={country.code}>
+                                <div className="flex items-center justify-between w-full">
+                                  <span>{country.name}</span>
+                                  <span className="text-xs text-gray-500 ml-2">{country.code}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
                         <Label htmlFor="signup-email" className="text-gray-700 font-medium">
                           Email *
                         </Label>
@@ -226,10 +252,10 @@ export const AuthPage = () => {
                           disabled={isLoading}
                         />
                       </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]" 
-                        disabled={isLoading || !email || !password}
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold py-3 transition-all duration-300 transform hover:scale-[1.02]"
+                        disabled={isLoading || !email || !password || !selectedCountry}
                       >
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Create Account

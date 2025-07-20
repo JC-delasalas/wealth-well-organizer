@@ -24,7 +24,7 @@ interface AuthContextType {
   /** Loading state for authentication operations */
   loading: boolean;
   /** Sign up a new user */
-  signUp: (email: string, password: string, fullName?: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, fullName?: string, country?: string) => Promise<{ error: AuthError | null }>;
   /** Sign in an existing user */
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   /** Sign out the current user */
@@ -133,20 +133,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [toast]);
 
-  const signUp = async (email: string, password: string, fullName?: string) => {
+  const signUp = async (email: string, password: string, fullName?: string, country?: string) => {
     setLoading(true);
-    
+
     try {
       const redirectUrl = `https://wealth-well-organizer.vercel.app/auth/callback`;
-      
+
+      // Prepare user metadata with country information
+      const userData: Record<string, any> = {};
+      if (fullName) userData.full_name = fullName;
+      if (country) userData.country = country;
+
       // Signing up with redirect URL - logging removed for security
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
-          data: fullName ? { full_name: fullName } : undefined
+          data: Object.keys(userData).length > 0 ? userData : undefined
         }
       });
 
