@@ -191,8 +191,18 @@ export const formatCurrency = (
       return `${getCurrencySymbol(currencyCode)}0.00`;
     }
 
-    // Ensure we have a valid locale
-    const validLocale = locale && locale.trim() ? locale.trim() : 'en-US';
+    // Ensure we have a valid locale with better validation
+    let validLocale = 'en-US'; // Default fallback
+    if (locale && typeof locale === 'string' && locale.trim()) {
+      const trimmedLocale = locale.trim();
+      // Basic locale format validation (language-country or language)
+      if (/^[a-z]{2}(-[A-Z]{2})?$/.test(trimmedLocale)) {
+        validLocale = trimmedLocale;
+      } else {
+        console.warn(`Invalid locale format "${locale}", using fallback en-US`);
+      }
+    }
+
     const validCurrencyCode = currencyCode && currencyCode.trim() ? currencyCode.trim() : 'PHP';
 
     // Get currency info
@@ -213,15 +223,26 @@ export const formatCurrency = (
       return formatter.format(amount);
     }
 
-    // Use provided locale or default, with fallback
+    // Use provided locale or default, with multiple fallback layers
     try {
       const formatter = new Intl.NumberFormat(validLocale, formatOptions);
       return formatter.format(amount);
     } catch (localeError) {
-      // If the provided locale is invalid, fall back to en-US
-      console.warn(`Invalid locale "${validLocale}", falling back to en-US`);
-      const fallbackFormatter = new Intl.NumberFormat('en-US', formatOptions);
-      return fallbackFormatter.format(amount);
+      console.warn(`Invalid locale "${validLocale}", trying fallback locales`);
+
+      // Try common fallback locales
+      const fallbackLocales = ['en-US', 'en', 'en-GB'];
+      for (const fallbackLocale of fallbackLocales) {
+        try {
+          const fallbackFormatter = new Intl.NumberFormat(fallbackLocale, formatOptions);
+          return fallbackFormatter.format(amount);
+        } catch (fallbackError) {
+          console.warn(`Fallback locale "${fallbackLocale}" also failed`);
+        }
+      }
+
+      // If all locales fail, throw to outer catch
+      throw new Error(`All locale formatting attempts failed for locale: ${validLocale}`);
     }
   } catch (error) {
     console.error('Error formatting currency:', error);

@@ -126,7 +126,7 @@ export const ProfileSettingsPage: React.FC = () => {
             <div className="text-right">
               <div className="text-sm text-muted-foreground">Preferred Currency</div>
               <div className="text-lg font-semibold">
-                {formatUserCurrency(1234.56)}
+                {userProfile ? formatUserCurrency(1234.56) : 'Loading...'}
               </div>
             </div>
           </div>
