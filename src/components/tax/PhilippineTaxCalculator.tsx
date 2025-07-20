@@ -84,35 +84,6 @@ export const PhilippineTaxCalculator: React.FC = () => {
     );
   }
 
-
-
-  // Check if user is in Philippines
-  const isPhilippineUser = userProfile?.country === 'PH';
-
-  if (!isPhilippineUser) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card className="max-w-2xl mx-auto">
-          <CardContent className="p-8 text-center">
-            <div className="mb-4">
-              <Calculator className="w-16 h-16 mx-auto text-muted-foreground" />
-            </div>
-            <h2 className="text-2xl font-semibold mb-2">Philippine Tax Calculator</h2>
-            <p className="text-muted-foreground mb-4">
-              This tax calculator is specifically designed for Philippine taxpayers using BIR regulations.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              To access this feature, please update your country to Philippines in your profile settings.
-            </p>
-            <Button className="mt-4" variant="outline">
-              Update Profile Settings
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto py-6 space-y-6">
       {/* Page Header */}
