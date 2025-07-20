@@ -1,0 +1,201 @@
+/* FinanceTracker Brand Color Palette
+ * Extracted from logo and designed for wealth-well-organizer application
+ * Author: JC de las Alas
+ */
+
+:root {
+  /* Primary Green Palette - Extracted from FinanceTracker Logo */
+  --finance-green-50: #f0fdf4;    /* Very light green for backgrounds */
+  --finance-green-100: #dcfce7;   /* Light green for subtle accents */
+  --finance-green-200: #bbf7d0;   /* Medium-light green for hover states */
+  --finance-green-300: #86efac;   /* Medium green for secondary elements */
+  --finance-green-400: #4ade80;   /* Medium-bright green for interactive elements */
+  --finance-green-500: #22c55e;   /* Primary brand green (main logo color) */
+  --finance-green-600: #16a34a;   /* Medium-dark green for primary buttons */
+  --finance-green-700: #15803d;   /* Dark green for text and borders */
+  --finance-green-800: #166534;   /* Very dark green for emphasis */
+  --finance-green-900: #14532d;   /* Darkest green for high contrast text */
+
+  /* Glassmorphism Color Variants */
+  --glass-green-light: rgba(34, 197, 94, 0.1);    /* 10% opacity for light glass */
+  --glass-green-medium: rgba(34, 197, 94, 0.15);  /* 15% opacity for medium glass */
+  --glass-green-strong: rgba(34, 197, 94, 0.2);   /* 20% opacity for strong glass */
+  
+  /* Neutral Palette for Balance */
+  --finance-gray-50: #f9fafb;
+  --finance-gray-100: #f3f4f6;
+  --finance-gray-200: #e5e7eb;
+  --finance-gray-300: #d1d5db;
+  --finance-gray-400: #9ca3af;
+  --finance-gray-500: #6b7280;
+  --finance-gray-600: #4b5563;
+  --finance-gray-700: #374151;
+  --finance-gray-800: #1f2937;
+  --finance-gray-900: #111827;
+
+  /* Glassmorphism Neutral Variants */
+  --glass-white: rgba(255, 255, 255, 0.1);
+  --glass-white-medium: rgba(255, 255, 255, 0.15);
+  --glass-white-strong: rgba(255, 255, 255, 0.25);
+  --glass-dark: rgba(0, 0, 0, 0.1);
+  --glass-dark-medium: rgba(0, 0, 0, 0.15);
+
+  /* Accent Colors for Status and Feedback */
+  --finance-blue-500: #3b82f6;    /* Information blue */
+  --finance-red-500: #ef4444;     /* Error red */
+  --finance-yellow-500: #eab308;  /* Warning yellow */
+  --finance-purple-500: #8b5cf6;  /* Premium purple */
+
+  /* Glassmorphism Effects */
+  --glass-blur: blur(12px);
+  --glass-blur-strong: blur(20px);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+  --glass-border-green: 1px solid rgba(34, 197, 94, 0.3);
+  
+  /* Shadow Definitions for Glassmorphism */
+  --glass-shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --glass-shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                         0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --glass-shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+                         0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --glass-shadow-green: 0 10px 15px -3px rgba(34, 197, 94, 0.1), 
+                        0 4px 6px -2px rgba(34, 197, 94, 0.05);
+
+  /* Transition Definitions */
+  --transition-fast: 200ms ease-in-out;
+  --transition-normal: 300ms ease-in-out;
+  --transition-slow: 500ms ease-in-out;
+
+  /* Border Radius for Consistency */
+  --radius-sm: 0.375rem;   /* 6px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+}
+
+/* Glassmorphism Base Classes */
+.glass-card {
+  background: var(--glass-white-medium);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow-medium);
+  transition: all var(--transition-normal);
+}
+
+.glass-card-green {
+  background: var(--glass-green-medium);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border-green);
+  box-shadow: var(--glass-shadow-green);
+  transition: all var(--transition-normal);
+}
+
+.glass-card:hover {
+  background: var(--glass-white-strong);
+  box-shadow: var(--glass-shadow-strong);
+  transform: translateY(-2px);
+}
+
+.glass-card-green:hover {
+  background: var(--glass-green-strong);
+  box-shadow: var(--glass-shadow-green);
+  transform: translateY(-2px);
+}
+
+/* Button Variants */
+.btn-finance-primary {
+  background: linear-gradient(135deg, var(--finance-green-500), var(--finance-green-600));
+  color: white;
+  border: none;
+  transition: all var(--transition-normal);
+  box-shadow: var(--glass-shadow-light);
+}
+
+.btn-finance-primary:hover {
+  background: linear-gradient(135deg, var(--finance-green-600), var(--finance-green-700));
+  box-shadow: var(--glass-shadow-medium);
+  transform: translateY(-1px);
+}
+
+.btn-finance-secondary {
+  background: var(--glass-white-medium);
+  color: var(--finance-green-700);
+  border: var(--glass-border-green);
+  backdrop-filter: var(--glass-blur);
+  transition: all var(--transition-normal);
+}
+
+.btn-finance-secondary:hover {
+  background: var(--glass-green-light);
+  color: var(--finance-green-800);
+  transform: translateY(-1px);
+}
+
+/* Input Field Styling */
+.input-finance {
+  background: var(--glass-white-medium);
+  border: 1px solid var(--finance-gray-300);
+  backdrop-filter: var(--glass-blur);
+  transition: all var(--transition-normal);
+}
+
+.input-finance:focus {
+  border-color: var(--finance-green-500);
+  box-shadow: 0 0 0 3px var(--glass-green-light);
+  background: var(--glass-white-strong);
+}
+
+/* Background Gradients */
+.bg-finance-gradient {
+  background: linear-gradient(135deg, 
+    var(--finance-green-50) 0%, 
+    var(--finance-gray-50) 50%, 
+    var(--finance-green-100) 100%);
+}
+
+.bg-finance-gradient-dark {
+  background: linear-gradient(135deg, 
+    var(--finance-gray-900) 0%, 
+    var(--finance-gray-800) 50%, 
+    var(--finance-green-900) 100%);
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --glass-border: 2px solid var(--finance-gray-800);
+    --glass-border-green: 2px solid var(--finance-green-700);
+  }
+  
+  .glass-card,
+  .glass-card-green {
+    background: var(--finance-gray-50);
+    backdrop-filter: none;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --glass-white: rgba(255, 255, 255, 0.05);
+    --glass-white-medium: rgba(255, 255, 255, 0.1);
+    --glass-white-strong: rgba(255, 255, 255, 0.15);
+  }
+  
+  .bg-finance-gradient {
+    background: linear-gradient(135deg, 
+      var(--finance-gray-900) 0%, 
+      var(--finance-gray-800) 50%, 
+      var(--finance-green-900) 100%);
+  }
+}
