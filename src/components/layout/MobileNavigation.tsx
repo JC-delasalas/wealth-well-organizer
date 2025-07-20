@@ -4,14 +4,15 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/co
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Menu, 
-  Home, 
-  CreditCard, 
-  BarChart3, 
-  Target, 
-  Lightbulb, 
+import {
+  Menu,
+  Home,
+  CreditCard,
+  BarChart3,
+  Target,
+  Lightbulb,
   Receipt,
+  Calculator,
   User,
   LogOut,
   X
@@ -42,6 +43,7 @@ export const MobileNavigation = ({ className }: MobileNavigationProps) => {
     { path: '/goals', label: 'Savings Goals', icon: Target },
     { path: '/insights', label: 'Insights', icon: Lightbulb },
     { path: '/receipts', label: 'Receipts', icon: Receipt },
+    { path: '/tax-calculator', label: 'Tax Calculator', icon: Calculator },
   ];
 
   const handleNavigation = (path: string) => {
@@ -150,10 +152,7 @@ export const MobileNavigation = ({ className }: MobileNavigationProps) => {
             <Button
               variant="ghost"
               className="w-full justify-start h-12 px-4 text-gray-700 hover:bg-gray-100"
-              onClick={() => {
-                // Navigate to profile/settings when implemented
-                setOpen(false);
-              }}
+              onClick={() => handleNavigation('/profile')}
             >
               <User className="h-5 w-5 mr-3" />
               <span className="font-medium">Profile & Settings</span>

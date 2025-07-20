@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Calculator, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Link, useLocation } from 'react-router-dom';
 import { MobileNavigation } from './MobileNavigation';
@@ -92,6 +92,14 @@ export const Navbar = () => {
             >
               Receipts
             </Link>
+            <Link
+              to="/tax-calculator"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive('/tax-calculator') ? 'bg-primary text-white' : 'text-gray-700 hover:text-primary'
+              }`}
+            >
+              Tax Calculator
+            </Link>
           </div>
         </div>
 
@@ -109,6 +117,12 @@ export const Navbar = () => {
             <DropdownMenuItem disabled>
               <User className="mr-2 h-4 w-4" />
               {user?.email}
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/profile" className="flex items-center">
+                <Settings className="mr-2 h-4 w-4" />
+                Profile & Settings
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={signOut}>
               <LogOut className="mr-2 h-4 w-4" />

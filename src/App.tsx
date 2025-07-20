@@ -44,6 +44,12 @@ const CategoriesPage = React.lazy(() =>
 const ReceiptsPage = React.lazy(() =>
   import("./components/receipts/ReceiptsPage").then(module => ({ default: module.ReceiptsPage }))
 );
+const PhilippineTaxCalculator = React.lazy(() =>
+  import("./components/tax/PhilippineTaxCalculator").then(module => ({ default: module.PhilippineTaxCalculator }))
+);
+const ProfileSettingsPage = React.lazy(() =>
+  import("./components/profile/ProfileSettingsPage").then(module => ({ default: module.ProfileSettingsPage }))
+);
 const NotFound = React.lazy(() =>
   import("./pages/NotFound")
 );
@@ -191,6 +197,26 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <Suspense fallback={<LoadingSpinner size="lg" />}>
               <ReceiptsPage />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tax-calculator"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <PhilippineTaxCalculator />
+            </Suspense>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingSpinner size="lg" />}>
+              <ProfileSettingsPage />
             </Suspense>
           </ProtectedRoute>
         }

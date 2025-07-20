@@ -10,7 +10,9 @@ import {
   Plus,
   ArrowUpRight,
   Target,
-  Lightbulb
+  Lightbulb,
+  Calculator,
+  Settings
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { StatsCard } from './StatsCard';
@@ -123,6 +125,24 @@ export const Dashboard = () => {
                 <Lightbulb className="w-4 h-4 sm:w-6 sm:h-6" />
                 <span className="hidden sm:inline">Get Insights</span>
                 <span className="sm:hidden">Insights</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm"
+                onClick={() => navigate('/tax-calculator')}
+              >
+                <Calculator className="w-4 h-4 sm:w-6 sm:h-6" />
+                <span className="hidden sm:inline">Tax Calculator</span>
+                <span className="sm:hidden">Tax Calc</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-16 sm:h-20 flex-col gap-1 sm:gap-2 hover:bg-primary/5 hover:border-primary transition-colors text-xs sm:text-sm"
+                onClick={() => navigate('/profile')}
+              >
+                <Settings className="w-4 h-4 sm:w-6 sm:h-6" />
+                <span className="hidden sm:inline">Settings</span>
+                <span className="sm:hidden">Settings</span>
               </Button>
             </div>
           </CardContent>
