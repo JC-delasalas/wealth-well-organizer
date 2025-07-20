@@ -196,7 +196,7 @@ This document outlines the comprehensive glassmorphism authentication design sys
 
 ### Updated Attribution
 - Application name: "wealth-well-organizer"
-- Developer: "JC de las Alas"
+- Developer: "Millennial_TV"
 - Consistent branding terminology throughout
 
 ## Technical Implementation

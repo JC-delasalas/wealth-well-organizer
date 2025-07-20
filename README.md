@@ -139,4 +139,4 @@ For support, email jcedrick.delasalas@gmail.com or create an issue on GitHub.
 
 ---
 
-Built with ❤️ by [JC de las Alas](https://github.com/JC-delasalas)
+Built with ❤️ by [Millennial_TV](https://github.com/JC-delasalas)

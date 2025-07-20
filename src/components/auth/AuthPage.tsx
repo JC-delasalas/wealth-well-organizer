@@ -431,9 +431,9 @@ export const AuthPage = () => {
 
             <div className="mt-6 text-center">
               <div className="glass-card rounded-xl p-4">
-                <Smartphone className="w-6 h-6 text-finance-green-600 mx-auto mb-2" />
-                <p className="text-sm text-finance-gray-700 font-medium">Available on all devices</p>
-                <p className="text-xs text-finance-gray-600">Access your finances anywhere, anytime</p>
+                <Smartphone className="w-6 h-6 text-finance-green-400 mx-auto mb-2" />
+                <p className="text-sm text-finance-green-400 font-medium">Available on all devices</p>
+                <p className="text-xs text-finance-green-400">Access your finances anywhere, anytime</p>
               </div>
             </div>
           </div>
@@ -445,7 +445,7 @@ export const AuthPage = () => {
             By signing up, you agree to our terms of service and privacy policy
           </p>
           <p className="text-xs text-finance-gray-500 mt-2">
-            © 2024 FinanceTracker - Wealth Well Organizer. Developed by JC de las Alas.
+            © 2024 FinanceTracker - Wealth Well Organizer. Developed by Millennial_TV.
           </p>
         </footer>
       </div>
