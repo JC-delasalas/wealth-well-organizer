@@ -91,10 +91,10 @@ export const useCurrency = () => {
     },
   });
 
-  // Get user's current currency
-  const userCurrency = userProfile?.currency || 'PHP';
-  const userCountry = userProfile?.country || 'PH';
-  const userLocale = userProfile?.locale || 'en-PH';
+  // Get user's current currency with proper validation
+  const userCurrency = userProfile?.currency && userProfile.currency.trim() ? userProfile.currency.trim() : 'PHP';
+  const userCountry = userProfile?.country && userProfile.country.trim() ? userProfile.country.trim() : 'PH';
+  const userLocale = userProfile?.locale && userProfile.locale.trim() ? userProfile.locale.trim() : 'en-PH';
 
   // Format currency with user's preferences
   const formatUserCurrency = useCallback((
@@ -227,10 +227,19 @@ export const useCurrencyFormatter = () => {
 
     // No currency symbol, just number
     number: useCallback((amount: number) => {
-      return new Intl.NumberFormat(userLocale, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(amount);
+      try {
+        const validLocale = userLocale && userLocale.trim() ? userLocale.trim() : 'en-US';
+        return new Intl.NumberFormat(validLocale, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(amount);
+      } catch (error) {
+        console.warn('Error formatting number, using fallback:', error);
+        return new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(amount);
+      }
     }, [userLocale]),
   };
 

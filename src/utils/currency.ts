@@ -186,31 +186,51 @@ export const formatCurrency = (
   options: Partial<Intl.NumberFormatOptions> = {}
 ): string => {
   try {
+    // Validate and sanitize inputs
+    if (typeof amount !== 'number' || isNaN(amount)) {
+      return `${getCurrencySymbol(currencyCode)}0.00`;
+    }
+
+    // Ensure we have a valid locale
+    const validLocale = locale && locale.trim() ? locale.trim() : 'en-US';
+    const validCurrencyCode = currencyCode && currencyCode.trim() ? currencyCode.trim() : 'PHP';
+
     // Get currency info
-    const currency = getCurrencyInfo(currencyCode);
-    
+    const currency = getCurrencyInfo(validCurrencyCode);
+
     const formatOptions: Intl.NumberFormatOptions = {
       style: 'currency',
-      currency: currencyCode,
+      currency: validCurrencyCode,
       minimumFractionDigits: currency.decimalPlaces,
       maximumFractionDigits: currency.decimalPlaces,
       ...options
     };
 
     // Special handling for Philippine Peso
-    if (currencyCode === 'PHP') {
+    if (validCurrencyCode === 'PHP') {
       // Use Filipino locale for proper formatting
       const formatter = new Intl.NumberFormat('fil-PH', formatOptions);
       return formatter.format(amount);
     }
 
-    // Use provided locale or default
-    const formatter = new Intl.NumberFormat(locale, formatOptions);
-    return formatter.format(amount);
+    // Use provided locale or default, with fallback
+    try {
+      const formatter = new Intl.NumberFormat(validLocale, formatOptions);
+      return formatter.format(amount);
+    } catch (localeError) {
+      // If the provided locale is invalid, fall back to en-US
+      console.warn(`Invalid locale "${validLocale}", falling back to en-US`);
+      const fallbackFormatter = new Intl.NumberFormat('en-US', formatOptions);
+      return fallbackFormatter.format(amount);
+    }
   } catch (error) {
     console.error('Error formatting currency:', error);
-    // Fallback formatting
-    return `${getCurrencySymbol(currencyCode)}${amount.toLocaleString()}`;
+    // Enhanced fallback formatting
+    const symbol = getCurrencySymbol(currencyCode);
+    const formattedAmount = typeof amount === 'number' && !isNaN(amount)
+      ? amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : '0.00';
+    return `${symbol}${formattedAmount}`;
   }
 };
 
