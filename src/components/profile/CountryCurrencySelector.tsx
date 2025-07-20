@@ -113,7 +113,8 @@ export const CountryCurrencySelector: React.FC<CountryCurrencySelectorProps> = (
   const getCurrencyPreview = (currencyCode: string) => {
     const currency = getCurrencyInfo(currencyCode);
     const sampleAmount = 1234.56;
-    const formatted = formatCurrency(sampleAmount, currencyCode, selectedLocale);
+    const validLocale = selectedLocale && selectedLocale.trim() ? selectedLocale.trim() : 'en-US';
+    const formatted = formatCurrency(sampleAmount, currencyCode, validLocale);
     return { currency, formatted };
   };
 
@@ -260,11 +261,24 @@ export const CountryCurrencySelector: React.FC<CountryCurrencySelectorProps> = (
             </SelectContent>
           </Select>
           <div className="text-sm text-muted-foreground">
-            Current time: {new Date().toLocaleString(selectedLocale, { 
-              timeZone: selectedTimezone,
-              dateStyle: 'medium',
-              timeStyle: 'short'
-            })}
+            Current time: {(() => {
+              try {
+                const validLocale = selectedLocale && selectedLocale.trim() ? selectedLocale.trim() : 'en-US';
+                const validTimezone = selectedTimezone && selectedTimezone.trim() ? selectedTimezone.trim() : 'UTC';
+                return new Date().toLocaleString(validLocale, {
+                  timeZone: validTimezone,
+                  dateStyle: 'medium',
+                  timeStyle: 'short'
+                });
+              } catch (error) {
+                console.warn('Error formatting date with locale, using fallback:', error);
+                return new Date().toLocaleString('en-US', {
+                  timeZone: 'UTC',
+                  dateStyle: 'medium',
+                  timeStyle: 'short'
+                });
+              }
+            })()}
           </div>
         </div>
 

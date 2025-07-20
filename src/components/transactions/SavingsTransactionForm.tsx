@@ -1,6 +1,6 @@
 // Enhanced Transaction Form with Savings Goal Selection
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -140,6 +140,12 @@ export const SavingsTransactionForm: React.FC<SavingsTransactionFormProps> = ({
             <PiggyBank className="w-5 h-5" />
             {isEdit ? 'Edit Savings Transaction' : 'Add Savings Transaction'}
           </DialogTitle>
+          <DialogDescription>
+            {isEdit
+              ? 'Update your savings transaction details and track your progress.'
+              : 'Record a new savings transaction to track your financial goals.'
+            }
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

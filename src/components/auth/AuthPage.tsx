@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useCountryCurrency } from '@/hooks/useCurrency';
@@ -369,6 +369,9 @@ export const AuthPage = () => {
                               <Mail className="w-5 h-5 text-finance-green-400" />
                               Reset Password
                             </DialogTitle>
+                            <DialogDescription className="text-white">
+                              Enter your email address and we'll send you a link to reset your password.
+                            </DialogDescription>
                           </DialogHeader>
                           <form onSubmit={handleForgotPassword} className="space-y-4">
                             <div className="space-y-2">

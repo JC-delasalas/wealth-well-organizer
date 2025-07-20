@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -306,6 +306,9 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
             {getFileIcon(transaction.receipt_name)}
             Receipt: {transaction.receipt_name}
           </DialogTitle>
+          <DialogDescription>
+            View and manage the receipt for this transaction
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
