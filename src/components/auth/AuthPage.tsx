@@ -196,7 +196,7 @@ export const AuthPage = () => {
                   <TabsContent value="signup" className="mt-6">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signup-name" className="text-finance-gray-700 font-medium">
+                        <Label htmlFor="signup-name" className="text-white font-medium">
                           Full Name
                         </Label>
                         <Input
@@ -210,8 +210,8 @@ export const AuthPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-country" className="text-finance-gray-700 font-medium flex items-center gap-2">
-                          <Globe className="w-4 h-4 text-finance-green-600" />
+                        <Label htmlFor="signup-country" className="text-white font-medium flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-finance-green-400" />
                           Country *
                         </Label>
                         <Select value={selectedCountry} onValueChange={setSelectedCountry} disabled={isLoading}>
@@ -231,8 +231,8 @@ export const AuthPage = () => {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email" className="text-finance-gray-700 font-medium flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-finance-green-600" />
+                        <Label htmlFor="signup-email" className="text-white font-medium flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-finance-green-400" />
                           Email *
                         </Label>
                         <Input
@@ -247,8 +247,8 @@ export const AuthPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signup-password" className="text-finance-gray-700 font-medium flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-finance-green-600" />
+                        <Label htmlFor="signup-password" className="text-white font-medium flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-finance-green-400" />
                           Password *
                         </Label>
                         <div className="relative">
@@ -294,8 +294,8 @@ export const AuthPage = () => {
                   <TabsContent value="signin" className="mt-6">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="signin-email" className="text-finance-gray-700 font-medium flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-finance-green-600" />
+                        <Label htmlFor="signin-email" className="text-white font-medium flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-finance-green-400" />
                           Email *
                         </Label>
                         <Input
@@ -310,8 +310,8 @@ export const AuthPage = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="signin-password" className="text-finance-gray-700 font-medium flex items-center gap-2">
-                          <Shield className="w-4 h-4 text-finance-green-600" />
+                        <Label htmlFor="signin-password" className="text-white font-medium flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-finance-green-400" />
                           Password *
                         </Label>
                         <div className="relative">
@@ -372,7 +372,7 @@ export const AuthPage = () => {
                           </DialogHeader>
                           <form onSubmit={handleForgotPassword} className="space-y-4">
                             <div className="space-y-2">
-                              <Label htmlFor="reset-email" className="text-finance-gray-700 font-medium">Email Address</Label>
+                              <Label htmlFor="reset-email" className="text-white font-medium">Email Address</Label>
                               <Input
                                 id="reset-email"
                                 type="email"
@@ -384,7 +384,7 @@ export const AuthPage = () => {
                                 className="input-finance"
                               />
                             </div>
-                            <p className="text-sm text-finance-gray-600">
+                            <p className="text-sm text-white">
                               We'll send you a secure link to reset your password.
                             </p>
                             <div className="flex gap-2">
