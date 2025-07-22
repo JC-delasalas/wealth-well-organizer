@@ -45,7 +45,7 @@ export const Dashboard = () => {
             change={+12.5}
             icon={DollarSign}
             trend="up"
-            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 shadow-sm"
           />
           <StatsCard
             title="Monthly Income"
@@ -53,7 +53,7 @@ export const Dashboard = () => {
             change={+8.2}
             icon={TrendingUp}
             trend="up"
-            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 shadow-sm"
           />
           <StatsCard
             title="Monthly Expenses"
@@ -61,7 +61,7 @@ export const Dashboard = () => {
             change={-3.1}
             icon={TrendingDown}
             trend="down"
-            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 shadow-sm"
           />
           <StatsCard
             title="Transactions"
@@ -69,7 +69,7 @@ export const Dashboard = () => {
             change={+15.3}
             icon={Receipt}
             trend="up"
-            className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 shadow-sm"
           />
         </div>
 
@@ -81,7 +81,7 @@ export const Dashboard = () => {
         {/* Financial Analytics and Activity */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
           {/* Category Breakdown */}
-          <Card className="xl:col-span-2 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <Card className="xl:col-span-2 bg-white border border-gray-200 shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2">
                 <TrendingDown className="w-5 h-5 text-finance-green-600" />
@@ -106,7 +106,7 @@ export const Dashboard = () => {
           </Card>
 
           {/* Recent Transactions */}
-          <Card className="bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
+          <Card className="bg-white border border-gray-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2">
                 <Receipt className="w-5 h-5 text-finance-green-600" />
@@ -115,7 +115,7 @@ export const Dashboard = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-finance-green-600 hover:text-finance-green-700 hover:bg-finance-green-50 text-xs sm:text-sm transition-colors"
+                className="text-finance-green-600 text-xs sm:text-sm"
                 onClick={() => navigate('/transactions')}
               >
                 <span className="hidden sm:inline">View All</span>
