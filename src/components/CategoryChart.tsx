@@ -19,16 +19,16 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="glass-card p-3 rounded-lg shadow-lg border border-finance-gray-600/30">
-          <p className="font-medium text-white">{data.category}</p>
-          <p className="text-sm text-finance-gray-300">
-            Amount: <span className="font-semibold text-finance-green-400">${data.amount.toLocaleString()}</span>
+        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+          <p className="font-medium text-gray-900">{data.category}</p>
+          <p className="text-sm text-gray-700">
+            Amount: <span className="font-semibold text-finance-green-600">${data.amount.toLocaleString()}</span>
           </p>
-          <p className="text-sm text-finance-gray-300">
-            Percentage: <span className="font-semibold text-finance-green-400">{data.percentage}%</span>
+          <p className="text-sm text-gray-700">
+            Percentage: <span className="font-semibold text-finance-green-600">{data.percentage}%</span>
           </p>
-          <p className="text-sm text-finance-gray-300">
-            Transactions: <span className="font-semibold text-finance-green-400">{data.count}</span>
+          <p className="text-sm text-gray-700">
+            Transactions: <span className="font-semibold text-finance-green-600">{data.count}</span>
           </p>
         </div>
       );
@@ -45,7 +45,7 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ data }) => {
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-sm text-white font-medium">
+            <span className="text-sm text-gray-900 font-medium">
               {entry.value}
             </span>
           </div>

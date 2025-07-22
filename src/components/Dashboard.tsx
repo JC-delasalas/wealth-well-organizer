@@ -27,7 +27,7 @@ export const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Header */}
         <div className="mb-6 lg:mb-8">
-          <div className="animate-fade-in">
+          <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
               Financial <span className="text-finance-green-600">Dashboard</span>
             </h1>
@@ -38,7 +38,7 @@ export const Dashboard = () => {
         </div>
 
         {/* Financial Overview Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 animate-slide-up mb-6 lg:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
           <StatsCard
             title="Total Balance"
             value={formatCurrency(stats.totalBalance)}
@@ -74,12 +74,12 @@ export const Dashboard = () => {
         </div>
 
         {/* Insights Dashboard */}
-        <div className="animate-slide-up mb-6 lg:mb-8" style={{ animationDelay: '0.1s' }}>
+        <div className="mb-6 lg:mb-8">
           <InsightsDashboard />
         </div>
 
         {/* Financial Analytics and Activity */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
           {/* Category Breakdown */}
           <Card className="xl:col-span-2 bg-white border border-gray-200 shadow-sm">
             <CardHeader className="pb-3">

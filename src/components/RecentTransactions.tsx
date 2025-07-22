@@ -49,8 +49,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transact
         return (
           <div
             key={transaction.id}
-            className="flex items-center justify-between p-2 sm:p-3 rounded-lg hover:bg-finance-green-50 transition-colors duration-150 border border-gray-200 hover:border-finance-green-300"
-            style={{ animationDelay: `${index * 0.05}s` }}
+            className="flex items-center justify-between p-2 sm:p-3 rounded-lg border border-gray-200"
           >
             <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
               <div

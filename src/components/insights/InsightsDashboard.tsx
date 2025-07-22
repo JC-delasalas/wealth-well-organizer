@@ -226,7 +226,7 @@ export const InsightsDashboard = () => {
                 <div
                   key={insight.id}
                   className={cn(
-                    "p-4 rounded-lg border transition-all duration-300",
+                    "p-4 rounded-lg border",
                     insight.is_read
                       ? "bg-gray-50 border-gray-200 opacity-75"
                       : "bg-finance-green-50 border-finance-green-200 shadow-sm"
@@ -236,7 +236,7 @@ export const InsightsDashboard = () => {
                     <div className="flex items-center gap-2">
                       {getPriorityIcon(insight.priority)}
                       <h4 className={cn(
-                        "font-semibold transition-colors",
+                        "font-semibold",
                         insight.is_read ? "text-gray-500" : "text-gray-900"
                       )}>
                         {insight.title}
@@ -256,7 +256,7 @@ export const InsightsDashboard = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => markAsRead(insight.id)}
-                          className="text-finance-green-600 hover:text-finance-green-700 hover:bg-finance-green-50"
+                          className="text-finance-green-600"
                         >
                           Mark as read
                         </Button>
@@ -266,7 +266,7 @@ export const InsightsDashboard = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            className="text-red-600"
                             disabled={isDeletingInsight}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -283,7 +283,7 @@ export const InsightsDashboard = () => {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => deleteInsight(insight.id)}
-                              className="bg-red-600 hover:bg-red-700"
+                              className="bg-red-600"
                               disabled={isDeletingInsight}
                             >
                               {isDeletingInsight ? 'Deleting...' : 'Delete Insight'}
@@ -294,7 +294,7 @@ export const InsightsDashboard = () => {
                     </div>
                   </div>
                   <p className={cn(
-                    "text-sm transition-colors",
+                    "text-sm",
                     insight.is_read ? "text-gray-500" : "text-gray-700"
                   )}>
                     {insight.content}
