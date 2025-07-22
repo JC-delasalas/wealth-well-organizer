@@ -42,7 +42,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
 
   return (
     <Card className={cn(
-      "relative overflow-hidden transition-all duration-200 hover:scale-[1.02] sm:hover:scale-105 hover:shadow-card-hover",
+      "relative overflow-hidden",
       className
     )}>
       <CardContent className="p-4 sm:p-6">
