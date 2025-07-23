@@ -93,13 +93,33 @@ export const BusinessTaxCalculator: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Period Selection */}
-      <PeriodSelector
-        period={period}
-        onPeriodChange={updatePeriod}
-        exampleAmount={100000}
-      />
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Sophisticated Glassmorphism Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-finance-green-50/15">
+        {/* Animated Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-finance-green-100/12 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 left-0 w-80 h-80 bg-blue-100/8 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-0 right-1/3 w-72 h-72 bg-purple-100/6 rounded-full blur-3xl animate-pulse delay-2000"></div>
+
+        {/* Subtle Grid Pattern */}
+        <div className="absolute inset-0 opacity-[0.01]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
+          backgroundSize: '28px 28px'
+        }}></div>
+      </div>
+
+      <div className="relative space-y-8 p-6 lg:p-8">
+        {/* Enhanced Period Selection */}
+        <div className="relative">
+          <div className="absolute -inset-3 bg-gradient-to-r from-white/60 to-white/40 backdrop-blur-xl rounded-3xl border border-white/30 shadow-xl shadow-black/5"></div>
+          <div className="relative p-2">
+            <PeriodSelector
+              period={period}
+              onPeriodChange={updatePeriod}
+              exampleAmount={100000}
+            />
+          </div>
+        </div>
 
       {/* Input Form */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -542,6 +562,7 @@ export const BusinessTaxCalculator: React.FC = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

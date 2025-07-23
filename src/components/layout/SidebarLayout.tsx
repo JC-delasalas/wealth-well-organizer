@@ -160,27 +160,30 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
     return 'U';
   };
 
-  // Desktop sidebar component
+  // Enhanced Desktop sidebar component with finance-green theme
   const DesktopSidebar = () => (
-    <div className={`hidden md:flex flex-col w-64 bg-white border-r border-gray-200 transition-all duration-300 ${
+    <div className={`hidden md:flex flex-col w-64 bg-finance-green-600 border-r border-finance-green-700 transition-all duration-300 shadow-xl ${
       sidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
-      {/* Sidebar Header */}
-      <div className="p-6 border-b border-gray-200">
+      {/* Enhanced Sidebar Header */}
+      <div className="p-6 border-b border-finance-green-700/30">
         <div className="flex items-center space-x-3">
-          <img
-            src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
-            alt="FinanceTracker Logo"
-            className="w-8 h-8 object-contain"
-          />
-          <span className="text-xl font-bold text-gray-900">FinanceTracker</span>
+          <div className="relative">
+            <div className="absolute inset-0 bg-white/20 rounded-lg blur-sm"></div>
+            <img
+              src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
+              alt="FinanceTracker Logo"
+              className="relative w-8 h-8 object-contain"
+            />
+          </div>
+          <span className="text-xl font-bold text-white">FinanceTracker</span>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-sm text-white/80 mt-1">
           Personal Finance Management
         </p>
       </div>
 
-      {/* Navigation Menu */}
+      {/* Enhanced Navigation Menu */}
       <nav className="flex-1 p-4 space-y-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
@@ -190,18 +193,29 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
               key={item.id}
               to={item.path}
               onClick={handleNavigation}
-              className={`w-full text-left p-3 rounded-lg transition-colors flex items-start gap-3 ${
+              className={`group w-full text-left p-3 rounded-xl transition-all duration-200 flex items-start gap-3 relative overflow-hidden ${
                 active
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-gray-100 text-gray-700'
+                  ? 'bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30'
+                  : 'hover:bg-white/10 text-white/90 hover:text-white hover:shadow-md'
               }`}
             >
-              <Icon className={`w-5 h-5 mt-0.5 ${active ? 'text-primary-foreground' : 'text-gray-500'}`} />
-              <div>
-                <div className={`font-medium text-sm ${active ? 'text-primary-foreground' : 'text-gray-900'}`}>
+              {/* Active state background glow */}
+              {active && (
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent rounded-xl"></div>
+              )}
+
+              <Icon className={`relative w-5 h-5 mt-0.5 transition-colors ${
+                active ? 'text-white' : 'text-white/80 group-hover:text-white'
+              }`} />
+              <div className="relative">
+                <div className={`font-semibold text-sm transition-colors ${
+                  active ? 'text-white' : 'text-white/90 group-hover:text-white'
+                }`}>
                   {item.label}
                 </div>
-                <div className={`text-xs mt-1 ${active ? 'text-primary-foreground/80' : 'text-gray-500'}`}>
+                <div className={`text-xs mt-1 transition-colors ${
+                  active ? 'text-white/90' : 'text-white/70 group-hover:text-white/80'
+                }`}>
                   {item.description}
                 </div>
               </div>
@@ -247,26 +261,29 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
     </div>
   );
 
-  // Mobile sidebar using Sheet component
+  // Enhanced Mobile sidebar using Sheet component
   const MobileSidebar = () => (
     <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-      <SheetContent side="left" className="w-64 p-0">
-        {/* Mobile Sidebar Header */}
-        <div className="p-6 border-b border-gray-200">
+      <SheetContent side="left" className="w-64 p-0 bg-finance-green-600 border-finance-green-700">
+        {/* Enhanced Mobile Sidebar Header */}
+        <div className="p-6 border-b border-finance-green-700/30">
           <div className="flex items-center space-x-3">
-            <img
-              src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
-              alt="FinanceTracker Logo"
-              className="w-8 h-8 object-contain"
-            />
-            <span className="text-xl font-bold text-gray-900">FinanceTracker</span>
+            <div className="relative">
+              <div className="absolute inset-0 bg-white/20 rounded-lg blur-sm"></div>
+              <img
+                src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
+                alt="FinanceTracker Logo"
+                className="relative w-8 h-8 object-contain"
+              />
+            </div>
+            <span className="text-xl font-bold text-white">FinanceTracker</span>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-white/80 mt-1">
             Personal Finance Management
           </p>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Enhanced Mobile Navigation Menu */}
         <nav className="flex-1 p-4 space-y-2">
           {navigationItems.map((item) => {
             const Icon = item.icon;
@@ -276,18 +293,29 @@ export const SidebarLayout: React.FC<SidebarLayoutProps> = ({ children }) => {
                 key={item.id}
                 to={item.path}
                 onClick={handleNavigation}
-                className={`w-full text-left p-3 rounded-lg transition-colors flex items-start gap-3 ${
+                className={`group w-full text-left p-3 rounded-xl transition-all duration-200 flex items-start gap-3 relative overflow-hidden ${
                   active
-                    ? 'bg-primary text-primary-foreground'
-                    : 'hover:bg-gray-100 text-gray-700'
+                    ? 'bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/30'
+                    : 'hover:bg-white/10 text-white/90 hover:text-white hover:shadow-md'
                 }`}
               >
-                <Icon className={`w-5 h-5 mt-0.5 ${active ? 'text-primary-foreground' : 'text-gray-500'}`} />
-                <div>
-                  <div className={`font-medium text-sm ${active ? 'text-primary-foreground' : 'text-gray-900'}`}>
+                {/* Active state background glow */}
+                {active && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent rounded-xl"></div>
+                )}
+
+                <Icon className={`relative w-5 h-5 mt-0.5 transition-colors ${
+                  active ? 'text-white' : 'text-white/80 group-hover:text-white'
+                }`} />
+                <div className="relative">
+                  <div className={`font-semibold text-sm transition-colors ${
+                    active ? 'text-white' : 'text-white/90 group-hover:text-white'
+                  }`}>
                     {item.label}
                   </div>
-                  <div className={`text-xs mt-1 ${active ? 'text-primary-foreground/80' : 'text-gray-500'}`}>
+                  <div className={`text-xs mt-1 transition-colors ${
+                    active ? 'text-white/90' : 'text-white/70 group-hover:text-white/80'
+                  }`}>
                     {item.description}
                   </div>
                 </div>
