@@ -30,21 +30,21 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
   const { standard: formatCurrency } = useCurrencyFormatter();
 
   return (
-    <Card className={`border-blue-200 bg-blue-50 ${className}`}>
+    <Card className={`bg-white border border-gray-200 shadow-sm ${className}`}>
       <CardContent className="p-4">
         <div className="space-y-4">
           {/* Period Selection */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
-              <span className="font-medium text-blue-800">Income Period</span>
+              <Calendar className="w-5 h-5 text-gray-600" />
+              <span className="font-medium text-gray-900">Income Period</span>
             </div>
             <div className="flex items-center gap-2">
               <Button
                 variant={period === 'monthly' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => onPeriodChange('monthly')}
-                className={period === 'monthly' ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-300 text-blue-700 hover:bg-blue-100'}
+                className={period === 'monthly' ? 'bg-finance-green-600' : 'border-gray-300 text-gray-700'}
               >
                 <CalendarDays className="w-4 h-4 mr-1" />
                 Monthly
@@ -53,7 +53,7 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
                 variant={period === 'annual' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => onPeriodChange('annual')}
-                className={period === 'annual' ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-300 text-blue-700 hover:bg-blue-100'}
+                className={period === 'annual' ? 'bg-finance-green-600' : 'border-gray-300 text-gray-700'}
               >
                 <TrendingUp className="w-4 h-4 mr-1" />
                 Annual
@@ -62,7 +62,7 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
           </div>
 
           {/* Description */}
-          <div className="text-sm text-blue-700">
+          <div className="text-sm text-gray-700">
             {period === 'monthly' ? (
               <>
                 <strong>Monthly Mode:</strong> Enter your monthly income amounts. 
@@ -78,12 +78,12 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
 
           {/* Conversion Example */}
           {showConversionExample && (
-            <div className="p-3 bg-white border border-blue-200 rounded-lg">
+            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
               <div className="flex items-center gap-2 mb-2">
-                <Info className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-800">Example Conversion</span>
+                <Info className="w-4 h-4 text-gray-600" />
+                <span className="text-sm font-medium text-gray-900">Example Conversion</span>
               </div>
-              <div className="text-sm text-blue-700 space-y-1">
+              <div className="text-sm text-gray-700 space-y-1">
                 {period === 'monthly' ? (
                   <>
                     <div className="flex justify-between">
@@ -112,7 +112,7 @@ export const PeriodSelector: React.FC<PeriodSelectorProps> = ({
           )}
 
           {/* BIR Compliance Note */}
-          <div className="flex items-start gap-2 text-xs text-blue-600">
+          <div className="flex items-start gap-2 text-xs text-gray-600">
             <Info className="w-3 h-3 mt-0.5 flex-shrink-0" />
             <span>
               All tax calculations are computed on an annual basis for BIR compliance, 
@@ -214,7 +214,7 @@ export const PeriodBadge: React.FC<PeriodBadgeProps> = ({
   return (
     <Badge 
       variant={period === 'monthly' ? 'default' : 'secondary'}
-      className={`${period === 'monthly' ? 'bg-blue-600' : 'bg-green-600'} ${className}`}
+      className={`${period === 'monthly' ? 'bg-finance-green-600' : 'bg-finance-green-600'} ${className}`}
     >
       {period === 'monthly' ? (
         <>

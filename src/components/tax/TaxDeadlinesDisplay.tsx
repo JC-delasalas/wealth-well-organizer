@@ -158,10 +158,10 @@ export const TaxDeadlinesDisplay: React.FC = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'text-red-600 bg-red-50 border-red-200';
-      case 'medium': return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'low': return 'text-blue-600 bg-blue-50 border-blue-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'high': return 'text-gray-900 bg-white border-gray-200';
+      case 'medium': return 'text-gray-900 bg-white border-gray-200';
+      case 'low': return 'text-gray-900 bg-white border-gray-200';
+      default: return 'text-gray-900 bg-white border-gray-200';
     }
   };
 
@@ -231,7 +231,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-red-200 bg-red-50">
+        <Card className="bg-white border border-gray-200 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-8 h-8 text-red-600" />
@@ -245,7 +245,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="bg-white border border-gray-200 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <Clock className="w-8 h-8 text-orange-600" />
@@ -259,7 +259,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 bg-green-50">
+        <Card className="bg-white border border-gray-200 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <CheckCircle className="w-8 h-8 text-green-600" />
@@ -276,7 +276,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
 
       {/* Overdue Deadlines */}
       {overdueDeadlines.length > 0 && (
-        <Card className="border-red-200 bg-red-50">
+        <Card className="bg-white border border-gray-200 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-800">
               <AlertTriangle className="w-5 h-5" />
@@ -286,7 +286,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
           <CardContent>
             <div className="space-y-3">
               {overdueDeadlines.map((deadline) => (
-                <div key={deadline.id} className="p-3 bg-white border border-red-200 rounded-lg">
+                <div key={deadline.id} className="p-3 bg-white border border-gray-200 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {getTypeIcon(deadline.type)}
@@ -384,7 +384,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
         <CardContent>
           <div className="space-y-3">
             {filteredDeadlines.map((deadline) => (
-              <div key={deadline.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
+              <div key={deadline.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
                 <div className="flex items-center gap-3">
                   {getTypeIcon(deadline.type)}
                   <div>
@@ -412,7 +412,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
       </Card>
 
       {/* Important Notes */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="bg-white border border-gray-200 shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />

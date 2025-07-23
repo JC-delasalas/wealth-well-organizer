@@ -239,11 +239,11 @@ export const BusinessTaxCalculator: React.FC = () => {
                 </div>
                 
                 {businessInput.optionalStandardDeduction && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="text-sm text-blue-800">
+                  <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-900">
                       <strong>OSD Amount:</strong> {formatCurrency(businessInput.grossReceipts * 0.40)}
                     </div>
-                    <div className="text-xs text-blue-600 mt-1">
+                    <div className="text-xs text-gray-600 mt-1">
                       This will be used instead of actual deductions for graduated tax calculation
                     </div>
                   </div>
@@ -311,40 +311,32 @@ export const BusinessTaxCalculator: React.FC = () => {
           <CardContent className="space-y-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="text-sm text-blue-600 font-medium">Gross Receipts</div>
-                <div className="text-xl font-bold text-blue-800">
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Gross Receipts</div>
+                <div className="text-xl font-bold text-gray-900">
                   {formatCurrency(businessInput.grossReceipts)}
                 </div>
               </div>
-              
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="text-sm text-green-600 font-medium">Net Income</div>
-                <div className="text-xl font-bold text-green-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Net Income</div>
+                <div className="text-xl font-bold text-finance-green-600">
                   {formatCurrency(businessResult.netIncome)}
                 </div>
               </div>
-              
-              <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                <div className="text-sm text-purple-600 font-medium">Taxable Income</div>
-                <div className="text-xl font-bold text-purple-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Taxable Income</div>
+                <div className="text-xl font-bold text-gray-900">
                   {formatCurrency(businessResult.taxableIncome)}
                 </div>
               </div>
               
-              <div className={`p-4 border rounded-lg ${
-                businessResult.recommendedOption === '8%' 
-                  ? 'bg-orange-50 border-orange-200' 
-                  : 'bg-green-50 border-green-200'
-              }`}>
-                <div className={`text-sm font-medium ${
-                  businessResult.recommendedOption === '8%' ? 'text-orange-600' : 'text-green-600'
-                }`}>
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">
                   Recommended Option
                 </div>
-                <div className={`text-lg font-bold ${
-                  businessResult.recommendedOption === '8%' ? 'text-orange-800' : 'text-green-800'
-                }`}>
+                <div className="text-lg font-bold text-finance-green-600">
                   {businessResult.recommendedOption === '8%' ? '8% Tax' : 'Graduated Tax'}
                 </div>
               </div>
@@ -353,9 +345,9 @@ export const BusinessTaxCalculator: React.FC = () => {
             {/* Tax Comparison */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* 8% Tax Option */}
-              <div className={`p-6 border-2 rounded-lg ${
-                businessResult.recommendedOption === '8%' 
-                  ? 'border-green-500 bg-green-50' 
+              <div className={`p-6 border-2 rounded-lg bg-white ${
+                businessResult.recommendedOption === '8%'
+                  ? 'border-finance-green-500'
                   : 'border-gray-200'
               }`}>
                 <div className="flex items-center justify-between mb-4">
@@ -397,9 +389,9 @@ export const BusinessTaxCalculator: React.FC = () => {
               </div>
 
               {/* Graduated Tax Option */}
-              <div className={`p-6 border-2 rounded-lg ${
-                businessResult.recommendedOption === 'graduated' 
-                  ? 'border-green-500 bg-green-50' 
+              <div className={`p-6 border-2 rounded-lg bg-white ${
+                businessResult.recommendedOption === 'graduated'
+                  ? 'border-finance-green-500'
                   : 'border-gray-200'
               }`}>
                 <div className="flex items-center justify-between mb-4">
@@ -442,7 +434,7 @@ export const BusinessTaxCalculator: React.FC = () => {
             </div>
 
             {/* Savings Comparison */}
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <Info className="w-5 h-5 text-blue-600" />
                 <span className="font-medium">Tax Savings Analysis</span>

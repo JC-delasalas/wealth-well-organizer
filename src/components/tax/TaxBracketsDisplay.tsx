@@ -126,7 +126,7 @@ export const TaxBracketsDisplay: React.FC = () => {
                 </thead>
                 <tbody>
                   {taxBrackets.map((bracket, index) => (
-                    <tr key={bracket.id} className="border-b hover:bg-muted/50">
+                    <tr key={bracket.id} className="border-b">
                       <td className="p-3">
                         <Badge variant="outline">
                           Bracket {bracket.bracketOrder}
@@ -267,7 +267,7 @@ export const TaxBracketsDisplay: React.FC = () => {
       )}
 
       {/* Key Information */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="bg-white border border-gray-200 shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-600 mt-0.5" />

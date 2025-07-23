@@ -345,39 +345,33 @@ export const IndividualTaxCalculator: React.FC = () => {
           <CardContent className="space-y-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="text-sm text-blue-600 font-medium">Gross Income</div>
-                <div className="text-xl font-bold text-blue-800">
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Gross Income</div>
+                <div className="text-xl font-bold text-gray-900">
                   {formatCurrency(taxResult.grossIncome)}
                 </div>
               </div>
-              
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="text-sm text-green-600 font-medium">Taxable Income</div>
-                <div className="text-xl font-bold text-green-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Taxable Income</div>
+                <div className="text-xl font-bold text-finance-green-600">
                   {formatCurrency(taxResult.taxableIncome)}
                 </div>
               </div>
-              
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="text-sm text-red-600 font-medium">Tax Due</div>
-                <div className="text-xl font-bold text-red-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Tax Due</div>
+                <div className="text-xl font-bold text-gray-900">
                   {formatCurrency(taxResult.taxDue)}
                 </div>
               </div>
               
-              <div className={`p-4 border rounded-lg ${
-                taxResult.taxPayable > 0 
-                  ? 'bg-orange-50 border-orange-200' 
-                  : 'bg-green-50 border-green-200'
-              }`}>
-                <div className={`text-sm font-medium ${
-                  taxResult.taxPayable > 0 ? 'text-orange-600' : 'text-green-600'
-                }`}>
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">
                   {taxResult.taxPayable > 0 ? 'Tax Payable' : 'Tax Refund'}
                 </div>
                 <div className={`text-xl font-bold ${
-                  taxResult.taxPayable > 0 ? 'text-orange-800' : 'text-green-800'
+                  taxResult.taxPayable > 0 ? 'text-gray-900' : 'text-finance-green-600'
                 }`}>
                   {formatCurrency(taxResult.taxPayable > 0 ? taxResult.taxPayable : taxResult.taxRefund)}
                 </div>
@@ -404,7 +398,7 @@ export const IndividualTaxCalculator: React.FC = () => {
               <h3 className="text-lg font-semibold">Tax Bracket Breakdown</h3>
               <div className="space-y-2">
                 {taxResult.breakdown.map((bracket, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
                     <div className="flex-1">
                       <div className="font-medium">
                         Bracket {bracket.bracket}: {formatCurrency(bracket.minIncome)} - {

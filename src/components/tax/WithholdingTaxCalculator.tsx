@@ -252,7 +252,7 @@ export const WithholdingTaxCalculator: React.FC = () => {
                 />
               </div>
               
-              <div className="p-3 bg-muted rounded-lg">
+              <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
                 <div className="flex items-center gap-2 mb-2">
                   {withholdingInput.isResident ? (
                     <User className="w-4 h-4 text-green-600" />
@@ -308,37 +308,37 @@ export const WithholdingTaxCalculator: React.FC = () => {
           <CardContent className="space-y-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="text-sm text-blue-600 font-medium">Gross Amount</div>
-                <div className="text-xl font-bold text-blue-800">
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Gross Amount</div>
+                <div className="text-xl font-bold text-gray-900">
                   {formatCurrency(withholdingInput.amount)}
                 </div>
               </div>
-              
-              <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                <div className="text-sm text-purple-600 font-medium">Tax Rate</div>
-                <div className="text-xl font-bold text-purple-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Tax Rate</div>
+                <div className="text-xl font-bold text-finance-green-600">
                   {(getWithholdingRate() * 100).toFixed(1)}%
                 </div>
               </div>
-              
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="text-sm text-red-600 font-medium">Withholding Tax</div>
-                <div className="text-xl font-bold text-red-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Withholding Tax</div>
+                <div className="text-xl font-bold text-gray-900">
                   {formatCurrency(withholdingResult)}
                 </div>
               </div>
-              
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <div className="text-sm text-green-600 font-medium">Net Amount</div>
-                <div className="text-xl font-bold text-green-800">
+
+              <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                <div className="text-sm text-gray-600 font-medium">Net Amount</div>
+                <div className="text-xl font-bold text-finance-green-600">
                   {formatCurrency(withholdingInput.amount - withholdingResult)}
                 </div>
               </div>
             </div>
 
             {/* Calculation Breakdown */}
-            <div className="p-4 bg-muted rounded-lg">
+            <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-3">Calculation Breakdown</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -374,7 +374,7 @@ export const WithholdingTaxCalculator: React.FC = () => {
             </div>
 
             {/* Important Notes */}
-            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-amber-600 mt-0.5" />
                 <div className="text-sm">
