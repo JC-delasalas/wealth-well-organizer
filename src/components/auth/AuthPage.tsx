@@ -113,16 +113,13 @@ export const AuthPage = () => {
           <div className="absolute inset-0 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-lg shadow-black/5"></div>
 
           <div className="relative flex items-center justify-center md:justify-start">
-            {/* Enhanced Logo with Neomorphism */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-finance-green-600 rounded-2xl blur-lg opacity-30"></div>
-              <div className="relative bg-gradient-to-br from-finance-green-500 to-finance-green-700 p-4 rounded-2xl shadow-2xl shadow-finance-green-600/25 border border-finance-green-400/20">
-                <img
-                  src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
-                  alt="FinanceTracker Logo"
-                  className="w-8 h-8 object-contain filter drop-shadow-sm"
-                />
-              </div>
+            {/* Clean Logo */}
+            <div>
+              <img
+                src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
+                alt="FinanceTracker Logo"
+                className="w-8 h-8 object-contain"
+              />
             </div>
 
             <div className="ml-4">
