@@ -45,35 +45,35 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       "relative overflow-hidden",
       className
     )}>
-      <CardContent className="p-6 sm:p-8">
-        <div className="flex items-center justify-between">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            {/* Clean title with better readability */}
-            <p className="text-sm sm:text-base font-semibold text-gray-600 mb-2 truncate">{title}</p>
+            {/* Compact title with better readability */}
+            <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1 leading-tight">{title}</p>
 
-            {/* Clean value with high contrast */}
-            <p className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 truncate text-gray-900">
+            {/* Optimized value with responsive sizing */}
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold mb-1 sm:mb-2 leading-tight text-gray-900 break-words">
               {value}
             </p>
 
-            {/* Clean trend indicator */}
-            <div className="flex items-center text-sm sm:text-base">
-              <TrendIcon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-finance-green-600 mr-2" />
+            {/* Compact trend indicator */}
+            <div className="flex items-center text-xs sm:text-sm">
+              <TrendIcon className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 text-finance-green-600 mr-1" />
               <span className={cn(
-                "font-semibold",
+                "font-semibold whitespace-nowrap",
                 isPositive ? "text-finance-green-600" : "text-red-600"
               )}>
                 {isPositive ? '+' : ''}{change}%
               </span>
-              <span className="text-gray-500 ml-2 font-medium hidden sm:inline">vs last month</span>
-              <span className="text-gray-500 ml-2 font-medium sm:hidden">vs last</span>
+              <span className="text-gray-500 ml-1 font-medium text-xs hidden sm:inline whitespace-nowrap">vs last month</span>
+              <span className="text-gray-500 ml-1 font-medium text-xs sm:hidden whitespace-nowrap">vs last</span>
             </div>
           </div>
 
-          {/* Clean icon container */}
-          <div className="flex-shrink-0 ml-4">
-            <div className="p-3 sm:p-4 rounded-xl bg-finance-green-100 border border-finance-green-200">
-              <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-finance-green-600" />
+          {/* Compact icon container */}
+          <div className="flex-shrink-0">
+            <div className="p-2 sm:p-2.5 rounded-lg bg-finance-green-100 border border-finance-green-200">
+              <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-finance-green-600" />
             </div>
           </div>
         </div>
