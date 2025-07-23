@@ -91,85 +91,155 @@ export const AuthPage = () => {
   const isLoading = loading || isSubmitting;
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="min-h-screen flex flex-col bg-white">
-        {/* Header */}
-        <header className="p-4 md:p-8 bg-white">
-          <div className="flex items-center justify-center md:justify-start">
-            <div className="bg-finance-green-600 p-3 rounded-full">
-              <img
-                src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
-                alt="FinanceTracker Logo"
-                className="w-8 h-8 object-contain"
-              />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Modern Glassmorphism Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-finance-green-50/30">
+        {/* Animated Background Elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-finance-green-100/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/4 right-0 w-80 h-80 bg-blue-100/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-purple-100/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+
+        {/* Subtle Grid Pattern */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
+          backgroundSize: '24px 24px'
+        }}></div>
+      </div>
+
+      <div className="relative min-h-screen flex flex-col">
+        {/* Enhanced Header with Glassmorphism */}
+        <header className="relative p-6 md:p-10">
+          {/* Glassmorphism Header Background */}
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-lg shadow-black/5"></div>
+
+          <div className="relative flex items-center justify-center md:justify-start">
+            {/* Enhanced Logo with Neomorphism */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-finance-green-600 rounded-2xl blur-lg opacity-30"></div>
+              <div className="relative bg-gradient-to-br from-finance-green-500 to-finance-green-700 p-4 rounded-2xl shadow-2xl shadow-finance-green-600/25 border border-finance-green-400/20">
+                <img
+                  src="/lovable-uploads/eb5e50d2-20f4-4a30-840c-4301bd79298e.png"
+                  alt="FinanceTracker Logo"
+                  className="w-8 h-8 object-contain filter drop-shadow-sm"
+                />
+              </div>
             </div>
-            <h1 className="ml-3 text-2xl md:text-3xl font-bold text-gray-900">
-              FinanceTracker
-            </h1>
+
+            <div className="ml-4">
+              <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                FinanceTracker
+              </h1>
+              <div className="h-0.5 w-full bg-gradient-to-r from-finance-green-500 to-transparent mt-1 rounded-full"></div>
+            </div>
           </div>
-          <p className="text-center md:text-left text-gray-700 mt-2 text-sm">
+
+          <p className="relative text-center md:text-left text-gray-600 mt-3 text-sm font-medium tracking-wide">
             Wealth Well Organizer - Your Personal Finance Management Solution
           </p>
         </header>
 
-        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center px-4 md:px-8 py-8 gap-8 lg:gap-16 bg-white">
-          {/* Left side - Hero content */}
-          <div className="flex-1 max-w-lg lg:max-w-xl text-center lg:text-left">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Master Your
-              <span className="text-finance-green-600 block">
-                Financial Future
-              </span>
-            </h2>
+        <div className="relative flex-1 flex flex-col lg:flex-row items-center justify-center px-6 md:px-12 py-12 gap-12 lg:gap-20">
+          {/* Left side - Enhanced Hero content */}
+          <div className="relative flex-1 max-w-lg lg:max-w-xl text-center lg:text-left">
+            {/* Subtle background glow for hero section */}
+            <div className="absolute -inset-8 bg-gradient-to-r from-finance-green-50/30 to-transparent rounded-3xl blur-2xl"></div>
+            <div className="relative">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
+                <span className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                  Master Your
+                </span>
+                <span className="block bg-gradient-to-r from-finance-green-600 via-finance-green-500 to-finance-green-700 bg-clip-text text-transparent drop-shadow-sm">
+                  Financial Future
+                </span>
+              </h2>
 
-            <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -left-4 w-8 h-8 bg-finance-green-200/30 rounded-full blur-sm"></div>
+              <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-blue-200/20 rounded-full blur-sm"></div>
+            </div>
+
+            <p className="relative text-lg md:text-xl text-gray-600 mb-10 leading-relaxed font-medium">
               Take control of your finances with AI-powered insights, smart budgeting, and personalized recommendations designed for your success.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
               {[
                 { icon: Brain, title: "AI Insights", desc: "Smart financial advice powered by machine learning" },
                 { icon: BarChart3, title: "Analytics", desc: "Comprehensive reports and data visualization" },
                 { icon: Target, title: "Goals", desc: "Savings tracking with progress monitoring" },
                 { icon: Shield, title: "Secure", desc: "Bank-level security and data protection" }
               ].map((feature, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                  <feature.icon className="w-6 h-6 text-finance-green-600 mb-2" />
-                  <h3 className="font-semibold text-gray-900 text-sm">{feature.title}</h3>
-                  <p className="text-xs text-gray-600">{feature.desc}</p>
+                <div key={index} className="group relative">
+                  {/* Neomorphism card with glassmorphism */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm rounded-2xl shadow-lg shadow-black/5 border border-white/20"></div>
+                  <div className="relative bg-white/70 backdrop-blur-sm border border-gray-100/50 rounded-2xl p-6 shadow-xl shadow-black/5">
+                    {/* Icon with enhanced styling */}
+                    <div className="relative mb-4">
+                      <div className="absolute inset-0 bg-finance-green-500/20 rounded-xl blur-md"></div>
+                      <div className="relative bg-gradient-to-br from-finance-green-50 to-finance-green-100/50 p-3 rounded-xl border border-finance-green-200/30">
+                        <feature.icon className="w-6 h-6 text-finance-green-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-gray-900 text-base mb-2">{feature.title}</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">{feature.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="flex justify-center lg:justify-start gap-8 text-center">
-              <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
-                <div className="text-2xl md:text-3xl font-bold text-finance-green-600">10K+</div>
-                <div className="text-sm text-gray-700">Active Users</div>
-              </div>
-              <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
-                <div className="text-2xl md:text-3xl font-bold text-finance-green-600">₱2M+</div>
-                <div className="text-sm text-gray-700">Money Managed</div>
-              </div>
-              <div className="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
-                <div className="text-2xl md:text-3xl font-bold text-finance-green-600">4.9★</div>
-                <div className="text-sm text-gray-700">User Rating</div>
-              </div>
+            <div className="flex justify-center lg:justify-start gap-6 text-center">
+              {[
+                { value: "10K+", label: "Active Users" },
+                { value: "₱2M+", label: "Money Managed" },
+                { value: "4.9★", label: "User Rating" }
+              ].map((stat, index) => (
+                <div key={index} className="relative group">
+                  {/* Glassmorphism background with subtle glow */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/90 to-white/60 backdrop-blur-xl rounded-2xl shadow-xl shadow-black/10 border border-white/30"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-finance-green-50/30 to-transparent rounded-2xl"></div>
+
+                  <div className="relative px-6 py-5 rounded-2xl">
+                    <div className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-finance-green-600 to-finance-green-700 bg-clip-text text-transparent mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm font-medium text-gray-600">
+                      {stat.label}
+                    </div>
+                  </div>
+
+                  {/* Subtle decorative element */}
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-finance-green-400/20 rounded-full blur-sm"></div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Right side - Auth form */}
-          <div className="w-full max-w-md">
-            <Card className="bg-white shadow-lg border border-gray-200">
-              <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl font-bold text-gray-900">
+          {/* Right side - Enhanced Auth form */}
+          <div className="relative w-full max-w-md">
+            {/* Glassmorphism container with multiple layers */}
+            <div className="absolute -inset-4 bg-gradient-to-br from-finance-green-100/20 via-white/10 to-blue-100/10 rounded-3xl blur-2xl"></div>
+            <div className="absolute -inset-2 bg-gradient-to-br from-white/40 to-white/20 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl shadow-black/10"></div>
+
+            <Card className="relative bg-white/95 backdrop-blur-sm shadow-2xl border border-white/50 rounded-3xl overflow-hidden">
+              {/* Subtle inner glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-finance-green-50/20 pointer-events-none"></div>
+              <CardHeader className="relative text-center pb-6 pt-8">
+                {/* Decorative top border */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-finance-green-500 to-transparent rounded-full"></div>
+
+                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-3">
                   Welcome to FinanceTracker
                 </CardTitle>
-                <p className="text-gray-700 text-sm">
+                <p className="text-gray-600 text-sm leading-relaxed font-medium">
                   Join thousands of users already mastering their finances with our comprehensive wealth management platform
                 </p>
+
+                {/* Subtle decorative elements */}
+                <div className="absolute top-4 left-4 w-2 h-2 bg-finance-green-300/30 rounded-full"></div>
+                <div className="absolute top-6 right-6 w-1.5 h-1.5 bg-blue-300/20 rounded-full"></div>
               </CardHeader>
 
-              <CardContent>
+              <CardContent className="relative px-8 pb-8">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="grid w-full grid-cols-2 bg-white border border-gray-200">
                     <TabsTrigger
@@ -425,24 +495,40 @@ export const AuthPage = () => {
               </CardContent>
             </Card>
 
-            <div className="mt-6 text-center">
-              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <Smartphone className="w-6 h-6 text-finance-green-600 mx-auto mb-2" />
-                <p className="text-sm text-gray-900 font-medium">Available on all devices</p>
-                <p className="text-xs text-gray-600">Access your finances anywhere, anytime</p>
+            <div className="mt-8 text-center">
+              <div className="relative group">
+                {/* Glassmorphism background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-sm rounded-2xl shadow-lg shadow-black/5 border border-white/30"></div>
+                <div className="relative bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-100/50">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-finance-green-500/10 rounded-full blur-lg"></div>
+                    <Smartphone className="relative w-7 h-7 text-finance-green-600 mx-auto mb-3" />
+                  </div>
+                  <p className="text-sm text-gray-900 font-bold mb-1">Available on all devices</p>
+                  <p className="text-xs text-gray-600 font-medium">Access your finances anywhere, anytime</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="p-4 md:p-8 text-center bg-white">
-          <p className="text-sm text-gray-700">
-            By signing up, you agree to our terms of service and privacy policy
-          </p>
-          <p className="text-xs text-gray-600 mt-2">
-            © 2024 FinanceTracker - Wealth Well Organizer. Developed by Millennial_TV.
-          </p>
+        {/* Enhanced Footer with Glassmorphism */}
+        <footer className="relative p-6 md:p-10 text-center">
+          {/* Glassmorphism footer background */}
+          <div className="absolute inset-0 bg-white/70 backdrop-blur-xl border-t border-white/20 shadow-lg shadow-black/5"></div>
+
+          <div className="relative">
+            <p className="text-sm text-gray-600 font-medium mb-3">
+              By signing up, you agree to our terms of service and privacy policy
+            </p>
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+              <span>© 2024 FinanceTracker - Wealth Well Organizer.</span>
+              <span className="text-finance-green-600 font-medium">Developed by Millennial_TV.</span>
+            </div>
+
+            {/* Decorative elements */}
+            <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-finance-green-400/30 to-transparent rounded-full"></div>
+          </div>
         </footer>
       </div>
     </div>
