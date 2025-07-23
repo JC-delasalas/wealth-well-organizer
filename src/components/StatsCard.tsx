@@ -45,25 +45,46 @@ export const StatsCard: React.FC<StatsCardProps> = ({
       "relative overflow-hidden",
       className
     )}>
-      <CardContent className="p-4 sm:p-6">
+      {/* Inner glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-finance-green-50/30 pointer-events-none rounded-2xl"></div>
+
+      <CardContent className="relative p-6 sm:p-8">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="text-xs sm:text-sm font-medium text-finance-gray-700 mb-1 truncate">{title}</p>
-            <p className="text-lg sm:text-xl lg:text-2xl font-bold mb-2 truncate text-finance-gray-900">{value}</p>
-            <div className="flex items-center text-xs sm:text-sm">
-              <TrendIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0 text-finance-gray-600" />
+            {/* Enhanced title with better typography */}
+            <p className="text-sm sm:text-base font-semibold text-gray-700 mb-2 truncate tracking-wide">{title}</p>
+
+            {/* Enhanced value with gradient text */}
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 truncate bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+              {value}
+            </p>
+
+            {/* Enhanced trend indicator */}
+            <div className="flex items-center text-sm sm:text-base">
+              <div className="relative mr-2">
+                <div className="absolute inset-0 bg-finance-green-500/20 rounded-full blur-sm"></div>
+                <TrendIcon className="relative w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 text-finance-green-600" />
+              </div>
               <span className={cn(
-                "font-medium",
+                "font-bold text-base",
                 isPositive ? "text-finance-green-600" : "text-red-600"
               )}>
                 {isPositive ? '+' : ''}{change}%
               </span>
-              <span className="text-finance-gray-600 ml-1 hidden sm:inline">vs last month</span>
-              <span className="text-finance-gray-600 ml-1 sm:hidden">vs last</span>
+              <span className="text-gray-600 ml-2 font-medium hidden sm:inline">vs last month</span>
+              <span className="text-gray-600 ml-2 font-medium sm:hidden">vs last</span>
             </div>
           </div>
-          <div className="p-2 sm:p-3 rounded-full bg-finance-green-500/20 backdrop-blur-sm flex-shrink-0 ml-2">
-            <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-finance-green-600" />
+
+          {/* Enhanced icon container with neomorphism */}
+          <div className="relative flex-shrink-0 ml-4">
+            {/* Multiple shadow layers for depth */}
+            <div className="absolute inset-0 bg-finance-green-500/20 rounded-2xl blur-lg"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-finance-green-100/80 to-finance-green-200/40 rounded-2xl shadow-inner"></div>
+
+            <div className="relative p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-finance-green-50 to-finance-green-100/70 backdrop-blur-sm border border-finance-green-200/50 shadow-xl shadow-finance-green-500/20">
+              <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-finance-green-600 drop-shadow-sm" />
+            </div>
           </div>
         </div>
       </CardContent>
