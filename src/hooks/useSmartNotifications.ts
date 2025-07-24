@@ -24,6 +24,7 @@ export interface UseSmartNotificationsReturn {
     totalThisHour: number;
     byCategory: Record<string, number>;
     byPriority: Record<string, number>;
+    queueSize: number;
   };
   
   // Utility methods
@@ -120,9 +121,20 @@ export const useSmartNotifications = (): UseSmartNotificationsReturn => {
     setPreferences(smartNotifications.getPreferences());
   }, []);
 
+  // Cleanup methods
+  const clearQueue = useCallback(() => {
+    smartNotifications.clearNotificationQueue();
+    setStats(smartNotifications.getNotificationStats());
+  }, []);
+
+  const cleanupOld = useCallback((daysToKeep: number = 7) => {
+    smartNotifications.cleanupOldNotifications(daysToKeep);
+    setStats(smartNotifications.getNotificationStats());
+  }, []);
+
   // Calculate if notifications can be sent
-  const canNotify = preferences.enabled && 
-    stats.totalThisHour < preferences.maxPerHour && 
+  const canNotify = preferences.enabled &&
+    stats.totalThisHour < preferences.maxPerHour &&
     stats.totalToday < preferences.maxPerDay;
 
   return {
@@ -136,6 +148,8 @@ export const useSmartNotifications = (): UseSmartNotificationsReturn => {
     stats,
     isQuietTime,
     canNotify,
+    clearQueue,
+    cleanupOld,
   };
 };
 

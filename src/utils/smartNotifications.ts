@@ -41,6 +41,10 @@ class SmartNotificationManager {
   private preferences: NotificationPreferences;
   private readonly STORAGE_KEY = 'notification-preferences';
   private readonly HISTORY_KEY = 'notification-history';
+  private notificationQueue: NotificationData[] = [];
+  private batchTimeout: NodeJS.Timeout | null = null;
+  private readonly BATCH_DELAY = 2000; // 2 seconds
+  private readonly MAX_BATCH_SIZE = 3;
 
   constructor() {
     this.preferences = this.loadPreferences();
@@ -82,8 +86,8 @@ class SmartNotificationManager {
   private getDefaultPreferences(): NotificationPreferences {
     return {
       enabled: true,
-      maxPerHour: 5,
-      maxPerDay: 20,
+      maxPerHour: 3, // Reduced from 5 to 3
+      maxPerDay: 10, // Reduced from 20 to 10
       quietHoursStart: '22:00',
       quietHoursEnd: '08:00',
       priorityThreshold: 'medium',
@@ -157,8 +161,25 @@ class SmartNotificationManager {
     );
   }
 
+  private isDuplicateNotification(notification: NotificationData): boolean {
+    const now = Date.now();
+    const oneHourAgo = now - 60 * 60 * 1000;
+
+    // Check for duplicate notifications in the last hour
+    return this.notificationHistory.some(existing =>
+      existing.title === notification.title &&
+      existing.category === notification.category &&
+      existing.timestamp > oneHourAgo
+    );
+  }
+
   private shouldShowNotification(notification: NotificationData): boolean {
-    // Always show high priority notifications
+    // Check for duplicates first
+    if (this.isDuplicateNotification(notification)) {
+      return false;
+    }
+
+    // Always show high priority notifications (but still check duplicates)
     if (notification.priority === 'high') {
       return true;
     }
@@ -177,7 +198,7 @@ class SmartNotificationManager {
     const priorityLevels = { low: 0, medium: 1, high: 2 };
     const notificationLevel = priorityLevels[notification.priority];
     const thresholdLevel = priorityLevels[this.preferences.priorityThreshold];
-    
+
     if (notificationLevel < thresholdLevel) {
       return false;
     }
@@ -193,6 +214,68 @@ class SmartNotificationManager {
     }
 
     return true;
+  }
+
+  private processBatch(): void {
+    if (this.notificationQueue.length === 0) return;
+
+    // Take up to MAX_BATCH_SIZE notifications from queue
+    const batch = this.notificationQueue.splice(0, this.MAX_BATCH_SIZE);
+
+    // Group by category for better presentation
+    const groupedNotifications = batch.reduce((groups, notification) => {
+      if (!groups[notification.category]) {
+        groups[notification.category] = [];
+      }
+      groups[notification.category].push(notification);
+      return groups;
+    }, {} as Record<string, NotificationData[]>);
+
+    // Show notifications by category
+    Object.entries(groupedNotifications).forEach(([category, notifications]) => {
+      if (notifications.length === 1) {
+        // Single notification
+        const notification = notifications[0];
+        toast({
+          title: notification.title,
+          description: notification.description,
+          variant: notification.type === 'error' ? 'destructive' : 'default',
+          action: notification.action ? {
+            altText: notification.action.label,
+            onClick: notification.action.onClick,
+            children: notification.action.label,
+          } : undefined,
+        });
+      } else {
+        // Multiple notifications - batch them
+        const highPriority = notifications.filter(n => n.priority === 'high');
+        const others = notifications.filter(n => n.priority !== 'high');
+
+        if (highPriority.length > 0) {
+          // Show high priority notifications individually
+          highPriority.forEach(notification => {
+            toast({
+              title: notification.title,
+              description: notification.description,
+              variant: notification.type === 'error' ? 'destructive' : 'default',
+            });
+          });
+        }
+
+        if (others.length > 0) {
+          // Batch other notifications
+          toast({
+            title: `${others.length} ${category} notifications`,
+            description: `You have ${others.length} new ${category} updates. Check your dashboard for details.`,
+          });
+        }
+      }
+    });
+
+    // Continue processing if there are more notifications
+    if (this.notificationQueue.length > 0) {
+      this.batchTimeout = setTimeout(() => this.processBatch(), this.BATCH_DELAY);
+    }
   }
 
   public notify(notification: Omit<NotificationData, 'id' | 'timestamp'>): boolean {
@@ -211,17 +294,16 @@ class SmartNotificationManager {
       return false;
     }
 
-    // Show the notification
-    toast({
-      title: fullNotification.title,
-      description: fullNotification.description,
-      variant: fullNotification.type === 'error' ? 'destructive' : 'default',
-      action: fullNotification.action ? {
-        altText: fullNotification.action.label,
-        onClick: fullNotification.action.onClick,
-        children: fullNotification.action.label,
-      } : undefined,
-    });
+    // Add to queue for batch processing
+    this.notificationQueue.push(fullNotification);
+
+    // Start batch processing if not already running
+    if (!this.batchTimeout) {
+      this.batchTimeout = setTimeout(() => {
+        this.processBatch();
+        this.batchTimeout = null;
+      }, this.BATCH_DELAY);
+    }
 
     return true;
   }
@@ -277,11 +359,28 @@ class SmartNotificationManager {
     this.savePreferences();
   }
 
+  public clearNotificationQueue(): void {
+    this.notificationQueue = [];
+    if (this.batchTimeout) {
+      clearTimeout(this.batchTimeout);
+      this.batchTimeout = null;
+    }
+  }
+
+  public cleanupOldNotifications(daysToKeep: number = 7): void {
+    const cutoffTime = Date.now() - (daysToKeep * 24 * 60 * 60 * 1000);
+    this.notificationHistory = this.notificationHistory.filter(
+      notification => notification.timestamp > cutoffTime
+    );
+    this.saveHistory();
+  }
+
   public getNotificationStats(): {
     totalToday: number;
     totalThisHour: number;
     byCategory: Record<string, number>;
     byPriority: Record<string, number>;
+    queueSize: number;
   } {
     const now = Date.now();
     const oneHourAgo = now - 60 * 60 * 1000;
@@ -308,6 +407,7 @@ class SmartNotificationManager {
       totalThisHour: thisHourNotifications.length,
       byCategory,
       byPriority,
+      queueSize: this.notificationQueue.length,
     };
   }
 }

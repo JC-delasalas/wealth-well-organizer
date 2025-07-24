@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,11 +43,37 @@ export const InsightsDashboard = () => {
 
   const currentSavingsGoal = savingsGoals[0]; // Use first savings goal
 
+  // Refs to track what insights have been generated to prevent spam
+  const generatedInsightsRef = useRef<Set<string>>(new Set());
+  const lastGenerationTimeRef = useRef<number>(0);
+  const thresholdAlertGeneratedRef = useRef<boolean>(false);
+
+  // Throttling constants
+  const GENERATION_COOLDOWN = 30000; // 30 seconds between generations
+  const MAX_INSIGHTS_PER_SESSION = 10; // Maximum insights per session
+
   // Memoize the createInsight function
   const memoizedCreateInsight = useCallback(createInsight, [createInsight]);
 
-  // Generate new insights when data changes
-  useEffect(() => {
+  // Helper function to create insight hash for deduplication
+  const createInsightHash = useCallback((title: string, content: string) => {
+    return `${title}-${content}`.replace(/\s+/g, '').toLowerCase();
+  }, []);
+
+  // Throttled insight generation with deduplication
+  const generateInsightsThrottled = useCallback(() => {
+    const now = Date.now();
+
+    // Check throttling
+    if (now - lastGenerationTimeRef.current < GENERATION_COOLDOWN) {
+      return;
+    }
+
+    // Check session limits
+    if (generatedInsightsRef.current.size >= MAX_INSIGHTS_PER_SESSION) {
+      return;
+    }
+
     if (transactions.length > 0 && categories.length > 0) {
       const aiInsights = FinancialAdvisorService.generateInsights(
         transactions,
@@ -55,8 +81,19 @@ export const InsightsDashboard = () => {
         currentSavingsGoal
       );
 
-      // Create insights in database
-      aiInsights.forEach(insight => {
+      // Filter out already generated insights and limit to 3 per generation
+      const newInsights = aiInsights
+        .filter(insight => {
+          const hash = createInsightHash(insight.title, insight.description);
+          return !generatedInsightsRef.current.has(hash);
+        })
+        .slice(0, 3); // Limit to 3 insights per generation
+
+      // Create insights in database with deduplication
+      newInsights.forEach(insight => {
+        const hash = createInsightHash(insight.title, insight.description);
+        generatedInsightsRef.current.add(hash);
+
         memoizedCreateInsight({
           insight_type: 'monthly',
           title: insight.title,
@@ -65,26 +102,54 @@ export const InsightsDashboard = () => {
           is_read: false
         });
       });
+
+      lastGenerationTimeRef.current = now;
     }
-  }, [transactions, categories, currentSavingsGoal, memoizedCreateInsight]);
+  }, [transactions, categories, currentSavingsGoal, memoizedCreateInsight, createInsightHash]);
+
+  // Generate new insights when data changes (throttled)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      generateInsightsThrottled();
+    }, 1000); // Debounce by 1 second
+
+    return () => clearTimeout(timeoutId);
+  }, [generateInsightsThrottled]);
 
   // Check savings threshold
-  const thresholdCheck = currentSavingsGoal 
+  const thresholdCheck = currentSavingsGoal
     ? FinancialAdvisorService.checkSavingsThreshold(transactions, currentSavingsGoal)
     : null;
 
-  // Generate threshold alert if needed
+  // Generate threshold alert if needed (with deduplication)
   useEffect(() => {
-    if (thresholdCheck?.belowThreshold && currentSavingsGoal) {
-      memoizedCreateInsight({
-        insight_type: 'threshold_alert',
-        title: 'Savings Threshold Alert',
-        content: `Your current savings rate is ${thresholdCheck.currentRate.toFixed(1)}%, below your ${currentSavingsGoal.savings_percentage_threshold}% target. You have ${thresholdCheck.daysUntilSalary} days until your next salary.`,
-        priority: 'high',
-        is_read: false
-      });
+    if (thresholdCheck?.belowThreshold && currentSavingsGoal && !thresholdAlertGeneratedRef.current) {
+      // Check if we already have a recent threshold alert
+      const recentThresholdAlert = insights.find(insight =>
+        insight.insight_type === 'threshold_alert' &&
+        insight.title === 'Savings Threshold Alert' &&
+        !insight.is_read &&
+        new Date(insight.created_at).getTime() > Date.now() - 24 * 60 * 60 * 1000 // Within last 24 hours
+      );
+
+      if (!recentThresholdAlert) {
+        memoizedCreateInsight({
+          insight_type: 'threshold_alert',
+          title: 'Savings Threshold Alert',
+          content: `Your current savings rate is ${thresholdCheck.currentRate.toFixed(1)}%, below your ${currentSavingsGoal.savings_percentage_threshold}% target. You have ${thresholdCheck.daysUntilSalary} days until your next salary.`,
+          priority: 'high',
+          is_read: false
+        });
+
+        thresholdAlertGeneratedRef.current = true;
+
+        // Reset the flag after 24 hours
+        setTimeout(() => {
+          thresholdAlertGeneratedRef.current = false;
+        }, 24 * 60 * 60 * 1000);
+      }
     }
-  }, [thresholdCheck, currentSavingsGoal, memoizedCreateInsight]);
+  }, [thresholdCheck?.belowThreshold, currentSavingsGoal, memoizedCreateInsight, insights]);
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {

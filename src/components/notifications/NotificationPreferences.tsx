@@ -57,6 +57,16 @@ export const NotificationPreferencesComponent: React.FC = () => {
     );
   };
 
+  const clearQueue = () => {
+    smartNotifications.clearNotificationQueue();
+    setStats(smartNotifications.getNotificationStats());
+  };
+
+  const cleanupOld = () => {
+    smartNotifications.cleanupOldNotifications(7);
+    setStats(smartNotifications.getNotificationStats());
+  };
+
   return (
     <div className="space-y-6">
       {/* Main Settings */}
@@ -223,7 +233,7 @@ export const NotificationPreferencesComponent: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="text-2xl font-bold text-blue-600">{stats.totalThisHour}</div>
               <div className="text-sm text-gray-600">This Hour</div>
@@ -231,6 +241,10 @@ export const NotificationPreferencesComponent: React.FC = () => {
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">{stats.totalToday}</div>
               <div className="text-sm text-gray-600">Today</div>
+            </div>
+            <div className="text-center p-4 bg-orange-50 rounded-lg">
+              <div className="text-2xl font-bold text-orange-600">{stats.queueSize || 0}</div>
+              <div className="text-sm text-gray-600">Queued</div>
             </div>
           </div>
 
@@ -247,10 +261,18 @@ export const NotificationPreferencesComponent: React.FC = () => {
             </div>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={testNotification} variant="outline" size="sm">
               <Info className="w-4 h-4 mr-2" />
               Test Notification
+            </Button>
+            <Button onClick={clearQueue} variant="outline" size="sm" className="text-orange-600 border-orange-200 hover:bg-orange-50">
+              <Clock className="w-4 h-4 mr-2" />
+              Clear Queue
+            </Button>
+            <Button onClick={cleanupOld} variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50">
+              <Settings className="w-4 h-4 mr-2" />
+              Cleanup Old
             </Button>
           </div>
         </CardContent>
