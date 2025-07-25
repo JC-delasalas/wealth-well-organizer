@@ -3,6 +3,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { seedUserCategories } from '@/services/categorySeeder';
 
 /**
  * Custom error interface for authentication operations
@@ -58,6 +59,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const seedUserData = async (session: Session) => {
     try {
+      // Seed categories first (local operation)
+      if (session.user?.id) {
+        const categoryResult = await seedUserCategories(session.user.id);
+        if (categoryResult.success && categoryResult.categoriesCreated > 0) {
+          console.log(`Seeded ${categoryResult.categoriesCreated} categories for user`);
+        }
+      }
+
+      // Then call the edge function for other data seeding
       const { data, error } = await supabase.functions.invoke('seed-user-data', {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -65,10 +75,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Error seeding user data');
+        console.error('Error seeding user data:', error);
       }
     } catch (error) {
-      console.error('Error calling seed function');
+      console.error('Error calling seed function:', error);
     }
   };
 

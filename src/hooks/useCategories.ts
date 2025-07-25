@@ -17,9 +17,12 @@ export const useCategories = () => {
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories', user?.id],
     queryFn: async () => {
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .eq('user_id', user.id)
         .order('name');
 
       if (error) {
@@ -32,14 +35,18 @@ export const useCategories = () => {
   });
 
   const createCategoryMutation = useMutation({
-    mutationFn: async (categoryData: Omit<Category, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (categoryData: Omit<Category, 'id' | 'created_at' | 'user_id'>) => {
       if (!user) {
         throw new Error('User not authenticated');
       }
 
       const { data, error } = await supabase
         .from('categories')
-        .insert([categoryData])
+        .insert([{
+          ...categoryData,
+          user_id: user.id,
+          is_default: false
+        }])
         .select()
         .single();
 
@@ -68,10 +75,14 @@ export const useCategories = () => {
         throw new Error('User not authenticated');
       }
 
+      // Remove user_id and is_default from updates to prevent modification
+      const { user_id, is_default, ...safeUpdates } = updates;
+
       const { data, error } = await supabase
         .from('categories')
-        .update(updates)
+        .update(safeUpdates)
         .eq('id', id)
+        .eq('user_id', user.id) // Ensure user can only update their own categories
         .select()
         .single();
 
@@ -146,7 +157,8 @@ export const useCategories = () => {
       const { error } = await supabase
         .from('categories')
         .delete()
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id); // Ensure user can only delete their own categories
 
       if (error) {
         console.error('Category deletion error:', error);
@@ -182,6 +194,11 @@ export const useCategories = () => {
     return await checkCategoryUsage(categoryId);
   };
 
+  // Helper functions for getting categories by type
+  const getIncomeCategories = () => categories.filter(cat => cat.type === 'income');
+  const getExpenseCategories = () => categories.filter(cat => cat.type === 'expense');
+  const getCategoryById = (id: string) => categories.find(cat => cat.id === id);
+
   return {
     categories,
     isLoading,
@@ -189,6 +206,9 @@ export const useCategories = () => {
     updateCategory: updateCategoryMutation.mutate,
     deleteCategory: deleteCategoryMutation.mutate,
     getCategoryUsage,
+    getIncomeCategories,
+    getExpenseCategories,
+    getCategoryById,
     isCreating: createCategoryMutation.isPending,
     isUpdating: updateCategoryMutation.isPending,
     isDeleting: deleteCategoryMutation.isPending,

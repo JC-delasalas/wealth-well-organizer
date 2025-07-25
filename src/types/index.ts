@@ -21,6 +21,7 @@ export interface Category {
   icon: string;
   color: string;
   type: 'income' | 'expense';
+  description?: string;
   is_default?: boolean;
   user_id?: string;
   created_at?: string;
