@@ -156,7 +156,7 @@ export const CountryCurrencySelector: React.FC<CountryCurrencySelectorProps> = (
                   <div className="flex items-center justify-between w-full">
                     <span>{country.name}</span>
                     <Badge variant="secondary" className="ml-2">
-                      {country.default_currency}
+                      {country.defaultCurrency}
                     </Badge>
                   </div>
                 </SelectItem>
@@ -165,7 +165,7 @@ export const CountryCurrencySelector: React.FC<CountryCurrencySelectorProps> = (
           </Select>
           {selectedCountryInfo && (
             <div className="text-sm text-muted-foreground">
-              Tax System: {selectedCountryInfo.tax_system}
+              Tax System: {selectedCountryInfo.taxSystem}
             </div>
           )}
         </div>

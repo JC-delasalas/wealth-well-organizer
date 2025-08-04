@@ -306,7 +306,7 @@ export const useTaxCalculations = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as TaxCalculation[];
     },
     enabled: !!user,
   });

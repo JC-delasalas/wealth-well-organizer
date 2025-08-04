@@ -38,7 +38,7 @@ export const useCurrency = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as UserProfile;
     },
     enabled: !!user,
   });
@@ -255,7 +255,7 @@ export const useCountryCurrency = () => {
   // Get default currency for a country
   const getCountryDefaultCurrency = useCallback((countryCode: string): string => {
     const country = countries.find(c => c.code === countryCode);
-    return country?.default_currency || getDefaultCurrencyForCountry(countryCode);
+    return country?.defaultCurrency || getDefaultCurrencyForCountry(countryCode);
   }, [countries]);
 
   // Get country info
@@ -265,7 +265,7 @@ export const useCountryCurrency = () => {
 
   // Get countries by currency
   const getCountriesByCurrency = useCallback((currencyCode: string): Country[] => {
-    return countries.filter(c => c.default_currency === currencyCode);
+    return countries.filter(c => c.defaultCurrency === currencyCode);
   }, [countries]);
 
   return {

@@ -202,7 +202,7 @@ export const useInsightPreferences = () => {
           updated_at: new Date().toISOString()
         })
         .eq('id', preferences.id)
-        .eq('user_id', user?.id);
+        .eq('user_id', user?.id || '');
 
       // Invalidate query to refetch updated data
       queryClient.invalidateQueries({ queryKey: ['insight-preferences', user?.id] });
