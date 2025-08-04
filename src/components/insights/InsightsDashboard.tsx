@@ -98,8 +98,7 @@ export const InsightsDashboard = () => {
           insight_type: 'monthly',
           title: insight.title,
           content: insight.description,
-          priority: insight.impact,
-          is_read: false
+          priority: insight.impact
         });
       });
 
@@ -137,8 +136,7 @@ export const InsightsDashboard = () => {
           insight_type: 'threshold_alert',
           title: 'Savings Threshold Alert',
           content: `Your current savings rate is ${thresholdCheck.currentRate.toFixed(1)}%, below your ${currentSavingsGoal.savings_percentage_threshold}% target. You have ${thresholdCheck.daysUntilSalary} days until your next salary.`,
-          priority: 'high',
-          is_read: false
+          priority: 'high'
         });
 
         thresholdAlertGeneratedRef.current = true;

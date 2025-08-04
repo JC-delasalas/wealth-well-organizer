@@ -10,14 +10,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCountryCurrency } from '@/hooks/useCurrency';
 import {
   Loader2,
-  TrendingUp,
+  
   Shield,
   Smartphone,
   BarChart3,
   PiggyBank,
   Target,
   Brain,
-  Zap,
+  
   Mail,
   Globe,
   Eye,

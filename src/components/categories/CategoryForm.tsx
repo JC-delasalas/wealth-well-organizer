@@ -26,6 +26,7 @@ export const CategoryForm = ({ trigger, category, isEdit = false }: CategoryForm
     description: category?.description || '',
     color: category?.color || '#3B82F6',
     type: category?.type || 'expense',
+    icon: category?.icon || '📁',
   });
 
   const { createCategory, updateCategory, isCreating, isUpdating } = useCategories();
@@ -37,6 +38,7 @@ export const CategoryForm = ({ trigger, category, isEdit = false }: CategoryForm
       name: formData.name,
       description: formData.description || undefined,
       color: formData.color,
+      icon: formData.icon || '📁', // Default icon if none selected
       type: formData.type as 'income' | 'expense',
     };
 
@@ -52,6 +54,7 @@ export const CategoryForm = ({ trigger, category, isEdit = false }: CategoryForm
       description: '',
       color: '#3B82F6',
       type: 'expense',
+      icon: '📁',
     });
   };
 

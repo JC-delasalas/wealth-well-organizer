@@ -36,7 +36,7 @@ export const SavingsTransactionForm: React.FC<SavingsTransactionFormProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
-  const { createTransaction, updateTransaction } = useTransactions();
+  const { addTransaction, updateTransaction } = useTransactions();
   const { categories } = useCategories();
   const { savingsGoals } = useSavingsGoals();
   const { standard: formatCurrency } = useCurrencyFormatter();
@@ -93,7 +93,7 @@ export const SavingsTransactionForm: React.FC<SavingsTransactionFormProps> = ({
           description: "Your savings transaction has been updated successfully.",
         });
       } else {
-        await createTransaction(transactionData);
+        await addTransaction(transactionData);
         toast({
           title: "Savings Transaction Added",
           description: "Your savings transaction has been recorded and will update your goal progress.",

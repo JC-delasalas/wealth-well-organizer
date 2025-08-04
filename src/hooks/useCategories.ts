@@ -111,7 +111,7 @@ export const useCategories = () => {
       .from('transactions')
       .select('id')
       .eq('category_id', categoryId)
-      .eq('user_id', user?.id);
+      .eq('user_id', user?.id || '');
 
     if (transactionError) throw transactionError;
 
@@ -119,7 +119,7 @@ export const useCategories = () => {
       .from('budgets')
       .select('id')
       .eq('category_id', categoryId)
-      .eq('user_id', user?.id);
+      .eq('user_id', user?.id || '');
 
     if (budgetError) throw budgetError;
 

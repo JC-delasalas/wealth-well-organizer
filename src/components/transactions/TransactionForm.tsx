@@ -81,7 +81,7 @@ export const TransactionForm = ({ transaction, isEdit = false, trigger, defaultT
     e.preventDefault();
 
     // Sanitize and validate form data
-    const sanitizedAmount = sanitizeNumber(parseFloat(formData.amount), 0.01, 1000000);
+    const sanitizedAmount = sanitizeNumber(parseFloat(String(formData.amount)), 0.01, 1000000);
     const sanitizedDescription = sanitizeString(formData.description);
 
     if (!sanitizedAmount || sanitizedAmount <= 0) {
