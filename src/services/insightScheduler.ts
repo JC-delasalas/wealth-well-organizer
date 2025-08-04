@@ -7,8 +7,6 @@ import {
   InsightGenerationContext,
   CreateInsightInput,
   InsightType,
-  TimeBasedInsightData,
-  CategoryInsightData
 } from '@/types/insights';
 import { createInsightWithDeduplication } from '@/utils/insightDeduplication';
 
@@ -89,13 +87,13 @@ export class InsightScheduler {
       }
 
       // Check if generation is due
-      if (!this.isGenerationDue(preferences)) {
+      if (!this.isGenerationDue(preferences as any)) {
         console.log('Insight generation not due for user:', user.id);
         return;
       }
 
       console.log('Generating insights for user:', user.id);
-      await this.generateInsightsForUser(user.id, preferences);
+      await this.generateInsightsForUser(user.id, preferences as any);
 
     } catch (error) {
       console.error('Error in scheduled insight generation:', error);
@@ -164,11 +162,11 @@ export class InsightScheduler {
         if (prefError || !prefs) {
           throw new Error('User preferences not found');
         }
-        preferences = prefs;
+        preferences = prefs as any;
       }
 
       // Get user data for analysis
-      const context = await this.getUserDataContext(userId, preferences);
+      const context = await this.getUserDataContext(userId, preferences!);
 
       // Generate insights based on enabled types
       const results: InsightGenerationResult = {
@@ -179,7 +177,7 @@ export class InsightScheduler {
       };
 
       // Process insight types sequentially to prevent API overload
-      for (const insightType of preferences.enabled_insight_types) {
+      for (const insightType of (preferences!.enabled_insight_types as any)) {
         try {
           const insights = await this.generateInsightsByType(insightType, context);
 
