@@ -77,7 +77,7 @@ export const AuthPage = () => {
     
     setIsSubmitting(true);
     try {
-      console.log('Attempting to reset password for:', forgotPasswordEmail);
+      // Password reset logging disabled for security
       const result = await resetPassword(forgotPasswordEmail);
       if (!result.error) {
         setIsResetPasswordOpen(false);

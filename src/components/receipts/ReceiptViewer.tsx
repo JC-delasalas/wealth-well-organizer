@@ -71,7 +71,7 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
         filePath = pathParts.slice(-2).join('/');
       }
 
-      console.log('Getting signed URL for:', filePath);
+      // Signed URL logging disabled for security
 
       const { data, error } = await supabase.storage
         .from('receipts')
@@ -83,7 +83,7 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
       }
 
       if (data?.signedUrl) {
-        console.log('Signed URL created successfully');
+        // Success logging disabled for security
         setSignedUrl(data.signedUrl);
       }
     } catch (error) {

@@ -57,7 +57,7 @@ export const ResetPassword = () => {
 
     setIsSubmitting(true);
     try {
-      console.log('Attempting to update password');
+      // Password update logging disabled for security
       const result = await updatePassword(password);
       if (!result.error) {
         // Password updated successfully, redirect to dashboard

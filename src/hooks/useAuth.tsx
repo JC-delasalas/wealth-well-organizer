@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (session.user?.id) {
         const categoryResult = await seedUserCategories(session.user.id);
         if (categoryResult.success && categoryResult.categoriesCreated > 0) {
-          console.log(`Seeded ${categoryResult.categoriesCreated} categories for user`);
+          // Category seeding logging disabled for security
         }
       }
 

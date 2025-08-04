@@ -5,7 +5,7 @@ Password reset emails are redirecting to `localhost:3000` instead of the product
 
 **Error you're seeing:**
 ```
-http://localhost:3000/#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired
+[SECURE] Error details removed for security - please check application logs
 ```
 
 ## Quick Fix (5 minutes)

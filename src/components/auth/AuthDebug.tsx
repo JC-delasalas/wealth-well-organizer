@@ -53,12 +53,7 @@ export const AuthDebug = () => {
           variant="outline" 
           size="sm" 
           onClick={() => {
-            console.log('=== AUTH DEBUG INFO ===');
-            console.log('URL:', window.location.href);
-            console.log('URL Params:', urlParams);
-            console.log('User:', user);
-            console.log('Session:', session);
-            console.log('=== END DEBUG INFO ===');
+            // Auth debug logging disabled for security
           }}
         >
           Log to Console

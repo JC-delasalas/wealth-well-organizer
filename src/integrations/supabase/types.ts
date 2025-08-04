@@ -59,6 +59,7 @@ export type Database = {
         Row: {
           color: string
           created_at: string | null
+          description: string | null
           icon: string
           id: string
           is_default: boolean | null
@@ -69,6 +70,7 @@ export type Database = {
         Insert: {
           color: string
           created_at?: string | null
+          description?: string | null
           icon: string
           id?: string
           is_default?: boolean | null
@@ -79,6 +81,7 @@ export type Database = {
         Update: {
           color?: string
           created_at?: string | null
+          description?: string | null
           icon?: string
           id?: string
           is_default?: boolean | null
@@ -88,13 +91,96 @@ export type Database = {
         }
         Relationships: []
       }
+      countries: {
+        Row: {
+          code: string
+          created_at: string | null
+          default_currency: string | null
+          is_active: boolean | null
+          name: string
+          tax_system: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          default_currency?: string | null
+          is_active?: boolean | null
+          name: string
+          tax_system?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          default_currency?: string | null
+          is_active?: boolean | null
+          name?: string
+          tax_system?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "countries_default_currency_fkey"
+            columns: ["default_currency"]
+            isOneToOne: false
+            referencedRelation: "supported_currencies"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      currency_exchange_rates: {
+        Row: {
+          created_at: string | null
+          from_currency: string | null
+          id: string
+          rate: number
+          rate_date: string
+          source: string | null
+          to_currency: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_currency?: string | null
+          id?: string
+          rate: number
+          rate_date?: string
+          source?: string | null
+          to_currency?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          from_currency?: string | null
+          id?: string
+          rate?: number
+          rate_date?: string
+          source?: string | null
+          to_currency?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "currency_exchange_rates_from_currency_fkey"
+            columns: ["from_currency"]
+            isOneToOne: false
+            referencedRelation: "supported_currencies"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "currency_exchange_rates_to_currency_fkey"
+            columns: ["to_currency"]
+            isOneToOne: false
+            referencedRelation: "supported_currencies"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
       financial_insights: {
         Row: {
           content: string
+          content_hash: string | null
           created_at: string
+          generation_trigger: string | null
           id: string
           insight_type: string
           is_read: boolean | null
+          last_generated_at: string | null
           period_end: string | null
           period_start: string | null
           priority: string | null
@@ -103,10 +189,13 @@ export type Database = {
         }
         Insert: {
           content: string
+          content_hash?: string | null
           created_at?: string
+          generation_trigger?: string | null
           id?: string
           insight_type: string
           is_read?: boolean | null
+          last_generated_at?: string | null
           period_end?: string | null
           period_start?: string | null
           priority?: string | null
@@ -115,10 +204,13 @@ export type Database = {
         }
         Update: {
           content?: string
+          content_hash?: string | null
           created_at?: string
+          generation_trigger?: string | null
           id?: string
           insight_type?: string
           is_read?: boolean | null
+          last_generated_at?: string | null
           period_end?: string | null
           period_start?: string | null
           priority?: string | null
@@ -127,29 +219,80 @@ export type Database = {
         }
         Relationships: []
       }
+      ph_tax_brackets: {
+        Row: {
+          base_tax: number
+          bracket_order: number
+          created_at: string | null
+          excess_over: number
+          id: string
+          is_active: boolean | null
+          max_income: number | null
+          min_income: number
+          tax_rate: number
+          tax_year: number
+        }
+        Insert: {
+          base_tax?: number
+          bracket_order: number
+          created_at?: string | null
+          excess_over?: number
+          id?: string
+          is_active?: boolean | null
+          max_income?: number | null
+          min_income: number
+          tax_rate: number
+          tax_year: number
+        }
+        Update: {
+          base_tax?: number
+          bracket_order?: number
+          created_at?: string | null
+          excess_over?: number
+          id?: string
+          is_active?: boolean | null
+          max_income?: number | null
+          min_income?: number
+          tax_rate?: number
+          tax_year?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          country: string
           created_at: string | null
+          currency: string
           email: string | null
           full_name: string | null
           id: string
+          locale: string
+          timezone: string
           updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
+          country?: string
           created_at?: string | null
+          currency?: string
           email?: string | null
           full_name?: string | null
           id: string
+          locale?: string
+          timezone?: string
           updated_at?: string | null
         }
         Update: {
           avatar_url?: string | null
+          country?: string
           created_at?: string | null
+          currency?: string
           email?: string | null
           full_name?: string | null
           id?: string
+          locale?: string
+          timezone?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -157,6 +300,7 @@ export type Database = {
       savings_goals: {
         Row: {
           created_at: string
+          currency: string | null
           current_amount: number | null
           description: string | null
           id: string
@@ -171,6 +315,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          currency?: string | null
           current_amount?: number | null
           description?: string | null
           id?: string
@@ -185,6 +330,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          currency?: string | null
           current_amount?: number | null
           description?: string | null
           id?: string
@@ -198,6 +344,117 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      supported_currencies: {
+        Row: {
+          code: string
+          created_at: string | null
+          decimal_places: number | null
+          is_active: boolean | null
+          name: string
+          symbol: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          decimal_places?: number | null
+          is_active?: boolean | null
+          name: string
+          symbol: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          decimal_places?: number | null
+          is_active?: boolean | null
+          name?: string
+          symbol?: string
+        }
+        Relationships: []
+      }
+      tax_calculations: {
+        Row: {
+          calculation_breakdown: Json | null
+          calculation_name: string | null
+          calculation_type: string
+          country_code: string | null
+          created_at: string | null
+          currency: string | null
+          gross_income: number | null
+          id: string
+          input_data: Json
+          is_filed: boolean | null
+          is_saved: boolean | null
+          notes: string | null
+          tax_due: number | null
+          tax_payable: number | null
+          tax_refund: number | null
+          tax_withheld: number | null
+          tax_year: number
+          taxable_income: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          calculation_breakdown?: Json | null
+          calculation_name?: string | null
+          calculation_type: string
+          country_code?: string | null
+          created_at?: string | null
+          currency?: string | null
+          gross_income?: number | null
+          id?: string
+          input_data: Json
+          is_filed?: boolean | null
+          is_saved?: boolean | null
+          notes?: string | null
+          tax_due?: number | null
+          tax_payable?: number | null
+          tax_refund?: number | null
+          tax_withheld?: number | null
+          tax_year: number
+          taxable_income?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          calculation_breakdown?: Json | null
+          calculation_name?: string | null
+          calculation_type?: string
+          country_code?: string | null
+          created_at?: string | null
+          currency?: string | null
+          gross_income?: number | null
+          id?: string
+          input_data?: Json
+          is_filed?: boolean | null
+          is_saved?: boolean | null
+          notes?: string | null
+          tax_due?: number | null
+          tax_payable?: number | null
+          tax_refund?: number | null
+          tax_withheld?: number | null
+          tax_year?: number
+          taxable_income?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_calculations_country_code_fkey"
+            columns: ["country_code"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "tax_calculations_currency_fkey"
+            columns: ["currency"]
+            isOneToOne: false
+            referencedRelation: "supported_currencies"
+            referencedColumns: ["code"]
+          },
+        ]
       }
       transactions: {
         Row: {
@@ -249,12 +506,139 @@ export type Database = {
           },
         ]
       }
+      user_insight_preferences: {
+        Row: {
+          created_at: string
+          enabled_insight_types: Json
+          id: string
+          insight_frequency: string
+          last_insight_generation: string | null
+          next_generation_due: string | null
+          preferred_delivery_time: string
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled_insight_types?: Json
+          id?: string
+          insight_frequency?: string
+          last_insight_generation?: string | null
+          next_generation_due?: string | null
+          preferred_delivery_time?: string
+          timezone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled_insight_types?: Json
+          id?: string
+          insight_frequency?: string
+          last_insight_generation?: string | null
+          next_generation_due?: string | null
+          preferred_delivery_time?: string
+          timezone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      savings_goal_progress: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          current_amount: number | null
+          days_remaining: number | null
+          description: string | null
+          id: string | null
+          name: string | null
+          progress_percentage: number | null
+          remaining_amount: number | null
+          status: string | null
+          target_amount: number | null
+          target_date: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          current_amount?: number | null
+          days_remaining?: never
+          description?: string | null
+          id?: string | null
+          name?: string | null
+          progress_percentage?: never
+          remaining_amount?: never
+          status?: never
+          target_amount?: number | null
+          target_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          current_amount?: number | null
+          days_remaining?: never
+          description?: string | null
+          id?: string | null
+          name?: string | null
+          progress_percentage?: never
+          remaining_amount?: never
+          status?: never
+          target_amount?: number | null
+          target_date?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      calculate_next_generation_due: {
+        Args: {
+          frequency: string
+          preferred_time: string
+          user_timezone?: string
+        }
+        Returns: string
+      }
+      check_duplicate_insight: {
+        Args: {
+          p_user_id: string
+          p_insight_type: string
+          p_period_start: string
+          p_period_end: string
+          p_content_hash: string
+        }
+        Returns: boolean
+      }
+      convert_currency: {
+        Args: {
+          amount: number
+          from_curr: string
+          to_curr: string
+          rate_date?: string
+        }
+        Returns: number
+      }
+      get_exchange_rate: {
+        Args: { from_curr: string; to_curr: string; rate_date?: string }
+        Returns: number
+      }
+      get_test_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      seed_user_categories: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
