@@ -5,7 +5,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { defaultCategories } from '@/data/categories';
-import { Category } from '@/types';
+
 
 export interface CategorySeedResult {
   success: boolean;
@@ -124,7 +124,7 @@ export const seedCategoriesForAllUsers = async (): Promise<{
     }
 
     const usersNeedingCategories = usersWithoutCategories?.filter(user => {
-      const categoryCount = user.categories?.[0]?.count || 0;
+      const categoryCount = (user.categories?.[0] as any)?.count || 0;
       return categoryCount < defaultCategories.length;
     }) || [];
 
@@ -222,8 +222,8 @@ export const getCategoryStats = async (): Promise<{
 
     categoryStats?.forEach(category => {
       // Count categories per user
-      const currentCount = userCategoryCounts.get(category.user_id) || 0;
-      userCategoryCounts.set(category.user_id, currentCount + 1);
+      const currentCount = userCategoryCounts.get(category.user_id || '') || 0;
+      userCategoryCounts.set(category.user_id || '', currentCount + 1);
 
       // Count category usage
       const currentUsage = categoryUsage.get(category.name) || 0;

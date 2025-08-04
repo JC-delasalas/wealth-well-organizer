@@ -30,6 +30,7 @@ export interface UseSmartNotificationsReturn {
   // Utility methods
   isQuietTime: boolean;
   canNotify: boolean;
+  cleanupOld: (daysToKeep?: number) => void;
 }
 
 /**
@@ -121,12 +122,6 @@ export const useSmartNotifications = (): UseSmartNotificationsReturn => {
     setPreferences(smartNotifications.getPreferences());
   }, []);
 
-  // Cleanup methods
-  const clearQueue = useCallback(() => {
-    smartNotifications.clearNotificationQueue();
-    setStats(smartNotifications.getNotificationStats());
-  }, []);
-
   const cleanupOld = useCallback((daysToKeep: number = 7) => {
     smartNotifications.cleanupOldNotifications(daysToKeep);
     setStats(smartNotifications.getNotificationStats());
@@ -148,7 +143,6 @@ export const useSmartNotifications = (): UseSmartNotificationsReturn => {
     stats,
     isQuietTime,
     canNotify,
-    clearQueue,
     cleanupOld,
   };
 };
