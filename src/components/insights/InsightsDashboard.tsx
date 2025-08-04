@@ -77,7 +77,6 @@ export const InsightsDashboard = () => {
     if (transactions.length > 0 && categories.length > 0) {
       const aiInsights = FinancialAdvisorService.generateInsights(
         transactions,
-        categories,
         currentSavingsGoal
       );
 

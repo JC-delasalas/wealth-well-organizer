@@ -42,7 +42,7 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({ transact
 
   return (
     <div className="space-y-2 sm:space-y-3">
-      {transactions.map((transaction, index) => {
+      {transactions.map((transaction) => {
         const category = getCategoryInfo(transaction.category_id);
         const isIncome = transaction.type === 'income';
         

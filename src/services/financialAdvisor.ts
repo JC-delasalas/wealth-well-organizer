@@ -1,19 +1,17 @@
 
-import { Transaction, Category, SavingsGoal, InsightRecommendation } from '@/types';
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, differenceInDays } from 'date-fns';
+import { Transaction, SavingsGoal, InsightRecommendation } from '@/types';
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, differenceInDays } from 'date-fns';
 
 export class FinancialAdvisorService {
   static generateInsights(
     transactions: Transaction[],
-    categories: Category[],
     savingsGoal?: SavingsGoal
   ): InsightRecommendation[] {
     const insights: InsightRecommendation[] = [];
-    const now = new Date();
 
     // Calculate spending patterns
-    const monthlyData = this.getMonthlySpendingData(transactions, categories);
-    const weeklyData = this.getWeeklySpendingData(transactions, categories);
+    const monthlyData = this.getMonthlySpendingData(transactions);
+    const weeklyData = this.getWeeklySpendingData(transactions);
     
     // Generate spending reduction recommendations
     insights.push(...this.generateSpendingReductions(monthlyData));
@@ -91,14 +89,14 @@ export class FinancialAdvisorService {
     const deficit = savingsGoal.savings_percentage_threshold - currentRate;
 
     if (deficit > 0) {
-      // Analyze spending categories for reduction opportunities
-      const expensesByCategory = {};
-      transactions
-        .filter(t => t.type === 'expense')
-        .forEach(t => {
-          const key = t.category_id || 'uncategorized';
-          expensesByCategory[key] = (expensesByCategory[key] || 0) + t.amount;
-        });
+    // Analyze spending categories for reduction opportunities
+    const expensesByCategory: Record<string, number> = {};
+    transactions
+      .filter(t => t.type === 'expense')
+      .forEach(t => {
+        const key = t.category_id || 'uncategorized';
+        expensesByCategory[key] = (expensesByCategory[key] || 0) + t.amount;
+      });
 
       const sortedExpenses = Object.entries(expensesByCategory)
         .sort(([,a], [,b]) => (b as number) - (a as number))
@@ -125,7 +123,7 @@ export class FinancialAdvisorService {
     return recommendations;
   }
 
-  private static getMonthlySpendingData(transactions: Transaction[], categories: Category[]) {
+  private static getMonthlySpendingData(transactions: Transaction[]) {
     const now = new Date();
     const monthStart = startOfMonth(now);
     const monthEnd = endOfMonth(now);
@@ -136,7 +134,7 @@ export class FinancialAdvisorService {
     });
   }
 
-  private static getWeeklySpendingData(transactions: Transaction[], categories: Category[]) {
+  private static getWeeklySpendingData(transactions: Transaction[]) {
     const now = new Date();
     const weekStart = startOfWeek(now);
     const weekEnd = endOfWeek(now);
@@ -154,7 +152,7 @@ export class FinancialAdvisorService {
     if (totalExpenses === 0) return [];
 
     // Group by category
-    const categorySpending = {};
+    const categorySpending: Record<string, number> = {};
     expenses.forEach(t => {
       const key = t.category_id || 'uncategorized';
       categorySpending[key] = (categorySpending[key] || 0) + t.amount;
@@ -165,7 +163,7 @@ export class FinancialAdvisorService {
 
     if (!topSpendingCategory) return [];
 
-    const [categoryId, amount] = topSpendingCategory;
+    const [, amount] = topSpendingCategory;
     const percentage = ((amount as number) / totalExpenses * 100).toFixed(1);
 
     return [{

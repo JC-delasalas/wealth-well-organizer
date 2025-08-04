@@ -37,7 +37,7 @@ export const AuthPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('signin');
   const { signIn, signUp, resetPassword, loading } = useAuth();
-  const { countries, getCountryDefaultCurrency } = useCountryCurrency();
+  const { countries } = useCountryCurrency();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
