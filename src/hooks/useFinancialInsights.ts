@@ -3,12 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import {
+import type {
   FinancialInsight,
   CreateInsightInput,
   InsightGenerationResult,
-  InsightAnalytics,
-  GenerationStats
+  InsightAnalytics
 } from '@/types/insights';
 import { createInsightWithDeduplication, cleanupOldInsights } from '@/utils/insightDeduplication';
 import { insightScheduler } from '@/services/insightScheduler';
@@ -115,13 +114,11 @@ export const useFinancialInsights = () => {
         throw new Error('User not authenticated');
       }
 
-      const { error } = await supabase
+      await supabase
         .from('financial_insights')
         .update({ is_read: true })
         .eq('user_id', user.id)
         .eq('is_read', false); // Only update unread insights
-
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
@@ -130,7 +127,7 @@ export const useFinancialInsights = () => {
         description: "All insights marked as read",
       });
     },
-    onError: (error: DatabaseError) => {
+    onError: () => {
       console.error('Error marking all insights as read');
       toast({
         title: "Error",
@@ -146,13 +143,11 @@ export const useFinancialInsights = () => {
         throw new Error('User not authenticated');
       }
 
-      const { error } = await supabase
+      await supabase
         .from('financial_insights')
         .delete()
         .eq('id', id)
         .eq('user_id', user.id);
-
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['financial-insights', user?.id] });
@@ -161,7 +156,7 @@ export const useFinancialInsights = () => {
         description: "Insight deleted successfully",
       });
     },
-    onError: (error: DatabaseError) => {
+    onError: () => {
       console.error('Error deleting insight');
       toast({
         title: "Error",

@@ -1,5 +1,5 @@
 // React hooks for Philippine tax calculations
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
@@ -16,8 +16,7 @@ import {
   type IndividualTaxInput,
   type IndividualTaxResult,
   type BusinessTaxInput,
-  type WithholdingTaxInput,
-  type TaxBracket
+  type WithholdingTaxInput
 } from '@/utils/philippineTax';
 import type { TaxCalculation } from '@/types';
 

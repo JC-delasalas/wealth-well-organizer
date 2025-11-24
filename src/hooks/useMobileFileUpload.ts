@@ -26,7 +26,6 @@ export const useMobileFileUpload = (options: MobileFileUploadOptions = {}) => {
   const {
     maxSizeBytes = 5 * 1024 * 1024, // 5MB
     quality = 90,
-    allowEditing = true,
     maxWidth = 1024,
     maxHeight = 1024
   } = options;

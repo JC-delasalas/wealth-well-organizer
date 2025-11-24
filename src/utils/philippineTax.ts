@@ -106,12 +106,12 @@ export const getPhilippineTaxBrackets = async (taxYear: number = 2024): Promise<
       id: bracket.id,
       taxYear: bracket.tax_year,
       bracketOrder: bracket.bracket_order,
-      minIncome: parseFloat(bracket.min_income),
-      maxIncome: bracket.max_income ? parseFloat(bracket.max_income) : null,
-      baseTax: parseFloat(bracket.base_tax),
-      taxRate: parseFloat(bracket.tax_rate),
-      excessOver: parseFloat(bracket.excess_over),
-      isActive: bracket.is_active
+      minIncome: Number(bracket.min_income),
+      maxIncome: bracket.max_income ? Number(bracket.max_income) : null,
+      baseTax: Number(bracket.base_tax),
+      taxRate: Number(bracket.tax_rate),
+      excessOver: Number(bracket.excess_over),
+      isActive: bracket.is_active ?? true
     }));
 
     // Update cache

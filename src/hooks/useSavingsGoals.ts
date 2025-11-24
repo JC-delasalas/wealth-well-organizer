@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { SavingsGoal, SavingsGoalProgress } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { useCurrency } from './useCurrency';
 
 interface DatabaseError {
   message: string;
@@ -16,7 +15,6 @@ interface DatabaseError {
 export const useSavingsGoals = () => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const { userCurrency } = useCurrency();
   const queryClient = useQueryClient();
 
   const { data: savingsGoals = [], isLoading } = useQuery({

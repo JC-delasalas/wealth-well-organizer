@@ -2,8 +2,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  CreateInsightInput, 
-  UserInsightPreferences,
+  CreateInsightInput,
   InsightType,
   InsightFrequency 
 } from '@/types/insights';
@@ -94,7 +93,7 @@ const testDatabaseSchema = async (): Promise<void> => {
 
   try {
     // Test financial_insights table structure
-    const { data: insightsData, error: insightsError } = await supabase
+    const { error: insightsError } = await supabase
       .from('financial_insights')
       .select('*')
       .limit(1);
@@ -104,7 +103,7 @@ const testDatabaseSchema = async (): Promise<void> => {
     }
 
     // Test user_insight_preferences table structure
-    const { data: prefsData, error: prefsError } = await supabase
+    const { error: prefsError } = await supabase
       .from('user_insight_preferences')
       .select('*')
       .limit(1);

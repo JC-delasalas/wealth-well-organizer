@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -610,11 +610,11 @@ export type Database = {
       }
       check_duplicate_insight: {
         Args: {
-          p_user_id: string
-          p_insight_type: string
-          p_period_start: string
-          p_period_end: string
           p_content_hash: string
+          p_insight_type: string
+          p_period_end: string
+          p_period_start: string
+          p_user_id: string
         }
         Returns: boolean
       }
@@ -622,23 +622,17 @@ export type Database = {
         Args: {
           amount: number
           from_curr: string
-          to_curr: string
           rate_date?: string
+          to_curr: string
         }
         Returns: number
       }
       get_exchange_rate: {
-        Args: { from_curr: string; to_curr: string; rate_date?: string }
+        Args: { from_curr: string; rate_date?: string; to_curr: string }
         Returns: number
       }
-      get_test_user_id: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      seed_user_categories: {
-        Args: { user_id: string }
-        Returns: undefined
-      }
+      get_test_user_id: { Args: never; Returns: string }
+      seed_user_categories: { Args: { user_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
