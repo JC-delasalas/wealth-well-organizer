@@ -55,8 +55,8 @@ export const getSupportedCurrencies = async (): Promise<Currency[]> => {
       code: curr.code,
       name: curr.name,
       symbol: curr.symbol,
-      decimalPlaces: curr.decimal_places,
-      isActive: curr.is_active
+      decimalPlaces: curr.decimal_places ?? 2,
+      isActive: curr.is_active ?? true
     }));
 
     cacheTimestamp = Date.now();
@@ -89,9 +89,9 @@ export const getSupportedCountries = async (): Promise<Country[]> => {
     countriesCache = data.map(country => ({
       code: country.code,
       name: country.name,
-      defaultCurrency: country.default_currency,
-      taxSystem: country.tax_system,
-      isActive: country.is_active
+      defaultCurrency: country.default_currency ?? 'USD',
+      taxSystem: country.tax_system ?? 'STANDARD',
+      isActive: country.is_active ?? true
     }));
 
     return countriesCache;

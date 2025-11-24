@@ -1,5 +1,5 @@
 // React hooks for currency management and formatting
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
@@ -12,7 +12,6 @@ import {
   formatCurrency,
   getCurrencyInfo,
   getDefaultCurrencyForCountry,
-  type Currency,
   type Country
 } from '@/utils/currency';
 import type { UserProfile } from '@/types';

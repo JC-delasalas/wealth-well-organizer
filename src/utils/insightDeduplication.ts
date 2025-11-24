@@ -2,8 +2,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { 
-  FinancialInsight, 
-  InsightType, 
+  FinancialInsight,
   DuplicateCheckResult,
   CreateInsightInput 
 } from '@/types/insights';
@@ -290,7 +289,7 @@ export const findDuplicateInsights = async (userId: string): Promise<FinancialIn
       );
 
       if (duplicates.length > 0) {
-        duplicateGroups.push([insight, ...duplicates]);
+        duplicateGroups.push([insight as FinancialInsight, ...(duplicates as FinancialInsight[])]);
         processedHashes.add(insight.content_hash);
       }
     }

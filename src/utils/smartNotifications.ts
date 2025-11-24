@@ -240,11 +240,6 @@ class SmartNotificationManager {
           title: notification.title,
           description: notification.description,
           variant: notification.type === 'error' ? 'destructive' : 'default',
-          action: notification.action ? {
-            altText: notification.action.label,
-            onClick: notification.action.onClick,
-            children: notification.action.label,
-          } : undefined,
         });
       } else {
         // Multiple notifications - batch them

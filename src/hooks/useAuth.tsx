@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Then call the edge function for other data seeding
-      const { data, error } = await supabase.functions.invoke('seed-user-data', {
+      const { error } = await supabase.functions.invoke('seed-user-data', {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Signing up with redirect URL - logging removed for security
 
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -172,16 +172,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           description: error.message,
           variant: "destructive",
         });
-      } else if (data.user && !data.user.email_confirmed_at) {
+      } else {
         toast({
           title: "Check your email",
           description: "We've sent you a confirmation link. Please check your email and click the link to complete your registration.",
           duration: 10000,
-        });
-      } else if (data.user && data.user.email_confirmed_at) {
-        toast({
-          title: "Welcome!",
-          description: "Your account has been created successfully.",
         });
       }
 
@@ -204,7 +199,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
