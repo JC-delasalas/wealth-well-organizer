@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useDeviceInfo } from '@/hooks/use-mobile';
+import { useMobilePerformance } from '@/hooks/useMobilePerformance';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { MobileButton } from '@/components/ui/mobile-button';
 import {
   Menu,
   Home,
@@ -26,7 +28,8 @@ interface MobileNavigationProps {
 
 export const MobileNavigation = ({ className }: MobileNavigationProps) => {
   const [open, setOpen] = useState(false);
-  const isMobile = useIsMobile();
+  const { isMobile, isTouchDevice } = useDeviceInfo();
+  const { shouldReduceAnimations } = useMobilePerformance();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -128,19 +131,20 @@ export const MobileNavigation = ({ className }: MobileNavigationProps) => {
               const active = isActive(item.path);
               
               return (
-                <Button
+                <MobileButton
                   key={item.path}
                   variant={active ? "default" : "ghost"}
-                  className={`w-full justify-start h-12 px-4 ${
-                    active 
-                      ? 'bg-primary text-white shadow-sm' 
+                  size="mobile-default"
+                  className={`w-full justify-start px-4 ${
+                    active
+                      ? 'bg-primary text-white shadow-sm'
                       : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
+                  } ${shouldReduceAnimations ? '' : 'transition-colors duration-200'}`}
                   onClick={() => handleNavigation(item.path)}
                 >
                   <Icon className="h-5 w-5 mr-3" />
                   <span className="font-medium">{item.label}</span>
-                </Button>
+                </MobileButton>
               );
             })}
           </nav>

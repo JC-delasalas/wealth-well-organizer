@@ -379,8 +379,16 @@ export const testDuplicatePerformance = async (): Promise<void> => {
 };
 
 // Make functions available in browser console for testing
+declare global {
+  interface Window {
+    testInsightSystem?: typeof testInsightSystem;
+    cleanupTestData?: typeof cleanupTestData;
+    testDuplicatePerformance?: typeof testDuplicatePerformance;
+  }
+}
+
 if (typeof window !== 'undefined') {
-  (window as any).testInsightSystem = testInsightSystem;
-  (window as any).cleanupTestData = cleanupTestData;
-  (window as any).testDuplicatePerformance = testDuplicatePerformance;
+  window.testInsightSystem = testInsightSystem;
+  window.cleanupTestData = cleanupTestData;
+  window.testDuplicatePerformance = testDuplicatePerformance;
 }

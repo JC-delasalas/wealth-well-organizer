@@ -208,14 +208,10 @@ const calculateTaxFromBrackets = (
     }
   }
 
-  // Add base tax from the highest applicable bracket
-  const applicableBracket = brackets.find(b => 
-    taxableIncome > b.minIncome && (b.maxIncome === null || taxableIncome <= b.maxIncome)
-  );
-  
-  if (applicableBracket) {
-    totalTax += applicableBracket.baseTax;
-  }
+  // Note: baseTax is NOT added here because the iteration above already
+  // computes the cumulative tax across all applicable brackets. Adding
+  // baseTax would double-count since baseTax represents the cumulative
+  // tax from all lower brackets. (Fixed in 2026 Q1 audit)
 
   return { taxDue: totalTax, breakdown, marginalRate };
 };
@@ -234,8 +230,11 @@ export const calculateBusinessIncomeTax = async (
 }> => {
   const netIncome = input.grossReceipts - input.totalDeductions;
   
-  // 8% tax on gross receipts
-  const eightPercentTax = input.grossReceipts * 0.08;
+  // 8% tax on gross receipts in excess of ₱250,000 (per BIR TRAIN Law)
+  // This option is available for self-employed/professionals with gross
+  // sales/receipts not exceeding ₱3M, in lieu of graduated rates + percentage tax.
+  // (Fixed in 2026 Q1 audit — previously applied 8% on full gross receipts)
+  const eightPercentTax = Math.max(0, input.grossReceipts - 250000) * 0.08;
   
   // Graduated tax calculation
   let taxableIncome = netIncome;

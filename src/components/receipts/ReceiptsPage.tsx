@@ -176,7 +176,7 @@ export const ReceiptsPage = () => {
               
               <div className="space-y-2">
                 <label className="text-sm font-medium">Type</label>
-                <Select value={filterType} onValueChange={(value: any) => setFilterType(value)}>
+                <Select value={filterType} onValueChange={(value: string) => setFilterType(value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -207,7 +207,7 @@ export const ReceiptsPage = () => {
               
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sort By</label>
-                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                <Select value={sortBy} onValueChange={(value: string) => setSortBy(value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>

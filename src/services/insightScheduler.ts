@@ -8,6 +8,7 @@ import {
   CreateInsightInput,
   InsightType,
 } from '@/types/insights';
+import type { Transaction, Category, Budget, SavingsGoal } from '@/types';
 import { createInsightWithDeduplication } from '@/utils/insightDeduplication';
 
 // Scheduler class for managing insight generation
@@ -87,13 +88,13 @@ export class InsightScheduler {
       }
 
       // Check if generation is due
-      if (!this.isGenerationDue(preferences as any)) {
+      if (!this.isGenerationDue(preferences)) {
         console.log('Insight generation not due for user:', user.id);
         return;
       }
 
       console.log('Generating insights for user:', user.id);
-      await this.generateInsightsForUser(user.id, preferences as any);
+      await this.generateInsightsForUser(user.id, preferences);
 
     } catch (error) {
       console.error('Error in scheduled insight generation:', error);
@@ -162,7 +163,7 @@ export class InsightScheduler {
         if (prefError || !prefs) {
           throw new Error('User preferences not found');
         }
-        preferences = prefs as any;
+        preferences = prefs;
       }
 
       // Get user data for analysis
@@ -177,7 +178,7 @@ export class InsightScheduler {
       };
 
       // Process insight types sequentially to prevent API overload
-      for (const insightType of (preferences!.enabled_insight_types as any)) {
+      for (const insightType of preferences!.enabled_insight_types) {
         try {
           const insights = await this.generateInsightsByType(insightType, context);
 
@@ -259,7 +260,7 @@ export class InsightScheduler {
   }
 
   // Fetch user transactions
-  private async getUserTransactions(userId: string): Promise<any[]> {
+  private async getUserTransactions(userId: string): Promise<Transaction[]> {
     const { data, error } = await supabase
       .from('transactions')
       .select('*')
@@ -276,7 +277,7 @@ export class InsightScheduler {
   }
 
   // Fetch user categories
-  private async getUserCategories(userId: string): Promise<any[]> {
+  private async getUserCategories(userId: string): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
       .select('*')
@@ -291,7 +292,7 @@ export class InsightScheduler {
   }
 
   // Fetch user budgets
-  private async getUserBudgets(userId: string): Promise<any[]> {
+  private async getUserBudgets(userId: string): Promise<Budget[]> {
     const { data, error } = await supabase
       .from('budgets')
       .select('*')
@@ -306,7 +307,7 @@ export class InsightScheduler {
   }
 
   // Fetch user savings goals
-  private async getUserSavingsGoals(userId: string): Promise<any[]> {
+  private async getUserSavingsGoals(userId: string): Promise<SavingsGoal[]> {
     const { data, error } = await supabase
       .from('savings_goals')
       .select('*')

@@ -4,6 +4,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { seedUserCategories } from '@/services/categorySeeder';
+import { logger, sanitizeForLogging } from '@/utils/logger';
 
 /**
  * Custom error interface for authentication operations
@@ -75,10 +76,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Error seeding user data:', error);
+        logger.error('Error seeding user data', sanitizeForLogging({ error }));
       }
     } catch (error) {
-      console.error('Error calling seed function:', error);
+      logger.error('Error calling seed function', sanitizeForLogging({ error }));
     }
   };
 
@@ -120,7 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) {
-          console.error('Error getting session');
+          logger.error('Error getting session', sanitizeForLogging({ error }));
         }
         if (mounted) {
           setSession(session);
@@ -128,7 +129,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setLoading(false);
         }
       } catch (error) {
-        console.error('Error in getInitialSession');
+        logger.error('Error in getInitialSession', sanitizeForLogging({ error }));
         if (mounted) {
           setLoading(false);
         }
@@ -150,7 +151,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const redirectUrl = `https://wealth-well-organizer.vercel.app/auth/callback`;
 
       // Prepare user metadata with country information
-      const userData: Record<string, any> = {};
+      const userData: Record<string, string> = {};
       if (fullName) userData.full_name = fullName;
       if (country) userData.country = country;
 
@@ -166,7 +167,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Sign up error:', error);
+        logger.auth('Sign up error', sanitizeForLogging({ error: error.message }));
         toast({
           title: "Sign up failed",
           description: error.message,
@@ -183,7 +184,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       return { error };
     } catch (err) {
-      console.error('Unexpected sign up error:', err);
+      logger.error('Unexpected sign up error', sanitizeForLogging({ error: err }));
       setLoading(false);
       const error = { message: 'An unexpected error occurred during sign up' };
       toast({
@@ -205,7 +206,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Sign in error');
+        logger.auth('Sign in error', sanitizeForLogging({ error: error.message }));
         toast({
           title: "Sign in failed",
           description: error.message,
@@ -216,7 +217,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       return { error };
     } catch (err) {
-      console.error('Unexpected sign in error');
+      logger.error('Unexpected sign in error', sanitizeForLogging({ error: err }));
       setLoading(false);
       const error = { message: 'An unexpected error occurred during sign in' };
       toast({
@@ -234,7 +235,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
-        console.error('Sign out error:', error);
+        logger.auth('Sign out error', sanitizeForLogging({ error: error.message }));
         toast({
           title: "Sign out failed",
           description: error.message,
@@ -243,7 +244,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       setLoading(false);
     } catch (err) {
-      console.error('Unexpected sign out error:', err);
+      logger.error('Unexpected sign out error', sanitizeForLogging({ error: err }));
       setLoading(false);
       toast({
         title: "Sign out failed",
@@ -266,7 +267,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Reset password error:', error);
+        logger.auth('Reset password error', sanitizeForLogging({ error: error.message }));
         toast({
           title: "Reset password failed",
           description: error.message,
@@ -283,7 +284,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       return { error };
     } catch (err) {
-      console.error('Unexpected reset password error:', err);
+      logger.error('Unexpected reset password error', sanitizeForLogging({ error: err }));
       setLoading(false);
       const error = { message: 'An unexpected error occurred during password reset' };
       toast({
@@ -318,7 +319,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        console.error('Update password error:', error);
+        logger.auth('Update password error', sanitizeForLogging({ error: error.message }));
         toast({
           title: "Update password failed",
           description: error.message,
@@ -335,7 +336,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       return { error };
     } catch (err) {
-      console.error('Unexpected update password error:', err);
+      logger.error('Unexpected update password error', sanitizeForLogging({ error: err }));
       setLoading(false);
       const error = { message: 'An unexpected error occurred during password update' };
       toast({

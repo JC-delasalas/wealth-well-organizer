@@ -124,7 +124,7 @@ export const seedCategoriesForAllUsers = async (): Promise<{
     }
 
     const usersNeedingCategories = usersWithoutCategories?.filter(user => {
-      const categoryCount = (user.categories?.[0] as any)?.count || 0;
+      const categoryCount = (user.categories?.[0] as { count: number })?.count || 0;
       return categoryCount < defaultCategories.length;
     }) || [];
 

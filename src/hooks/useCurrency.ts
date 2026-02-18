@@ -81,10 +81,10 @@ export const useCurrency = () => {
         description: "Your currency preferences have been saved.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Error updating preferences",
-        description: error.message || "Failed to update currency preferences.",
+        description: (error as Error)?.message || "Failed to update currency preferences.",
         variant: "destructive",
       });
     },

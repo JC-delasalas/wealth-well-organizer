@@ -29,7 +29,7 @@ export interface ExchangeRate {
 // Cache for currencies and exchange rates
 let currenciesCache: Currency[] | null = null;
 let countriesCache: Country[] | null = null;
-let exchangeRatesCache: Map<string, ExchangeRate> = new Map();
+const exchangeRatesCache: Map<string, ExchangeRate> = new Map();
 let cacheTimestamp = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
@@ -287,7 +287,7 @@ export const parseCurrency = (currencyString: string, currencyCode: string = 'PH
   try {
     // Remove currency symbols and spaces
     const currency = getCurrencyInfo(currencyCode);
-    let cleanString = currencyString
+    const cleanString = currencyString
       .replace(currency.symbol, '')
       .replace(/[^\d.-]/g, ''); // Keep only digits, dots, and minus
 

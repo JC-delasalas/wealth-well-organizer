@@ -1,10 +1,12 @@
 // Insight deduplication utilities for preventing duplicate financial insights
 
 import { supabase } from '@/integrations/supabase/client';
-import { 
+import type { Database } from '@/integrations/supabase/types';
+import {
   FinancialInsight,
+  InsightType,
   DuplicateCheckResult,
-  CreateInsightInput 
+  CreateInsightInput
 } from '@/types/insights';
 
 /**
@@ -196,7 +198,7 @@ export const checkForDuplicateInsight = async (
 
     // Log specific error details for debugging
     if (error && typeof error === 'object') {
-      const dbError = error as any;
+      const dbError = error as { code?: string; message?: string; [key: string]: unknown };
       if (dbError.code === '42703') {
         console.error('Database column missing - content_hash field may not exist');
       } else if (dbError.code === '42P01') {
@@ -373,7 +375,7 @@ export const validateInsightContent = (insight: CreateInsightInput): string[] =>
 };
 
 // Request queue to prevent simultaneous requests
-const requestQueue: Array<() => Promise<any>> = [];
+const requestQueue: Array<() => Promise<unknown>> = [];
 let isProcessingQueue = false;
 
 /**
@@ -443,7 +445,7 @@ export const createInsightWithDeduplication = async (
         await throttleRequest();
 
         // Create the insight with fallback for missing columns
-        const insertData: any = {
+        const insertData: Database['public']['Tables']['financial_insights']['Insert'] = {
           user_id: userId,
           insight_type: insight.insight_type,
           title: insight.title,

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { Budget } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -102,7 +103,7 @@ export const useBudgets = () => {
       }
 
       // Clean and validate update data
-      const cleanUpdates: any = {};
+      const cleanUpdates: Database['public']['Tables']['budgets']['Update'] = {};
       
       if (updates.amount !== undefined) {
         if (updates.amount <= 0) {

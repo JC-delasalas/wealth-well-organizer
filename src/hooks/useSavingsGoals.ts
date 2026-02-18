@@ -1,6 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { SavingsGoal, SavingsGoalProgress } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -97,7 +98,7 @@ export const useSavingsGoals = () => {
       }
 
       // Ensure proper data types and handle null/undefined values
-      const goalData: any = {
+      const goalData: Database['public']['Tables']['savings_goals']['Insert'] = {
         user_id: user.id,
         target_amount: Number(goal.target_amount),
         current_amount: Number(goal.current_amount || 0),
@@ -177,7 +178,7 @@ export const useSavingsGoals = () => {
       }
 
       // Clean and validate update data
-      const cleanUpdates: any = {};
+      const cleanUpdates: Database['public']['Tables']['savings_goals']['Update'] = {};
 
       if (updates.name !== undefined) {
         if (!updates.name || updates.name.trim() === '') {

@@ -1,4 +1,5 @@
 // Enhanced types for financial insights system with duplicate prevention and user preferences
+import type { Transaction, Category, Budget, SavingsGoal } from './index';
 
 export type InsightType = 'daily' | 'weekly' | 'monthly' | 'threshold_alert';
 
@@ -66,10 +67,10 @@ export interface CreateInsightInput {
 export interface InsightGenerationContext {
   user_id: string;
   preferences: UserInsightPreferences;
-  transactions: any[]; // Transaction data for analysis
-  categories: any[]; // Category data
-  budgets?: any[]; // Budget data if available
-  savings_goals?: any[]; // Savings goals data if available
+  transactions: Transaction[]; // Transaction data for analysis
+  categories: Category[]; // Category data
+  budgets?: Budget[]; // Budget data if available
+  savings_goals?: SavingsGoal[]; // Savings goals data if available
 }
 
 // Insight generation result

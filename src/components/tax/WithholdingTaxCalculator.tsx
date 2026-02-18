@@ -186,7 +186,7 @@ export const WithholdingTaxCalculator: React.FC = () => {
               <Label htmlFor="taxType">Income Type</Label>
               <Select 
                 value={withholdingInput.taxType} 
-                onValueChange={(value: any) => updateInput('taxType', value)}
+                onValueChange={(value: string) => updateInput('taxType', value)}
               >
                 <SelectTrigger>
                   <SelectValue />

@@ -3,26 +3,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  ComposedChart,
-  AreaChart,
-  Area,
-  RadialBarChart,
-  RadialBar,
-  Legend
-} from 'recharts';
+// Optimized imports for tree shaking
+import { BarChart } from 'recharts/es6/chart/BarChart';
+import { Bar } from 'recharts/es6/cartesian/Bar';
+import { XAxis } from 'recharts/es6/cartesian/XAxis';
+import { YAxis } from 'recharts/es6/cartesian/YAxis';
+import { CartesianGrid } from 'recharts/es6/cartesian/CartesianGrid';
+import { Tooltip } from 'recharts/es6/component/Tooltip';
+import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
+import { LineChart } from 'recharts/es6/chart/LineChart';
+import { Line } from 'recharts/es6/cartesian/Line';
+import { PieChart } from 'recharts/es6/chart/PieChart';
+import { Pie } from 'recharts/es6/polar/Pie';
+import { Cell } from 'recharts/es6/component/Cell';
+import { ComposedChart } from 'recharts/es6/chart/ComposedChart';
+import { AreaChart } from 'recharts/es6/chart/AreaChart';
+import { Area } from 'recharts/es6/cartesian/Area';
+import { RadialBarChart } from 'recharts/es6/chart/RadialBarChart';
+import { RadialBar } from 'recharts/es6/polar/RadialBar';
+import { Legend } from 'recharts/es6/component/Legend';
 import { useTransactions } from '@/hooks/useTransactions';
 import { useCategories } from '@/hooks/useCategories';
 import { useBudgets } from '@/hooks/useBudgets';
@@ -87,30 +86,34 @@ export const AdvancedReports = () => {
       let start: Date, end: Date, periodLabel: string;
 
       switch (period) {
-        case 'daily':
+        case 'daily': {
           const dayDate = subDays(now, i);
           start = startOfDay(dayDate);
           end = endOfDay(dayDate);
           periodLabel = format(dayDate, 'MMM dd');
           break;
-        case 'weekly':
+        }
+        case 'weekly': {
           const weekDate = subWeeks(now, i);
           start = startOfWeek(weekDate);
           end = endOfWeek(weekDate);
           periodLabel = format(start, 'MMM dd');
           break;
-        case 'monthly':
+        }
+        case 'monthly': {
           const monthDate = subMonths(now, i);
           start = startOfMonth(monthDate);
           end = endOfMonth(monthDate);
           periodLabel = format(monthDate, 'MMM yyyy');
           break;
-        case 'yearly':
+        }
+        case 'yearly': {
           const yearDate = subYears(now, i);
           start = new Date(yearDate.getFullYear(), 0, 1);
           end = new Date(yearDate.getFullYear(), 11, 31);
           periodLabel = yearDate.getFullYear().toString();
           break;
+        }
       }
 
       const periodTransactions = transactions.filter(t => {
@@ -208,7 +211,7 @@ export const AdvancedReports = () => {
   // Category Trend Analysis - Multi-month spending patterns per category
   const generateCategoryTrends = () => {
     const historicalData = getHistoricalTransactions();
-    const categoryTrends: Record<string, any[]> = {};
+    const categoryTrends: Record<string, Array<{ period: string; amount: number; count: number }>> = {};
 
     historicalData.forEach(periodData => {
       const categorySpending: Record<string, number> = {};
@@ -235,7 +238,7 @@ export const AdvancedReports = () => {
 
     // Convert to format suitable for LineChart
     const trendData = historicalData.map(periodData => {
-      const dataPoint: any = { period: periodData.period };
+      const dataPoint: Record<string, string | number> = { period: periodData.period };
       Object.keys(categoryTrends).forEach(categoryName => {
         const periodAmount = categoryTrends[categoryName].find(
           item => item.period === periodData.period
@@ -332,7 +335,14 @@ export const AdvancedReports = () => {
   // Budget vs Actual Analysis
   const generateBudgetVsActual = () => {
     const currentPeriodTransactions = getCurrentPeriodTransactions();
-    const budgetComparison: any[] = [];
+    const budgetComparison: Array<{
+      category: string;
+      budgeted: number;
+      actual: number;
+      variance: number;
+      utilizationRate: number;
+      status: 'under' | 'over' | 'on-track';
+    }> = [];
 
     budgets.forEach(budget => {
       const category = categories.find(c => c.id === budget.category_id);

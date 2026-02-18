@@ -185,14 +185,14 @@ export interface TaxCalculation {
   tax_year: number;
   country_code: string;
   currency: string;
-  input_data: Record<string, any>;
+  input_data: Record<string, unknown>;
   gross_income?: number;
   taxable_income?: number;
   tax_due?: number;
   tax_withheld?: number;
   tax_payable?: number;
   tax_refund?: number;
-  calculation_breakdown?: Record<string, any>;
+  calculation_breakdown?: Record<string, unknown>;
   calculation_name?: string;
   notes?: string;
   is_saved: boolean;

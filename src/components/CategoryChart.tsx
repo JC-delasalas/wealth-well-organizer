@@ -1,6 +1,12 @@
 
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+// Optimized imports for tree shaking
+import { PieChart } from 'recharts/es6/chart/PieChart';
+import { Pie } from 'recharts/es6/polar/Pie';
+import { Cell } from 'recharts/es6/component/Cell';
+import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
+import { Tooltip } from 'recharts/es6/component/Tooltip';
+import { Legend } from 'recharts/es6/component/Legend';
 import { CategoryStats } from '@/types';
 
 interface CategoryChartProps {

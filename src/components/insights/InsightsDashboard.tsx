@@ -146,7 +146,7 @@ export const InsightsDashboard = () => {
         }, 24 * 60 * 60 * 1000);
       }
     }
-  }, [thresholdCheck?.belowThreshold, currentSavingsGoal, memoizedCreateInsight, insights]);
+  }, [thresholdCheck?.belowThreshold, thresholdCheck?.currentRate, thresholdCheck?.daysUntilSalary, currentSavingsGoal, memoizedCreateInsight, insights]);
 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {

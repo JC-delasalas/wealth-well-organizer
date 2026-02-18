@@ -83,7 +83,7 @@ export const CategoryManager: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(defaultFormData);
-  const [categoryUsage, setCategoryUsage] = useState<Record<string, any>>({});
+  const [categoryUsage, setCategoryUsage] = useState<Record<string, { count: number; total: number }>>({});
 
   const incomeCategories = getIncomeCategories();
   const expenseCategories = getExpenseCategories();

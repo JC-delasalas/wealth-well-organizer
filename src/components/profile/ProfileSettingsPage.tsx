@@ -55,10 +55,10 @@ export const ProfileSettingsPage: React.FC = () => {
         title: "Profile Updated",
         description: "Your profile information has been updated successfully.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Error updating profile",
-        description: error.message || "Failed to update profile.",
+        description: (error as Error)?.message || "Failed to update profile.",
         variant: "destructive",
       });
     } finally {

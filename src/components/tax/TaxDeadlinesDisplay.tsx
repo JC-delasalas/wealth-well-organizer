@@ -195,7 +195,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
           
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Type:</label>
-            <Select value={filterType} onValueChange={(value: any) => setFilterType(value)}>
+            <Select value={filterType} onValueChange={(value: string) => setFilterType(value)}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
@@ -210,7 +210,7 @@ export const TaxDeadlinesDisplay: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Period:</label>
-            <Select value={filterCategory} onValueChange={(value: any) => setFilterCategory(value)}>
+            <Select value={filterCategory} onValueChange={(value: string) => setFilterCategory(value)}>
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>

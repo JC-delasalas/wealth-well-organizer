@@ -46,10 +46,6 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
   const [loadingSignedUrl, setLoadingSignedUrl] = useState(false);
   const { toast } = useToast();
 
-  if (!transaction.receipt_url || !transaction.receipt_name) {
-    return null;
-  }
-
   // Get signed URL for private storage access
   const getSignedUrl = async () => {
     if (loadingSignedUrl || signedUrl) return;
@@ -102,6 +98,11 @@ export const ReceiptViewer = ({ transaction, trigger, onReceiptDeleted }: Receip
       getSignedUrl();
     }
   }, [open]);
+
+  // Early return after all hooks
+  if (!transaction.receipt_url || !transaction.receipt_name) {
+    return null;
+  }
 
   const getFileType = (fileName: string) => {
     const extension = fileName.split('.').pop()?.toLowerCase();

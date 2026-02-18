@@ -25,12 +25,59 @@ export default defineConfig(({ mode }) => ({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
+        manualChunks: (id) => {
+          // Vendor chunks
+          if (id.includes('node_modules')) {
+            // React ecosystem
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            // Router
+            if (id.includes('react-router')) {
+              return 'router';
+            }
+            // Charts library
+            if (id.includes('recharts')) {
+              return 'charts';
+            }
+            // Supabase
+            if (id.includes('@supabase')) {
+              return 'supabase';
+            }
+            // UI libraries
+            if (id.includes('radix') || id.includes('lucide')) {
+              return 'ui-vendor';
+            }
+            // Other vendors
+            return 'vendor';
+          }
+
+          // App chunks
+          if (id.includes('/components/reports/')) {
+            return 'reports';
+          }
+          if (id.includes('/components/insights/')) {
+            return 'insights';
+          }
+          if (id.includes('/components/tax/')) {
+            return 'tax';
+          }
+          if (id.includes('/hooks/')) {
+            return 'hooks';
+          }
+        },
+        // Optimize chunk sizes
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
+          return `assets/[name]-[hash].js`;
         },
       },
     },
+    // Performance optimizations
+    target: 'esnext',
+    minify: 'esbuild',
+    cssMinify: true,
+    reportCompressedSize: false, // Faster builds
   },
   preview: {
     port: 4173,

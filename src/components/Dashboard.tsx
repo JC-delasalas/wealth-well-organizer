@@ -16,13 +16,17 @@ import { RecentTransactions } from './RecentTransactions';
 import { CategoryChart } from './CategoryChart';
 import { InsightsDashboard } from './insights/InsightsDashboard';
 import { TransactionForm } from './transactions/TransactionForm';
+import { MobileTransactionForm } from './transactions/MobileTransactionForm';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useCurrencyFormatter } from '@/hooks/useCurrency';
+import { useDeviceInfo } from '@/hooks/use-mobile';
+import { MobileButton } from '@/components/ui/mobile-button';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const stats = useDashboardStats();
   const { standard: formatCurrency } = useCurrencyFormatter();
+  const { isMobile, isTouchDevice } = useDeviceInfo();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,14 +46,28 @@ export const Dashboard = () => {
 
             {/* Quick Transaction Button */}
             <div className="flex justify-center lg:justify-end">
-              <TransactionForm
-                trigger={
-                  <Button className="bg-finance-green-600 hover:bg-finance-green-700 text-white px-6 py-3 text-base font-semibold shadow-lg">
-                    <Plus className="w-5 h-5 mr-2" />
-                    Add Transaction
-                  </Button>
-                }
-              />
+              {isMobile ? (
+                <MobileTransactionForm
+                  trigger={
+                    <MobileButton
+                      size="mobile-lg"
+                      className="bg-finance-green-600 hover:bg-finance-green-700 text-white shadow-lg"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      Add Transaction
+                    </MobileButton>
+                  }
+                />
+              ) : (
+                <TransactionForm
+                  trigger={
+                    <Button className="bg-finance-green-600 hover:bg-finance-green-700 text-white px-6 py-3 text-base font-semibold shadow-lg">
+                      <Plus className="w-5 h-5 mr-2" />
+                      Add Transaction
+                    </Button>
+                  }
+                />
+              )}
             </div>
           </div>
         </div>

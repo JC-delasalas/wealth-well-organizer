@@ -110,7 +110,7 @@ export const useIndividualTax = () => {
   }, [taxInput, period]);
 
   // Update input field
-  const updateInput = useCallback((field: keyof IndividualTaxInput, value: any) => {
+  const updateInput = useCallback((field: keyof IndividualTaxInput, value: string | number) => {
     setTaxInput(prev => ({ ...prev, [field]: value }));
   }, []);
 
@@ -156,7 +156,7 @@ export const useBusinessTax = () => {
     quarterlyPayments: [0, 0, 0, 0]
   });
 
-  const [businessResult, setBusinessResult] = useState<any>(null);
+  const [businessResult, setBusinessResult] = useState<BusinessTaxResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
   // Calculate business tax with period conversion
@@ -187,7 +187,7 @@ export const useBusinessTax = () => {
   }, [businessInput, period]);
 
   // Update input field
-  const updateInput = useCallback((field: keyof BusinessTaxInput, value: any) => {
+  const updateInput = useCallback((field: keyof BusinessTaxInput, value: string | number) => {
     setBusinessInput(prev => ({ ...prev, [field]: value }));
   }, []);
 
@@ -248,7 +248,7 @@ export const useWithholdingTax = () => {
   }, [withholdingInput, period]);
 
   // Update input field
-  const updateInput = useCallback((field: keyof WithholdingTaxInput, value: any) => {
+  const updateInput = useCallback((field: keyof WithholdingTaxInput, value: string | number) => {
     setWithholdingInput(prev => ({ ...prev, [field]: value }));
   }, []);
 
@@ -334,7 +334,7 @@ export const useTaxCalculations = () => {
         description: "Your tax calculation has been saved successfully.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Error saving calculation",
         description: error.message || "Failed to save tax calculation.",
@@ -363,7 +363,7 @@ export const useTaxCalculations = () => {
         description: "Your tax calculation has been updated successfully.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Error updating calculation",
         description: error.message || "Failed to update tax calculation.",
@@ -389,7 +389,7 @@ export const useTaxCalculations = () => {
         description: "Tax calculation has been deleted successfully.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Error deleting calculation",
         description: error.message || "Failed to delete tax calculation.",
